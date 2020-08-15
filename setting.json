@@ -1,0 +1,50 @@
+[
+    {
+        "title": "GENERAL",
+        "items": [
+            {
+                "title": "TODAY_SERVER",
+                "type": "switch",
+                "key": "setting.general.today_server",
+                "value": false
+            },
+            {
+                "title": "FIRST_SCREEN",
+                "type": "tab",
+                "key": "setting.general.first_screen",
+                "items": [
+                    "BOXJS",
+                    "SERVER",
+                    "SETTING"
+                ],
+                "value": 0
+            }
+        ]
+    },
+    {
+        "title": "ABOUT",
+        "items": [
+            {
+                "title": "Github",
+                "type": "info",
+                "key": "setting.about.github",
+                "value": "https://github.com/ipuppet/BoxJsHelper"
+            },
+            {
+                "title": "AUTHOR",
+                "type": "info",
+                "key": "setting.about.author",
+                "value": [
+                    "ipuppet",
+                    "https://blog.ipuppet.cn"
+                ]
+            },
+            {
+                "title": "README",
+                "type": "script",
+                "key": "setting.about.readme",
+                "value": "this.readme()"
+            }
+        ]
+    }
+]

@@ -1,0 +1,22 @@
+"ALERT_INFO" = "提示";
+"OK" = "好";
+"CANCEL" = "取消";
+"BACK" = "返回";
+
+"VISIT_ON_CONPUTER" = "在电脑上访问";
+"ENABLE_IN_SETTING" = "请在设置中开启";
+
+"BOXJS" = "BoxJs";
+"SERVER" = "服务器";
+"SETTING" = "设置";
+
+"GENERAL" = "一般";
+"TODAY_SERVER" = "Today 上的服务器开关";
+"FIRST_SCREEN" = "首屏显示";
+
+"ABOUT" = "关于";
+"VERSION" = "Version";
+"AUTHOR" = "作者";
+
+"SERVER_CLOSED" = "本地服务器已关闭";
+"SERVER_STARTED" = "本地服务器已开启";
