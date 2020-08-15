@@ -3,6 +3,12 @@
         "title": "GENERAL",
         "items": [
             {
+                "title": "REFRESH",
+                "type": "script",
+                "key": "setting.general.refersh",
+                "value": "require('/scripts/ui/main/home').refresh()"
+            },
+            {
                 "title": "TODAY_SERVER",
                 "type": "switch",
                 "key": "setting.general.today_server",

@@ -3,11 +3,29 @@ class HomeUI {
         this.kernel = kernel
     }
 
+    static refresh() {
+        $ui.alert({
+            title: $l10n("ALERT_INFO"),
+            message: `${$l10n("REFRESH")} ${$l10n("BOXJS")}?`,
+            actions: [
+                {
+                    title: $l10n("OK"),
+                    handler: () => {
+                        $("web_boxjs").reload()
+                        $ui.toast($l10n("REFRESH_SUCCESS"))
+                    }
+                },
+                { title: $l10n("CANCEL") }
+            ]
+        });
+    }
+
     get_views() {
         return [
             {
                 type: "web",
                 props: {
+                    id: "web_boxjs",
                     url: "http://boxjs.com/",
                     opaque: false,
                 },

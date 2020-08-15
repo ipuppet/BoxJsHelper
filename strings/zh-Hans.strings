@@ -2,6 +2,8 @@
 "OK" = "好";
 "CANCEL" = "取消";
 "BACK" = "返回";
+"REFRESH" = "刷新";
+"REFRESH_SUCCESS" = "刷新成功";
 
 "VISIT_ON_CONPUTER" = "在电脑上访问";
 "ENABLE_IN_SETTING" = "请在设置中开启";
