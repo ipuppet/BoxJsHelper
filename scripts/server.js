@@ -1,9 +1,12 @@
 const Logger = require("./logger")
 
 class Server {
-    constructor(kernel, port = 6060) {
+    constructor(kernel, port = null) {
         this.kernel = kernel
         this.logger = new Logger(this.kernel)
+        if (port === null) {
+            port = this.kernel.setting.get("setting.about.server_port")
+        }
         this.port = port
         this.handler = {}
         this.server = $server.new()
