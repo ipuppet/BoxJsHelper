@@ -35,6 +35,12 @@
                 "type": "switch",
                 "key": "setting.about.log_request",
                 "value": false
+            },
+            {
+                "title": "PORT",
+                "type": "string",
+                "key": "setting.about.server_port",
+                "value": 6060
             }
         ]
     },
