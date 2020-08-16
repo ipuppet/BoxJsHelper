@@ -316,7 +316,6 @@ class SettingUIBase {
                             layout: (make, view) => {
                                 make.left.inset(10)
                                 make.top.equalTo(view.super.safeAreaTop).offset(50)
-                                make.height.equalTo(40)
                             }
                         }]
                     },
