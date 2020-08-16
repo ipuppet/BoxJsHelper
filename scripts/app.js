@@ -11,24 +11,25 @@ class Kernel {
             {
                 type: "button",
                 props: {
-                    image: $image("assets/icon/back.png", "assets/icon/back-dark.png"),
+                    symbol: "chevron.left",
+                    tintColor: $color("primaryText", "secondaryText"),
                     bgcolor: $color("clear")
                 },
                 layout: make => {
                     make.left.inset(10)
-                    make.size.equalTo(20)
+                    make.size.equalTo(30)
                 }
             },
             {
                 type: "label",
                 props: {
                     text: parent_title,
-                    textColor: $color("primaryText"),
+                    textColor: $color("primaryText", "secondaryText"),
                     font: $font(18)
                 },
                 layout: (make, view) => {
                     make.height.equalTo(view.prev)
-                    make.left.equalTo(view.prev.right).inset(3)
+                    make.left.equalTo(view.prev.right)
                 }
             },
             {
