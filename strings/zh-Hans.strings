@@ -22,5 +22,7 @@
 "VERSION" = "Version";
 "AUTHOR" = "作者";
 
+"ACCESS" = "远程访问";
+"PORT" = "端口";
 "SERVER_CLOSED" = "本地服务器已关闭";
 "SERVER_STARTED" = "本地服务器已开启";
