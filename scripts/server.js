@@ -3,7 +3,7 @@ const Logger = require("./logger")
 class Server {
     constructor(kernel, port = null) {
         this.kernel = kernel
-        this.logger = new Logger(this.kernel,"server-access")
+        this.logger = new Logger(this.kernel, "server-access")
         if (port === null) {
             port = this.kernel.setting.get("setting.about.server_port")
         }
