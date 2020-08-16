@@ -3,7 +3,7 @@ const Logger = require("./logger")
 class Server {
     constructor(kernel, port = null) {
         this.kernel = kernel
-        this.logger = new Logger(this.kernel)
+        this.logger = new Logger(this.kernel,"server-access")
         if (port === null) {
             port = this.kernel.setting.get("setting.about.server_port")
         }
@@ -36,7 +36,7 @@ class Server {
         this.handler.asyncResponse = async (request, completion) => {
             let method = request.method
             let path = request.path
-            if (this.kernel.setting.get("LOG_REQUEST")) {
+            if (this.kernel.setting.get("setting.about.log_request")) {
                 this.logger.info(`"${method}" ${path}`)
             }
             let response = {}
