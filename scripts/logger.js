@@ -2,6 +2,7 @@ class Logger {
     constructor(kernel, name = "default") {
         this.kernel = kernel
         this.name = name
+        this.max_size = 1024 * 1024 * 1024
         if (undefined === $cache.get(this.name)) {
             $cache.set(this.name, new Date().getTime())
         }
@@ -14,9 +15,13 @@ class Logger {
     _log(message, level) {
         let path = `${this.path}${$cache.get(this.name)}.log`
         let file = $file.read(path)
-        console.log(path)
-        console.log(file)
         // 目前只能先读取文件后拼接字符串再写入
+        // 用nosejs会太麻烦
+        if (file && file.info.size >= this.max_size) {
+            $cache.set(this.name, new Date().getTime())
+            path = `${this.path}${$cache.get(this.name)}.log`
+            file = undefined
+        }
         let old_content = file ? file.string : ""
         let content = `${new Date().toISOString()} [${level}] ${message}\n`
         $file.write({
