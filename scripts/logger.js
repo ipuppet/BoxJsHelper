@@ -11,9 +11,11 @@ class Logger {
     }
 
     _log(message, level) {
-        let content = `${new Date().toLocaleString()} [${level}] ${message}`
+        let content = `${new Date().toLocaleString()} [${level}] ${message}\n`
+        // 目前只能先读取文件后拼接字符串再写入
+        let old_content = $file.read(this.path).string
         $file.write({
-            data: $data({ string: content }),
+            data: $data({ string: old_content + content }),
             path: this.path
         })
     }
