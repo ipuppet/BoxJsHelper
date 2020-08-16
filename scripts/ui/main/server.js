@@ -24,6 +24,7 @@ class ServerUI {
                     type: "label",
                     props: {
                         text: $l10n("ACCESS"),
+                        textColor: $color("primaryText", "secondaryText"),
                         font: $font(20)
                     }
                 },
@@ -56,50 +57,75 @@ class ServerUI {
                 title: { text: $l10n("LOG") },
                 events: {
                     tapped: () => {
-                        let nav_button = [
-                            {
-                                type: "button",
-                                props: {
-                                    title: $l10n("CLEAR_LOG"),
-                                    contentEdgeInsets: 10
-                                },
-                                layout: make => {
-                                    make.height.equalTo(30)
-                                    make.right.inset(10)
-                                },
-                                events: {
-                                    tapped: () => {
-                                        $ui.alert({
-                                            title: $l10n("ALERT_INFO"),
-                                            message: $l10n("CLEAR_LOG_MSG"),
-                                            actions: [
-                                                {
-                                                    title: $l10n("OK"),
-                                                    handler: () => {
-                                                        $file.write({
-                                                            data: $data({ string: "" }),
-                                                            path: this.server.logger.path
-                                                        })
-                                                        $("log_view").text = ""
-                                                        $ui.toast($l10n("CLEAR_LOG_DONE"))
-                                                    }
-                                                },
-                                                { title: $l10n("CANCEL") }
-                                            ]
-                                        })
-                                    }
-                                }
-                            }
-                        ]
+                        let path = this.server.logger.path
+                        let files = $file.list(path)
+                        let template_data = []
+                        for (let i = 0; i < files.length; i++) {
+                            template_data.push({
+                                label: { text: files[i] }
+                            })
+                        }
                         this.kernel.ui_push([{
-                            type: "text",
+                            type: "list",
                             props: {
-                                id: "log_view",
-                                editable: false,
-                                text: $file.read(this.server.logger.path).string
+                                header: {
+                                    type: "view",
+                                    props: {
+                                        height: 70,
+                                    },
+                                    views: [{
+                                        type: "label",
+                                        props: {
+                                            text: $l10n("LOG"),
+                                            textColor: $color("primaryText", "secondaryText"),
+                                            align: $align.left,
+                                            font: $font(34),
+                                            line: 1
+                                        },
+                                        layout: make => {
+                                            make.left.top.inset(10)
+                                        }
+                                    }]
+                                },
+                                data: template_data,
+                                template: [
+                                    {
+                                        type: "label",
+                                        props: {
+                                            id: "label",
+                                            textColor: $color("primaryText", "secondaryText"),
+                                        },
+                                        layout: (make, view) => {
+                                            make.left.inset(10)
+                                            make.centerY.equalTo(view.super)
+                                        }
+                                    }
+                                ],
+                                actions: [
+                                    {
+                                        title: "delete",
+                                        handler: (sender, indexPath) => {
+                                            let file = files[indexPath.item]
+                                            $file.delete(path + file)
+                                        }
+                                    }
+                                ]
+                            },
+                            events: {
+                                didSelect: (sender, indexPath, data) => {
+                                    this.kernel.ui_push([{
+                                        type: "text",
+                                        props: {
+                                            editable: false,
+                                            textColor: $color("primaryText", "secondaryText"),
+                                            text: $file.read(path + data.label.text).string
+                                        },
+                                        layout: $layout.fillSafeArea
+                                    }], $l10n("LOG"))
+                                }
                             },
                             layout: $layout.fillSafeArea
-                        }], $l10n("BACK"), nav_button)
+                        }], $l10n("SERVER"))
                     }
                 }
             }
@@ -119,7 +145,8 @@ class ServerUI {
             {
                 type: "label",
                 props: Object.assign({
-                    font: $font(18)
+                    font: $font(18),
+                    textColor: $color("primaryText", "secondaryText"),
                 }, data.title),
                 layout: make => {
                     make.bottom.left.inset(10)
@@ -156,6 +183,7 @@ class ServerUI {
                     text: $l10n("SERVER"),
                     align: $align.left,
                     font: $font("bold", 34),
+                    textColor: $color("primaryText", "secondaryText"),
                     line: 1,
                 },
                 layout: (make, view) => {
