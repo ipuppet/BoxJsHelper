@@ -21,11 +21,15 @@ class Server {
         }
         this.server.start(options)
         this.status = true
+        if (this.kernel.setting.get("setting.about.log_request"))
+            this.logger.info("Server Start.")
     }
 
     stop_server() {
         this.server.stop()
         this.status = false
+        if (this.kernel.setting.get("setting.about.log_request"))
+            this.logger.info("Server Stop.")
     }
 
     get_handler() {
