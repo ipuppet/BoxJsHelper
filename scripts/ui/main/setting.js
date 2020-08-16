@@ -398,7 +398,7 @@ class SettingUI extends SettingUIBase {
     }
 
     readme() {
-        const content = $file.read("README.md").string
+        const content = $file.read("/README.md").string
         this.kernel.ui_push([{
             type: "markdown",
             props: {
