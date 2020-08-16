@@ -138,7 +138,7 @@ class SettingUIBase {
                                     {
                                         type: "button",
                                         props: {
-                                            image: $image("assets/icon/check.png", "assets/icon/check-dark.png"),
+                                            symbol: "checkmark",
                                             bgcolor: $color("clear"),
                                             titleEdgeInsets: 10,
                                             contentEdgeInsets: 0,
