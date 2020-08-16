@@ -24,5 +24,8 @@
 
 "ACCESS" = "远程访问";
 "PORT" = "端口";
+"CLEAR_LOG" = "清理日志";
+"CLEAR_LOG_MSG" = "确认要清除所有日志吗？";
+"CLEAR_LOG_DONE" = "清理完成";
 "SERVER_CLOSED" = "本地服务器已关闭";
 "SERVER_STARTED" = "本地服务器已开启";
