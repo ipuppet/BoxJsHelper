@@ -17,7 +17,7 @@ class HomeUI {
                 },
                 { title: $l10n("CANCEL") }
             ]
-        });
+        })
     }
 
     get_views() {
