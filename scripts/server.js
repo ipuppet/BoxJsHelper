@@ -1,6 +1,9 @@
+const Logger = require("./logger")
+
 class Server {
     constructor(kernel, port = 6060) {
         this.kernel = kernel
+        this.logger = new Logger(this.kernel)
         this.port = port
         this.handler = {}
         this.server = $server.new()
@@ -30,6 +33,9 @@ class Server {
         this.handler.asyncResponse = async (request, completion) => {
             let method = request.method
             let path = request.path
+            if (this.kernel.setting.get("LOG_REQUEST")) {
+                this.logger.info(`"${method}" ${path}`)
+            }
             let response = {}
             if (method === "POST") {
                 // TODO

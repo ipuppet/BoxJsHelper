@@ -28,6 +28,17 @@
         ]
     },
     {
+        "title": "SERVER",
+        "items": [
+            {
+                "title": "LOG_REQUEST",
+                "type": "switch",
+                "key": "setting.about.log_request",
+                "value": false
+            }
+        ]
+    },
+    {
         "title": "ABOUT",
         "items": [
             {

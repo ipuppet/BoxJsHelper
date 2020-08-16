@@ -15,6 +15,8 @@
 "GENERAL" = "一般";
 "TODAY_SERVER" = "Today 上的服务器开关";
 "FIRST_SCREEN" = "首屏显示";
+"LOG" = "日志";
+"LOG_REQUEST" = "记录请求";
 
 "ABOUT" = "关于";
 "VERSION" = "Version";
