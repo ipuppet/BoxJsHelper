@@ -19,7 +19,7 @@ class Matrix {
         return {
             type: "view",
             props: {
-                bgcolor: $color("#FFFFFF"),
+                bgcolor: $color("tertiarySurface"),
                 cornerRadius: 10
             },
             layout: (make, view) => {
