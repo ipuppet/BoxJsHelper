@@ -2,6 +2,7 @@
 "OK" = "好";
 "CANCEL" = "取消";
 "BACK" = "返回";
+"COPY" = "复制";
 "REFRESH" = "刷新";
 "REFRESH_SUCCESS" = "刷新成功";
 

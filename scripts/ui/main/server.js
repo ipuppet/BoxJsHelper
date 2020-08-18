@@ -2,8 +2,9 @@ const Server = require("/scripts/server")
 const Matrix = require("/scripts/ui/components/matrix")
 
 class ServerUI {
-    constructor(kernel) {
+    constructor(kernel, factory) {
         this.kernel = kernel
+        this.factory = factory
         this.server = new Server(kernel)
         this.access_link = `${$device.wlanAddress}:${this.server.port}`
         this.columns = 2
@@ -65,7 +66,7 @@ class ServerUI {
                                 label: { text: files[i] }
                             })
                         }
-                        this.kernel.ui_push([{
+                        this.factory.push([{
                             type: "list",
                             props: {
                                 header: {
@@ -113,7 +114,7 @@ class ServerUI {
                             },
                             events: {
                                 didSelect: (sender, indexPath, data) => {
-                                    this.kernel.ui_push([{
+                                    this.factory.push([{
                                         type: "text",
                                         props: {
                                             editable: false,

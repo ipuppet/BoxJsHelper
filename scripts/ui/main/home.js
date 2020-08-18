@@ -1,6 +1,7 @@
 class HomeUI {
-    constructor(kernel) {
+    constructor(kernel, factory) {
         this.kernel = kernel
+        this.factory = factory
     }
 
     static refresh() {
