@@ -5,7 +5,7 @@ class BaseUISetting {
     constructor(kernel, factory) {
         this.kernel = kernel
         this.factory = factory
-        this.list = new List()
+        this.list = new List(factory)
     }
 
     update_setting(key, value) {

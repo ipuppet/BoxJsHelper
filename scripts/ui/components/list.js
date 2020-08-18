@@ -1,5 +1,6 @@
-class List{
-    constructor() {
+class List {
+    constructor(factory) {
+        this.factory = factory
         this.title_size = 35
         this.title_size_max = 40
         this.title_offset = 50
@@ -74,7 +75,7 @@ class List{
                     {
                         type: "blur",
                         props: {
-                            style: this.blur_style,
+                            style: this.factory.blur_style,
                         },
                         layout: $layout.fill,
                     },
