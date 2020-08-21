@@ -1,3 +1,5 @@
+"TIPS" = "小贴士";
+
 "ALERT_INFO" = "提示";
 "OK" = "好";
 "CANCEL" = "取消";
@@ -16,6 +18,10 @@
 "GENERAL" = "一般";
 "TODAY_SERVER" = "Today 上的服务器开关";
 "FIRST_SCREEN" = "首屏显示";
+
+"ADVANCED" = "高级";
+"DOMAIN" = "入口选择";
+
 "LOG" = "日志";
 "LOG_REQUEST" = "记录请求";
 

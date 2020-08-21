@@ -20,8 +20,28 @@
                 "key": "setting.general.first_screen",
                 "items": [
                     "BOXJS",
-                    "SERVER",
-                    "SETTING"
+                    "SERVER"
+                ],
+                "value": 0
+            }
+        ]
+    },
+    {
+        "title": "ADVANCED",
+        "items": [
+            {
+                "title": "TIPS",
+                "type": "script",
+                "key": "setting.about.tips_domain",
+                "value": "this.tips_domain()"
+            },
+            {
+                "title": "DOMAIN",
+                "type": "tab",
+                "key": "setting.about.domain",
+                "items": [
+                    ".com",
+                    ".net"
                 ],
                 "value": 0
             }

@@ -8,6 +8,10 @@ class Server {
             port = this.kernel.setting.get("setting.about.server_port")
         }
         this.port = port
+        this.domain = "boxjs.com"
+        // 目前只有这两个域名
+        if (this.kernel.setting.get("setting.about.domain"))
+            this.domain = "boxjs.net"
         this.handler = {}
         this.server = $server.new()
         this.status = false // 服务状态
@@ -40,30 +44,24 @@ class Server {
         this.handler.asyncResponse = async (request, completion) => {
             let method = request.method
             let path = request.path
+            let remote_address = request.remoteAddress
+            // 判断是否记录日志
             if (this.kernel.setting.get("setting.about.log_request")) {
-                this.logger.info(`"${method}" ${path}`)
+                this.logger.info(` ${remote_address} "${method}" ${path}`)
             }
             let response = {}
             if (method === "POST") {
-                // TODO
-                // 此处需要TF版解决
-                // 自动返回空数据
-                /* let content = await $http.post({
-                    url: `http://boxjs.com${path}`,
+                let content = await $http.post({
+                    url: `http://${this.domain}${path}`,
                     body: JSON.parse(request.data.string)
-                }) 
+                })
                 if (content.data === "") {
                     content.data = "{}"
                 }
-                response = { json: content.data } */
-                $http.post({
-                    url: `http://boxjs.com${path}`,
-                    body: JSON.parse(request.data.string)
-                })
-                response = { json: {} }
+                response = { json: content.data }
             } else {
-                let content = await $http.get(`http://boxjs.com${path}`)
-                response = { html: content.data }
+                let content = await $http.get(`http://${this.domain}${path}`)
+                response = { html: content.data + "" }
             }
             completion({
                 type: "data",

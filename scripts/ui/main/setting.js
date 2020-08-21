@@ -17,6 +17,13 @@ class SettingUI extends BaseUISetting {
             }
         }])
     }
+
+    tips_domain(){
+        $ui.alert({
+            title: $l10n("TIPS"),
+            message: "更换入口的话，重启应用后才会生效哦~\n可在底部README中查看更多信息。",
+        })
+    }
 }
 
 module.exports = SettingUI

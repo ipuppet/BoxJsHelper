@@ -22,12 +22,16 @@ class HomeUI {
     }
 
     get_views() {
+        let domain = "boxjs.com"
+        // 目前只有这两个域名
+        if (this.kernel.setting.get("setting.about.domain"))
+            domain = "boxjs.net"
         return [
             {
                 type: "web",
                 props: {
                     id: "web_boxjs",
-                    url: "http://boxjs.com/",
+                    url: `http://${domain}/`,
                     opaque: false,
                 },
                 layout: (make, view) => {
