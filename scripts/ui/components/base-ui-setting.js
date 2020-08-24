@@ -348,6 +348,8 @@ class BaseUISetting {
                     case "tab":
                         row = this.create_tab(item.key, $l10n(item.title), item.items, value)
                         break
+                    default:
+                        continue
                 }
                 rows.push(row)
             }
