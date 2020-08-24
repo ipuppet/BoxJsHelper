@@ -1,38 +1,33 @@
-"TIPS" = "小贴士";
-
 "ALERT_INFO" = "提示";
 "OK" = "好";
 "CANCEL" = "取消";
 "BACK" = "返回";
-"COPY" = "复制";
-"REFRESH" = "刷新";
-"REFRESH_SUCCESS" = "刷新成功";
 
 "VISIT_ON_CONPUTER" = "在电脑上访问";
 "ENABLE_IN_SETTING" = "请在设置中开启";
 
 "BOXJS" = "BoxJs";
-"SERVER" = "服务器";
+
+"TOOLKIT" = "工具箱";
+"REFRESH" = "刷新";
+"REFRESH_SUCCESS" = "刷新成功";
+"REMOTE_ACCESS" = "远程访问";
+"REMOTE_ACCESS_CLOSED" = "远程访问已关闭";
+"REMOTE_ACCESS_STARTED" = "远程访问已开启";
+"LOG" = "日志";
+"CLEAR_LOG" = "清理日志";
+"CLEAR_LOG_MSG" = "确认要清除所有日志吗？";
+"CLEAR_LOG_DONE" = "清理完成";
+
 "SETTING" = "设置";
-
 "GENERAL" = "一般";
-"TODAY_SERVER" = "Today 上的服务器开关";
+"TIPS" = "小贴士";
+"REFRESH_CONFIRM" = "刷新前确认";
 "FIRST_SCREEN" = "首屏显示";
-
 "ADVANCED" = "高级";
 "DOMAIN" = "入口选择";
-
-"LOG" = "日志";
-"LOG_REQUEST" = "记录请求";
+"PORT" = "端口";
 
 "ABOUT" = "关于";
 "VERSION" = "Version";
 "AUTHOR" = "作者";
-
-"ACCESS" = "远程访问";
-"PORT" = "端口";
-"CLEAR_LOG" = "清理日志";
-"CLEAR_LOG_MSG" = "确认要清除所有日志吗？";
-"CLEAR_LOG_DONE" = "清理完成";
-"SERVER_CLOSED" = "本地服务器已关闭";
-"SERVER_STARTED" = "本地服务器已开启";

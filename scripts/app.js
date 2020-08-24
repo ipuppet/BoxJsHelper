@@ -1,9 +1,13 @@
 const MainUI = require("./ui/main")
 const Setting = require("./setting")
+const Server = require("./server")
 
 class Kernel {
     constructor() {
         this.setting = new Setting()
+        this.server = new Server(this.setting)
+        this.server.start_server()
+        this.serverURL = this.server.server.serverURL
     }
 }
 

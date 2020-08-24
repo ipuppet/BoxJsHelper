@@ -3,24 +3,24 @@
         "title": "GENERAL",
         "items": [
             {
-                "title": "REFRESH",
+                "title": "TIPS",
                 "type": "script",
-                "key": "setting.general.refersh",
-                "value": "require('/scripts/ui/main/home').refresh()"
+                "key": "tips_domain",
+                "value": "this.tips_domain()"
             },
             {
-                "title": "TODAY_SERVER",
+                "title": "REFRESH_CONFIRM",
                 "type": "switch",
-                "key": "setting.general.today_server",
-                "value": false
+                "key": "general.refresh_confirm",
+                "value": true
             },
             {
                 "title": "FIRST_SCREEN",
                 "type": "tab",
-                "key": "setting.general.first_screen",
+                "key": "general.first_screen",
                 "items": [
                     "BOXJS",
-                    "SERVER"
+                    "TOOLKIT"
                 ],
                 "value": 0
             }
@@ -30,37 +30,30 @@
         "title": "ADVANCED",
         "items": [
             {
-                "title": "TIPS",
-                "type": "script",
-                "key": "setting.about.tips_domain",
-                "value": "this.tips_domain()"
-            },
-            {
                 "title": "DOMAIN",
                 "type": "tab",
-                "key": "setting.about.domain",
+                "key": "advanced.domain",
                 "items": [
                     ".com",
                     ".net"
                 ],
                 "value": 0
-            }
-        ]
-    },
-    {
-        "title": "SERVER",
-        "items": [
-            {
-                "title": "LOG_REQUEST",
-                "type": "switch",
-                "key": "setting.about.log_request",
-                "value": false
             },
             {
                 "title": "PORT",
                 "type": "string",
-                "key": "setting.about.server_port",
+                "key": "advanced.server_port",
                 "value": 6060
+            },
+            {
+                "title": "LOG_REQUEST",
+                "key": "server.remote_access",
+                "value": false
+            },
+            {
+                "title": "LOG_REQUEST",
+                "key": "server.log_request",
+                "value": false
             }
         ]
     },
@@ -70,13 +63,13 @@
             {
                 "title": "Github",
                 "type": "info",
-                "key": "setting.about.github",
+                "key": "about.github",
                 "value": "https://github.com/ipuppet/BoxJsHelper"
             },
             {
                 "title": "AUTHOR",
                 "type": "info",
-                "key": "setting.about.author",
+                "key": "about.author",
                 "value": [
                     "ipuppet",
                     "https://blog.ipuppet.cn"
@@ -85,7 +78,7 @@
             {
                 "title": "README",
                 "type": "script",
-                "key": "setting.about.readme",
+                "key": "about.readme",
                 "value": "this.readme()"
             }
         ]

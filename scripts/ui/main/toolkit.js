@@ -1,64 +1,68 @@
-const Server = require("/scripts/server")
 const Matrix = require("/scripts/ui/components/matrix")
 
-class ServerUI {
+class ToolkitUI {
     constructor(kernel, factory) {
         this.kernel = kernel
         this.factory = factory
-        this.server = new Server(kernel)
-        this.access_link = `${$device.wlanAddress}:${this.server.port}`
-        this.columns = 2
-        this.height = 90
-        this.spacing = 15
         this.matrix = new Matrix()
-        this.matrix.columns = this.columns
-        this.matrix.height = this.height
-        this.matrix.spacing = this.spacing
+        this.matrix.columns = 2
+        this.matrix.height = 90
+        this.matrix.spacing = 15
         this.data = [
             {
-                icon: { symbol: "link" },
+                icon: { symbol: "arrow.clockwise" },
                 title: {
-                    text: this.access_link,
-                    font: $font(12)
-                },
-                extra: {
-                    type: "label",
-                    props: {
-                        text: $l10n("ACCESS"),
-                        textColor: $color("primaryText", "secondaryText"),
-                        font: $font(20)
-                    }
+                    text: $l10n("REFRESH") + $l10n("BOXJS")
                 },
                 events: {
                     tapped: () => {
-                        $ui.alert(this.access_link)
+                        require('/scripts/ui/main/home').refresh(this.kernel.setting.get("general.refresh_confirm"))
                     }
                 }
             },
             {
                 icon: { symbol: "paperplane" },
-                title: { text: $l10n("SERVER") },
+                title: { text: $l10n("REMOTE_ACCESS") },
                 extra: {
                     type: "switch",
+                    props: { on: this.kernel.setting.get("server.remote_access") },
                     events: {
                         changed: sender => {
                             if (sender.on) {
-                                this.server.start_server()
-                                $ui.toast($l10n("SERVER_STARTED"))
+                                this.kernel.setting.save("server.remote_access", true)
+                                $ui.toast($l10n("REMOTE_ACCESS_STARTED"))
                             } else {
-                                this.server.stop_server()
-                                $ui.toast($l10n("SERVER_CLOSED"))
+                                this.kernel.setting.save("server.remote_access", false)
+                                $ui.toast($l10n("REMOTE_ACCESS_CLOSED"))
                             }
                         }
                     }
                 },
+                events: {
+                    tapped: () => {
+                        $ui.alert(this.kernel.serverURL.string)
+                    }
+                }
             },
             {
                 icon: { symbol: "doc.text" },
                 title: { text: $l10n("LOG") },
+                extra: {
+                    type: "switch",
+                    props: { on: this.kernel.setting.get("server.log_request") },
+                    events: {
+                        changed: sender => {
+                            if (sender.on) {
+                                this.kernel.setting.save("server.log_request", true)
+                            } else {
+                                this.kernel.setting.save("server.log_request", false)
+                            }
+                        }
+                    }
+                },
                 events: {
                     tapped: () => {
-                        let path = this.server.logger.path
+                        let path = this.kernel.server.logger.path
                         let files = $file.list(path)
                         let template_data = []
                         for (let i = 0; i < files.length; i++) {
@@ -126,13 +130,17 @@ class ServerUI {
                                 }
                             },
                             layout: $layout.fillSafeArea
-                        }], $l10n("SERVER"))
+                        }], $l10n("TOOLKIT"))
                     }
                 }
             }
         ]
     }
 
+    /**
+     * 卡片内容样式
+     * @param {*} data 
+     */
     template(data) {
         let views = [
             {
@@ -168,20 +176,21 @@ class ServerUI {
         return views
     }
 
-    get_views() {
-        // 套入模板，生成卡片
+    template_card() {
+        // TODO 排序
+        let data = []
         for (let i = 0; i < this.data.length; i++) {
-            this.data[i] = this.matrix.create_card(this.template(this.data[i]), this.data[i]["events"])
+            data[i] = this.matrix.template_card(this.template(this.data[i]), this.data[i]["events"])
         }
-        // 计算尺寸
-        let line = Math.ceil(this.data.length / this.columns)
-        let bottom = 50 + this.spacing // bottom是为了防止被下面菜单挡住最后一行的内容
-        let height = line * (this.height + this.spacing) + bottom
+        return data
+    }
+
+    get_views() {
         return [
             {
                 type: "label",
                 props: {
-                    text: $l10n("SERVER"),
+                    text: $l10n("TOOLKIT"),
                     align: $align.left,
                     font: $font("bold", 34),
                     textColor: $color("primaryText", "secondaryText"),
@@ -194,23 +203,10 @@ class ServerUI {
                     make.top.equalTo(view.super.safeAreaTop).offset(50)
                 }
             },
-            {
-                type: "scroll",
-                props: {
-                    bgcolor: $color("insetGroupedBackground"),
-                    scrollEnabled: true,
-                    indicatorInsets: $insets(this.spacing, 0, 50, 0),
-                    contentSize: $size(0, height)
-                },
-                views: this.data,
-                layout: (make, view) => {
-                    make.left.right.inset(0)
-                    make.bottom.inset(0)
-                    make.top.equalTo(view.prev).offset(50)
-                }
-            }
+            // 第二个参数是为了防止被下面菜单挡住最后一行的内容
+            this.matrix.template_scroll(this.template_card(), 50 + this.matrix.spacing)
         ]
     }
 }
 
-module.exports = ServerUI
+module.exports = ToolkitUI

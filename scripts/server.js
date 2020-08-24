@@ -1,39 +1,86 @@
 const Logger = require("./logger")
 
 class Server {
-    constructor(kernel, port = null) {
-        this.kernel = kernel
-        this.logger = new Logger(this.kernel, "server-access")
+    constructor(setting, port = null) {
+        this.setting = setting
+        this.logger = new Logger("server-access")
         if (port === null) {
-            port = this.kernel.setting.get("setting.about.server_port")
+            port = this.setting.get("advanced.server_port")
         }
         this.port = port
         this.domain = "boxjs.com"
         // 目前只有这两个域名
-        if (this.kernel.setting.get("setting.about.domain"))
+        if (this.setting.get("advanced.domain"))
             this.domain = "boxjs.net"
         this.handler = {}
         this.server = $server.new()
-        this.status = false // 服务状态
     }
 
     start_server() {
-        if (this.status) return
+        if (this.server.running) return
         this.server.addHandler(this.get_handler())
         let options = {
             port: this.port
         }
         this.server.start(options)
-        this.status = true
-        if (this.kernel.setting.get("setting.about.log_request"))
+        if (this.setting.get("server.log_request"))
             this.logger.info("Server Start.")
     }
 
     stop_server() {
         this.server.stop()
-        this.status = false
-        if (this.kernel.setting.get("setting.about.log_request"))
+        if (this.setting.get("server.log_request"))
             this.logger.info("Server Stop.")
+    }
+
+    async log_request(request) {
+        // 判断是否记录日志
+        if (this.setting.get("server.log_request")) {
+            let message = ` ${request.remoteAddress} "${request.method}" ${request.path}`
+            this.logger.info(message)
+        }
+    }
+
+    is_localhost(request) {
+        let req_host = request.remoteAddress
+        req_host = req_host.substring(0, req_host.indexOf(":"))
+        return this.server.serverURL.host === req_host
+    }
+
+    async response(request) {
+        let response = {}
+        if (request.method === "POST") {
+            let content = await $http.post({
+                url: `http://${this.domain}${request.path}`,
+                body: JSON.parse(request.data.string)
+            })
+            if (content.data === "") {
+                content.data = "{}"
+            }
+            response = { json: content.data }
+        } else {
+            let content = await $http.get(`http://${this.domain}${request.path}`)
+            response = { html: content.data + "" }
+        }
+        return response
+    }
+
+    async handle(request, completion) {
+        this.log_request(request)
+        let response = {}
+        if (this.is_localhost(request)) {
+            response = await this.response(request)
+        } else {
+            if (this.setting.get("server.remote_access")) {
+                response = await this.response(request)
+            } else {
+                response = { statusCode: 400, hasBody: false }
+            }
+        }
+        completion({
+            type: "data",
+            props: response
+        })
     }
 
     get_handler() {
@@ -42,31 +89,7 @@ class Server {
             return "data"
         }
         this.handler.asyncResponse = async (request, completion) => {
-            let method = request.method
-            let path = request.path
-            let remote_address = request.remoteAddress
-            // 判断是否记录日志
-            if (this.kernel.setting.get("setting.about.log_request")) {
-                this.logger.info(` ${remote_address} "${method}" ${path}`)
-            }
-            let response = {}
-            if (method === "POST") {
-                let content = await $http.post({
-                    url: `http://${this.domain}${path}`,
-                    body: JSON.parse(request.data.string)
-                })
-                if (content.data === "") {
-                    content.data = "{}"
-                }
-                response = { json: content.data }
-            } else {
-                let content = await $http.get(`http://${this.domain}${path}`)
-                response = { html: content.data + "" }
-            }
-            completion({
-                type: "data",
-                props: response
-            })
+            await this.handle(request, completion)
         }
         return this.handler
     }

@@ -3,7 +3,7 @@ const BaseUI = require("/scripts/ui/components/base-ui")
 class Factory extends BaseUI {
     constructor(kernel) {
         super(kernel)
-        this.selected_page = this.kernel.setting.get("setting.general.first_screen") // 当前显示的页面
+        this.selected_page = this.kernel.setting.get("general.first_screen") // 当前显示的页面
         this.page_index = [// 通过索引获取页面id
             "home",// 0 => 首页
             "server",// 1 => 服务器
@@ -20,8 +20,8 @@ class Factory extends BaseUI {
                 title: { text: $l10n("BOXJS") }
             },
             {
-                icon: { symbol: "paperplane" },
-                title: { text: $l10n("SERVER") }
+                icon: { symbol: "square.grid.2x2" },
+                title: { text: $l10n("TOOLKIT") }
             },
             {
                 icon: { symbol: "gear" },
@@ -37,8 +37,8 @@ class Factory extends BaseUI {
     }
 
     server() {
-        const ServerUI = require("./server")
-        let ui_interface = new ServerUI(this.kernel, this)
+        const ToolkitUI = require("./toolkit")
+        let ui_interface = new ToolkitUI(this.kernel, this)
         return this.creator(ui_interface.get_views(), 1)
     }
 

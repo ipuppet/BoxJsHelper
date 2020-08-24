@@ -1,6 +1,5 @@
 class Logger {
-    constructor(kernel, name = "default") {
-        this.kernel = kernel
+    constructor(name = "default") {
         this.name = name
         this.max_size = 1024 * 1024 * 1024
         if (undefined === $cache.get(this.name)) {
