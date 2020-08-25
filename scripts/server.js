@@ -63,7 +63,7 @@ class Server {
                 body: JSON.parse(request.data.string)
             })
             if (content.data === "") {
-                content.data = "{}"
+                content.data = {}
             }
             response = { json: content.data }
         } else {
