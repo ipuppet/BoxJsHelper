@@ -21,10 +21,11 @@
 "CLEAR_LOG" = "清理日志";
 "CLEAR_LOG_MSG" = "确认要清除所有日志吗？";
 "BACKUP" = "备份";
-"BACKUP_NOW" = "立即进行一次备份？";
+"BACKUP_NOW" = "立即进行备份？\n(会覆盖iCloud内的文件)";
 "ERROR_GET_DATA" = "获取数据时出错";
 "ERROE_BACKUP" = "制作备份时出错";
 "SUCCESS_BACKUP" = "备份成功";
+"REVERT_FROM_ICLOUD" = "从iCloud恢复备份";
 "RECOVER_BACKUP" = "恢复备份";
 "SUCCESS_RECOVER" = "恢复成功";
 "DELETE" = "删除";

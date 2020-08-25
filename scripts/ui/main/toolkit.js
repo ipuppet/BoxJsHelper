@@ -300,12 +300,13 @@ class ToolkitUI {
                                                                         return false
                                                                     }
                                                                     sender.delete(indexPath)
-                                                                    $http.get({
+                                                                    // 删除操作将不会影响iCloud内的文件
+                                                                    /* $http.get({
                                                                         url: `${this.kernel.serverURL.string}query/baks`,
                                                                         handler: (response) => {
                                                                             this.update_iCloud(JSON.stringify(response.data))
                                                                         }
-                                                                    })
+                                                                    }) */
                                                                 }
                                                             })
                                                         }
@@ -427,13 +428,103 @@ class ToolkitUI {
                                     make.right.inset(20)
                                     make.size.equalTo(20)
                                 }
+                            },
+                            {
+                                type: "spinner",
+                                props: {
+                                    id: "spinner_revert",
+                                    loading: true,
+                                    alpha: 0
+                                },
+                                layout: make => {
+                                    make.right.inset(60)
+                                    make.size.equalTo(20)
+                                }
+                            },
+                            {
+                                type: "button",
+                                props: {
+                                    id: "button_revert",
+                                    symbol: "arrow.clockwise",
+                                    bgcolor: $color("clear"),
+                                    alpha: 1
+                                },
+                                events: {
+                                    tapped: () => {
+                                        $ui.alert({
+                                            title: $l10n("REVERT_FROM_ICLOUD"),
+                                            actions: [
+                                                {
+                                                    title: $l10n("OK"),
+                                                    handler: async () => {
+                                                        $("button_revert").alpha = 0
+                                                        $("spinner_revert").alpha = 1
+                                                        // 从iCloud恢复
+                                                        let globalbaks = $file.read(`${this.iCloud}globalbaks.json`)
+                                                        globalbaks = JSON.parse(globalbaks.string).globalbaks
+                                                        for (let item of globalbaks) {
+                                                            // 先删除，防止重复
+                                                            await $http.post({
+                                                                url: `${this.kernel.serverURL.string}api/delGlobalBak`,
+                                                                body: { id: item.id }
+                                                            })
+                                                            // 添加新的备份到BoxJs
+                                                            await $http.post({
+                                                                url: `${this.kernel.serverURL.string}api/impGlobalBak`,
+                                                                body: item
+                                                            })
+                                                        }
+                                                        // 更新列表
+                                                        $("list_backup").data = await template_backup_list()
+                                                        // 播放动画
+                                                        $("button_revert").symbol = "checkmark"
+                                                        $("spinner_revert").alpha = 0
+                                                        $ui.animate({
+                                                            duration: 0.6,
+                                                            animation: () => {
+                                                                $("button_revert").alpha = 1
+                                                            },
+                                                            completion: () => {
+                                                                setTimeout(() => {
+                                                                    $ui.animate({
+                                                                        duration: 0.4,
+                                                                        animation: () => {
+                                                                            $("button_revert").alpha = 0
+                                                                        },
+                                                                        completion: () => {
+                                                                            $("button_revert").symbol = "arrow.clockwise"
+                                                                            $ui.animate({
+                                                                                duration: 0.4,
+                                                                                animation: () => {
+                                                                                    $("button_revert").alpha = 1
+                                                                                },
+                                                                                completion: () => {
+                                                                                    $("button_revert").alpha = 1
+                                                                                }
+                                                                            })
+                                                                        }
+                                                                    })
+                                                                }, 600)
+                                                            }
+                                                        })
+                                                    }
+                                                },
+                                                { title: $l10n("CANCEL") }
+                                            ]
+                                        })
+                                    }
+                                },
+                                layout: make => {
+                                    make.right.inset(60)
+                                    make.size.equalTo(20)
+                                }
                             }
                         ])
                     }
                 }
             },
             { // Today
-                icon: { symbol: "" },
+                icon: { symbol: "calendar" },
                 title: {
                     text: $l10n("TODAY")
                 },
