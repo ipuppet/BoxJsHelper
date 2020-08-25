@@ -14,8 +14,6 @@ class TodayUI {
             $ui.alert($l10n("NO_TODAY_CACHE"))
             return
         }
-        // 关闭服务器节约资源
-        this.kernel.server.stop_server()
         // 加载脚本
         let script = this.kernel.setting.get("today.script")
         if (script === "" || !$file.exists(script)) {

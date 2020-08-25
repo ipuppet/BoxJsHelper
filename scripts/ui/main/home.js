@@ -2,6 +2,9 @@ class HomeUI {
     constructor(kernel, factory) {
         this.kernel = kernel
         this.factory = factory
+        // 开启服务器并记录访问url
+        this.kernel.server.start_server()
+        this.kernel.serverURL = this.kernel.server.server.serverURL
     }
 
     static refresh(refresh_confirm) {
