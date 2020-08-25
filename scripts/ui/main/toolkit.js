@@ -140,41 +140,128 @@ class ToolkitUI {
                 title: { text: $l10n("BACKUP") },
                 events: {
                     tapped: async () => {
-                        //await this.backup()
-                        let globalbaks = await this.boxdata()
-                        globalbaks = globalbaks.globalbaks
-                        let template_data = []
-                        for (let item of globalbaks) {
-                            template_data.push({
-                                id: { info: item.id },
-                                name: { text: item.name },
-                                tags: { text: item.tags.join(" ") },
-                                date: { text: new Date(item.createTime).toLocaleString() },
-                            })
+                        if (this.kernel.setting.get("advanced.domain") !== 1) {
+                            $ui.toast($l10n("TF_ONLY"))
+                            return
+                        }
+                        const template_backup_list = async () => {
+                            let globalbaks = await this.boxdata()
+                            globalbaks = globalbaks.globalbaks
+                            let template_data = []
+                            for (let item of globalbaks) {
+                                template_data.push({
+                                    id: { info: item.id },
+                                    name: { text: item.name },
+                                    tags: { text: item.tags.join(" ") },
+                                    date: { text: new Date(item.createTime).toLocaleString() },
+                                })
+                            }
+                            return template_data
                         }
                         this.factory.push([{
                             type: "list",
                             props: {
                                 rowHeight: 60,
-                                data: template_data,
+                                data: await template_backup_list(),
+                                id: "list_backup",
                                 header: {
                                     type: "view",
                                     props: {
                                         height: 70,
                                     },
-                                    views: [{
-                                        type: "label",
-                                        props: {
-                                            text: $l10n("BACKUP"),
-                                            textColor: $color("primaryText", "secondaryText"),
-                                            align: $align.left,
-                                            font: $font(34),
-                                            line: 1
+                                    views: [
+                                        {
+                                            type: "label",
+                                            props: {
+                                                text: $l10n("BACKUP"),
+                                                textColor: $color("primaryText", "secondaryText"),
+                                                align: $align.left,
+                                                font: $font(34),
+                                                line: 1
+                                            },
+                                            layout: make => {
+                                                make.left.top.inset(10)
+                                            }
                                         },
-                                        layout: make => {
-                                            make.left.top.inset(10)
+                                        {
+                                            type: "spinner",
+                                            props: {
+                                                id: "spinner_backup",
+                                                loading: true,
+                                                alpha: 0
+                                            },
+                                            layout: (make, view) => {
+                                                make.centerY.equalTo(view.super)
+                                                make.right.inset(20)
+                                                make.size.equalTo(20)
+                                            }
+                                        },
+                                        {
+                                            type: "button",
+                                            props: {
+                                                id: "button_backup",
+                                                symbol: "arrow.up.doc",
+                                                bgcolor: $color("clear"),
+                                                alpha: 1
+                                            },
+                                            events: {
+                                                tapped: () => {
+                                                    $ui.alert({
+                                                        title: $l10n("BACKUP"),
+                                                        message: $l10n("BACKUP_NOW"),
+                                                        actions: [
+                                                            {
+                                                                title: $l10n("OK"),
+                                                                handler: () => {
+                                                                    $("button_backup").alpha = 0
+                                                                    $("spinner_backup").alpha = 1
+                                                                    this.backup(async () => {
+                                                                        // 更新列表
+                                                                        $("list_backup").data = await template_backup_list()
+                                                                        // 播放动画
+                                                                        $("button_backup").symbol = "checkmark"
+                                                                        $("spinner_backup").alpha = 0
+                                                                        $ui.animate({
+                                                                            duration: 0.6,
+                                                                            animation: () => {
+                                                                                $("button_backup").alpha = 1
+                                                                            },
+                                                                            completion: () => {
+                                                                                $ui.animate({
+                                                                                    duration: 0.4,
+                                                                                    animation: () => {
+                                                                                        $("button_backup").alpha = 0
+                                                                                    },
+                                                                                    completion: () => {
+                                                                                        $("button_backup").symbol = "arrow.up.doc"
+                                                                                        $ui.animate({
+                                                                                            duration: 0.4,
+                                                                                            animation: () => {
+                                                                                                $("button_backup").alpha = 1
+                                                                                            },
+                                                                                            completion: () => {
+                                                                                                $("button_backup").alpha = 1
+                                                                                            }
+                                                                                        })
+                                                                                    }
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                    })
+                                                                }
+                                                            },
+                                                            { title: $l10n("CANCEL") }
+                                                        ]
+                                                    })
+                                                }
+                                            },
+                                            layout: (make, view) => {
+                                                make.centerY.equalTo(view.super)
+                                                make.right.inset(20)
+                                                make.size.equalTo(20)
+                                            }
                                         }
-                                    }]
+                                    ]
                                 },
                                 template: {
                                     views: [
@@ -294,7 +381,7 @@ class ToolkitUI {
                                                                 $ui.toast($l10n("ERROR"))
                                                                 return false
                                                             }
-                                                            $ui.toast($l10n("SUCCESS"))
+                                                            $ui.toast($l10n("SUCCESS_RECOVER"))
                                                         }
                                                     })
                                                 }
@@ -332,7 +419,7 @@ class ToolkitUI {
         })
     }
 
-    async backup() {
+    async backup(callback) {
         let boxjs = await this.boxdata()
         let name = `BoxJsHelper-${boxjs.globalbaks.length + 1}`
         let date = new Date()
@@ -358,7 +445,7 @@ class ToolkitUI {
             return
         }
         if (this.update_iCloud(JSON.stringify(response.data))) {
-            $ui.toast($l10n("SUCCESS_BACKUP"))
+            callback()
         } else {
             $ui.toast($l10n("ERROE_BACKUP"))
         }
