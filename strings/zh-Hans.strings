@@ -1,5 +1,5 @@
 "ALERT_INFO" = "提示";
-"TF_ONLY" = "仅TF版可用";
+"TF_ONLY" = "仅TF版BoxJs可用，若已是TF版，可在设置中将入口切换到'.net'";
 "SUCCESS" = "成功";
 "ERROR" = "发生错误";
 "OK" = "好";
