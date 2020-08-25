@@ -9,7 +9,7 @@ class BaseUISetting {
     }
 
     update_setting(key, value) {
-        return this.kernel.setting.save(key, value)
+        return this.kernel.setting.set(key, value)
     }
 
     create_line_label(title) {
