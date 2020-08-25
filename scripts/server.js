@@ -47,6 +47,14 @@ class Server {
         return this.server.serverURL.host === req_host
     }
 
+    is_json_string(str) {
+        try {
+            if (typeof JSON.parse(str) === "object")
+                return true
+        } catch (e) { }
+        return false
+    }
+
     async response(request) {
         let response = {}
         if (request.method === "POST") {
@@ -60,7 +68,10 @@ class Server {
             response = { json: content.data }
         } else {
             let content = await $http.get(`http://${this.domain}${request.path}`)
-            response = { html: content.data + "" }
+            if (typeof content.data === "object")
+                response = { json: content.data }
+            else
+                response = { html: content.data + "" }
         }
         return response
     }

@@ -4,6 +4,7 @@ class ToolkitUI {
     constructor(kernel, factory) {
         this.kernel = kernel
         this.factory = factory
+        this.iCloud = this.kernel.iCloud_path("/BoxJsHepler")
         this.matrix = new Matrix()
         this.matrix.columns = 2
         this.matrix.height = 90
@@ -133,8 +134,234 @@ class ToolkitUI {
                         }], $l10n("TOOLKIT"))
                     }
                 }
+            },
+            {
+                icon: { symbol: "cloud" },
+                title: { text: $l10n("BACKUP") },
+                events: {
+                    tapped: async () => {
+                        //await this.backup()
+                        let globalbaks = await this.boxdata()
+                        globalbaks = globalbaks.globalbaks
+                        let template_data = []
+                        for (let item of globalbaks) {
+                            template_data.push({
+                                id: { info: item.id },
+                                name: { text: item.name },
+                                tags: { text: item.tags.join(" ") },
+                                date: { text: new Date(item.createTime).toLocaleString() },
+                            })
+                        }
+                        this.factory.push([{
+                            type: "list",
+                            props: {
+                                rowHeight: 60,
+                                data: template_data,
+                                header: {
+                                    type: "view",
+                                    props: {
+                                        height: 70,
+                                    },
+                                    views: [{
+                                        type: "label",
+                                        props: {
+                                            text: $l10n("BACKUP"),
+                                            textColor: $color("primaryText", "secondaryText"),
+                                            align: $align.left,
+                                            font: $font(34),
+                                            line: 1
+                                        },
+                                        layout: make => {
+                                            make.left.top.inset(10)
+                                        }
+                                    }]
+                                },
+                                template: {
+                                    views: [
+                                        {
+                                            type: "label",
+                                            props: {
+                                                id: "id",
+                                                hidden: true
+                                            }
+                                        },
+                                        {
+                                            type: "label",
+                                            props: {
+                                                id: "name",
+                                                font: $font(18),
+                                                align: $align.left
+                                            },
+                                            layout: (make, view) => {
+                                                make.top.inset(10)
+                                                make.left.inset(10)
+                                            }
+                                        },
+                                        {
+                                            type: "label",
+                                            props: {
+                                                id: "tags",
+                                                font: $font(14),
+                                                textColor: $color({
+                                                    light: "#C0C0C0",
+                                                    dark: "#545454"
+                                                }),
+                                                align: $align.left
+                                            },
+                                            layout: (make, view) => {
+                                                make.bottom.inset(5)
+                                                make.left.inset(10)
+                                            }
+                                        },
+                                        {
+                                            type: "label",
+                                            props: {
+                                                id: "date",
+                                                font: $font(14),
+                                                textColor: $color({
+                                                    light: "#C0C0C0",
+                                                    dark: "#545454"
+                                                }),
+                                                align: $align.right
+                                            },
+                                            layout: (make, view) => {
+                                                make.bottom.inset(5)
+                                                make.right.inset(10)
+                                            }
+                                        }
+                                    ]
+                                },
+                                actions: [
+                                    {
+                                        title: $l10n("DELETE"),
+                                        color: $color("red"),
+                                        handler: (sender, indexPath) => {
+                                            let id = sender.object(indexPath).id.info
+                                            let name = sender.object(indexPath).name.text
+                                            $ui.alert({
+                                                title: $l10n("ALERT_INFO"),
+                                                message: `${$l10n("DELETE")} ${name} ?`,
+                                                actions: [
+                                                    {
+                                                        title: $l10n("OK"),
+                                                        handler: () => {
+                                                            $http.post({
+                                                                url: `${this.kernel.serverURL.string}api/delGlobalBak`,
+                                                                body: {
+                                                                    id: id
+                                                                },
+                                                                handler: (response) => {
+                                                                    if (null !== response.error) {
+                                                                        $ui.toast($l10n("ERROR"))
+                                                                        return false
+                                                                    }
+                                                                    sender.delete(indexPath)
+                                                                    $http.get({
+                                                                        url: `${this.kernel.serverURL.string}query/baks`,
+                                                                        handler: (response) => {
+                                                                            this.update_iCloud(JSON.stringify(response.data))
+                                                                        }
+                                                                    })
+                                                                }
+                                                            })
+                                                        }
+                                                    },
+                                                    { title: $l10n("CANCEL") }
+                                                ]
+                                            })
+                                        }
+                                    }
+                                ]
+                            },
+                            events: {
+                                didSelect: (sender, indexPath, data) => {
+                                    let id = sender.object(indexPath).id.info
+                                    let name = sender.object(indexPath).name.text
+                                    $ui.alert({
+                                        title: $l10n("ALERT_INFO"),
+                                        message: `${$l10n("RECOVER_BACKUP")} ${name} ?`,
+                                        actions: [
+                                            {
+                                                title: $l10n("OK"),
+                                                handler: () => {
+                                                    $http.post({
+                                                        url: `${this.kernel.serverURL.string}api/revertGlobalBak`,
+                                                        body: {
+                                                            id: id
+                                                        },
+                                                        handler: (response) => {
+                                                            if (null !== response.error) {
+                                                                $ui.toast($l10n("ERROR"))
+                                                                return false
+                                                            }
+                                                            $ui.toast($l10n("SUCCESS"))
+                                                        }
+                                                    })
+                                                }
+                                            },
+                                            { title: $l10n("CANCEL") }
+                                        ]
+                                    })
+                                }
+                            },
+                            layout: $layout.fillSafeArea
+                        }], $l10n("TOOLKIT"))
+                    }
+                }
             }
         ]
+    }
+
+    async boxdata() {
+        let response = await $http.get(`${this.kernel.serverURL.string}query/boxdata`)
+        let boxdata = response.data
+        if (null !== response.error) {
+            $ui.toast($l10n("ERROR_GET_DATA"))
+            return false
+        }
+        return boxdata
+    }
+
+    update_iCloud(data) {
+        if (!$file.exists(this.iCloud)) {
+            $file.mkdir(this.iCloud)
+        }
+        return $file.write({
+            data: $data({ string: data }),
+            path: `${this.iCloud}globalbaks.json`
+        })
+    }
+
+    async backup() {
+        let boxjs = await this.boxdata()
+        let name = `BoxJsHelper-${boxjs.globalbaks.length + 1}`
+        let date = new Date()
+        let response = await $http.post({
+            url: `${this.kernel.serverURL.string}api/saveGlobalBak`,
+            body: {
+                id: this.kernel.uuid(),
+                createTime: date.toISOString(),
+                name: name,
+                tags: [
+                    "BoxJsHelper",
+                    boxjs.syscfgs.env,
+                    boxjs.syscfgs.version,
+                    boxjs.syscfgs.versionType
+                ],
+                version: boxjs.syscfgs.version,
+                versionType: boxjs.syscfgs.versionType,
+                env: boxjs.syscfgs.env,
+            }
+        })
+        if (null !== response.error) {
+            $ui.toast($l10n("ERROE_BACKUP"))
+            return
+        }
+        if (this.update_iCloud(JSON.stringify(response.data))) {
+            $ui.toast($l10n("SUCCESS_BACKUP"))
+        } else {
+            $ui.toast($l10n("ERROE_BACKUP"))
+        }
     }
 
     /**

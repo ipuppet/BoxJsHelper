@@ -1,4 +1,5 @@
 "ALERT_INFO" = "提示";
+"ERROR" = "发生错误";
 "OK" = "好";
 "CANCEL" = "取消";
 "BACK" = "返回";
@@ -18,6 +19,12 @@
 "CLEAR_LOG" = "清理日志";
 "CLEAR_LOG_MSG" = "确认要清除所有日志吗？";
 "CLEAR_LOG_DONE" = "清理完成";
+"BACKUP" = "备份";
+"ERROR_GET_DATA" = "获取数据时出错";
+"ERROE_BACKUP" = "制作备份时出错";
+"SUCCESS_BACKUP" = "备份成功";
+"RECOVER_BACKUP" = "恢复备份";
+"DELETE" = "删除";
 
 "SETTING" = "设置";
 "GENERAL" = "一般";
