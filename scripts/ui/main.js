@@ -20,10 +20,7 @@ class MainUI {
                 this.ui_main()
                 break
             case $env.today:
-                if (this.kernel.setting.get("general.today_server"))
-                    this.ui_today()
-                else
-                    $ui.alert($l10n("ENABLE_IN_SETTING"))
+                this.ui_today()
                 break
             default:
                 $ui.alert({

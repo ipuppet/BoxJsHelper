@@ -1,49 +1,30 @@
-const Server = require("/scripts/server")
-
-class TodayUI extends Server {
+class TodayUI {
     constructor(kernel) {
-        super(kernel)
+        this.kernel = kernel
     }
 
     render() {
-        $ui.render({
-            props: {
-                title: ""
-            },
-            views: [
-                {
-                    type: "switch",
-                    events: {
-                        changed: (sender) => {
-                            if (sender.on) {
-                                this.start_server()
-                            } else {
-                                this.stop_server()
-                            }
-                        }
-                    },
-                    layout: (make, view) => {
-                        make.top.inset(0)
-                        make.centerX.equalTo(view.super)
-                    }
-                },
-                {
-                    type: "label",
-                    props: {
-                        id: "server_path_label",
-                        align: $align.center,
-                        text: `${$l10n("VISIT_ON_CONPUTER")}:\n${$device.wlanAddress}:${this.port}`,
-                        textColor: $color("primaryText"),
-                        lines: 0
-                    },
-                    layout: (make, view) => {
-                        make.top.inset(50)
-                        make.centerX.equalTo(view.super)
-                    }
-                }
-            ],
-            layout: $layout.fill
-        })
+        // 获取boxdata
+        let boxdata = $cache.get("boxdata")
+        if(!boxdata){
+            $ui.alert({
+                title: $l10n("ALERT_INFO"),
+                message: $l10n("NO_TODAY_CACHE")
+            })
+            return
+        }
+        // 关闭服务器节约资源
+        this.kernel.server.stop_server()
+        // 加载脚本
+        let script = this.kernel.setting.get("today.script")
+        if (script === "" || !$file.exists(script)) {
+            $ui.alert({
+                title: $l10n("ALERT_INFO"),
+                message: $l10n("NO_SCRIPT")
+            })
+        } else {
+            require(script).main(boxdata)
+        }
     }
 }
 

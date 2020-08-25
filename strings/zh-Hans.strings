@@ -1,12 +1,13 @@
 "ALERT_INFO" = "提示";
 "TF_ONLY" = "仅TF版可用";
+"SUCCESS" = "成功";
 "ERROR" = "发生错误";
 "OK" = "好";
 "CANCEL" = "取消";
 "BACK" = "返回";
 
-"VISIT_ON_CONPUTER" = "在电脑上访问";
-"ENABLE_IN_SETTING" = "请在设置中开启";
+"NO_TODAY_CACHE" = "获取数据失败，请打开工具箱中的Today卡片，点击刷新按钮。";
+"NO_SCRIPT" = "未选择脚本或脚本被删除，请在工具箱中选择脚本";
 
 "BOXJS" = "BoxJs";
 
@@ -19,7 +20,6 @@
 "LOG" = "日志";
 "CLEAR_LOG" = "清理日志";
 "CLEAR_LOG_MSG" = "确认要清除所有日志吗？";
-"CLEAR_LOG_DONE" = "清理完成";
 "BACKUP" = "备份";
 "BACKUP_NOW" = "立即进行一次备份？";
 "ERROR_GET_DATA" = "获取数据时出错";
@@ -28,6 +28,11 @@
 "RECOVER_BACKUP" = "恢复备份";
 "SUCCESS_RECOVER" = "恢复成功";
 "DELETE" = "删除";
+"TODAY" = "Today小组件";
+"SELECTED_SCRIPT" = "当前脚本";
+"REFRESH_TODAY_CACHE_NOW" = "立即刷新Today数据缓存？";
+"APPLY" = "应用";
+"SUCCESS_SAVE" = "保存成功";
 
 "SETTING" = "设置";
 "GENERAL" = "一般";

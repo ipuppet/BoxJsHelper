@@ -9,8 +9,8 @@ class ToolkitUI {
         this.matrix.columns = 2
         this.matrix.height = 90
         this.matrix.spacing = 15
-        this.data = [
-            {
+        this.data = [ // 工具箱卡片
+            { // 刷新BoxJs
                 icon: { symbol: "arrow.clockwise" },
                 title: {
                     text: $l10n("REFRESH") + $l10n("BOXJS")
@@ -21,7 +21,7 @@ class ToolkitUI {
                     }
                 }
             },
-            {
+            { // 远程访问
                 icon: { symbol: "paperplane" },
                 title: { text: $l10n("REMOTE_ACCESS") },
                 extra: {
@@ -30,10 +30,10 @@ class ToolkitUI {
                     events: {
                         changed: sender => {
                             if (sender.on) {
-                                this.kernel.setting.save("server.remote_access", true)
+                                this.kernel.setting.set("server.remote_access", true)
                                 $ui.toast($l10n("REMOTE_ACCESS_STARTED"))
                             } else {
-                                this.kernel.setting.save("server.remote_access", false)
+                                this.kernel.setting.set("server.remote_access", false)
                                 $ui.toast($l10n("REMOTE_ACCESS_CLOSED"))
                             }
                         }
@@ -45,7 +45,7 @@ class ToolkitUI {
                     }
                 }
             },
-            {
+            { // 日志记录
                 icon: { symbol: "doc.text" },
                 title: { text: $l10n("LOG") },
                 extra: {
@@ -54,46 +54,52 @@ class ToolkitUI {
                     events: {
                         changed: sender => {
                             if (sender.on) {
-                                this.kernel.setting.save("server.log_request", true)
+                                this.kernel.setting.set("server.log_request", true)
                             } else {
-                                this.kernel.setting.save("server.log_request", false)
+                                this.kernel.setting.set("server.log_request", false)
                             }
                         }
                     }
                 },
                 events: {
                     tapped: () => {
-                        let path = this.kernel.server.logger.path
-                        let files = $file.list(path)
-                        let template_data = []
-                        for (let i = 0; i < files.length; i++) {
-                            template_data.push({
-                                label: { text: files[i] }
-                            })
+                        let path_log = this.kernel.server.logger.path
+                        const template_log_list = path => {
+                            let files = $file.list(path)
+                            let template_data = []
+                            for (let file of files) {
+                                template_data.push({
+                                    label: { text: file }
+                                })
+                            }
+                            return template_data
                         }
                         this.factory.push([{
                             type: "list",
                             props: {
+                                data: template_log_list(path_log),
+                                id: "list_log",
                                 header: {
                                     type: "view",
                                     props: {
                                         height: 70,
                                     },
-                                    views: [{
-                                        type: "label",
-                                        props: {
-                                            text: $l10n("LOG"),
-                                            textColor: $color("primaryText", "secondaryText"),
-                                            align: $align.left,
-                                            font: $font(34),
-                                            line: 1
-                                        },
-                                        layout: make => {
-                                            make.left.top.inset(10)
+                                    views: [
+                                        {
+                                            type: "label",
+                                            props: {
+                                                text: $l10n("LOG"),
+                                                textColor: $color("primaryText", "secondaryText"),
+                                                align: $align.left,
+                                                font: $font(34),
+                                                line: 1
+                                            },
+                                            layout: make => {
+                                                make.left.top.inset(10)
+                                            }
                                         }
-                                    }]
+                                    ]
                                 },
-                                data: template_data,
                                 template: [
                                     {
                                         type: "label",
@@ -112,7 +118,7 @@ class ToolkitUI {
                                         title: "delete",
                                         handler: (sender, indexPath) => {
                                             let file = files[indexPath.item]
-                                            $file.delete(path + file)
+                                            $file.delete(path_log + file)
                                         }
                                     }
                                 ]
@@ -124,18 +130,47 @@ class ToolkitUI {
                                         props: {
                                             editable: false,
                                             textColor: $color("primaryText", "secondaryText"),
-                                            text: $file.read(path + data.label.text).string
+                                            text: $file.read(path_log + data.label.text).string
                                         },
                                         layout: $layout.fillSafeArea
                                     }], $l10n("LOG"))
                                 }
                             },
                             layout: $layout.fillSafeArea
-                        }], $l10n("TOOLKIT"))
+                        }], $l10n("TOOLKIT"), [{
+                            type: "button",
+                            props: {
+                                symbol: "trash",
+                                bgcolor: $color("clear")
+                            },
+                            events: {
+                                tapped: () => {
+                                    $ui.alert({
+                                        title: $l10n("ALERT_INFO"),
+                                        message: $l10n("CLEAR_LOG_MSG"),
+                                        actions: [
+                                            {
+                                                title: $l10n("OK"),
+                                                handler: () => {
+                                                    $file.delete(path_log)
+                                                    $file.mkdir(path_log)
+                                                    $("list_log").data = template_log_list(path_log)
+                                                }
+                                            },
+                                            { title: $l10n("CANCEL") }
+                                        ]
+                                    })
+                                }
+                            },
+                            layout: make => {
+                                make.right.inset(20)
+                                make.size.equalTo(20)
+                            }
+                        }])
                     }
                 }
             },
-            {
+            { // 备份
                 icon: { symbol: "cloud" },
                 title: { text: $l10n("BACKUP") },
                 events: {
@@ -181,84 +216,6 @@ class ToolkitUI {
                                             },
                                             layout: make => {
                                                 make.left.top.inset(10)
-                                            }
-                                        },
-                                        {
-                                            type: "spinner",
-                                            props: {
-                                                id: "spinner_backup",
-                                                loading: true,
-                                                alpha: 0
-                                            },
-                                            layout: (make, view) => {
-                                                make.centerY.equalTo(view.super)
-                                                make.right.inset(20)
-                                                make.size.equalTo(20)
-                                            }
-                                        },
-                                        {
-                                            type: "button",
-                                            props: {
-                                                id: "button_backup",
-                                                symbol: "arrow.up.doc",
-                                                bgcolor: $color("clear"),
-                                                alpha: 1
-                                            },
-                                            events: {
-                                                tapped: () => {
-                                                    $ui.alert({
-                                                        title: $l10n("BACKUP"),
-                                                        message: $l10n("BACKUP_NOW"),
-                                                        actions: [
-                                                            {
-                                                                title: $l10n("OK"),
-                                                                handler: () => {
-                                                                    $("button_backup").alpha = 0
-                                                                    $("spinner_backup").alpha = 1
-                                                                    this.backup(async () => {
-                                                                        // 更新列表
-                                                                        $("list_backup").data = await template_backup_list()
-                                                                        // 播放动画
-                                                                        $("button_backup").symbol = "checkmark"
-                                                                        $("spinner_backup").alpha = 0
-                                                                        $ui.animate({
-                                                                            duration: 0.6,
-                                                                            animation: () => {
-                                                                                $("button_backup").alpha = 1
-                                                                            },
-                                                                            completion: () => {
-                                                                                $ui.animate({
-                                                                                    duration: 0.4,
-                                                                                    animation: () => {
-                                                                                        $("button_backup").alpha = 0
-                                                                                    },
-                                                                                    completion: () => {
-                                                                                        $("button_backup").symbol = "arrow.up.doc"
-                                                                                        $ui.animate({
-                                                                                            duration: 0.4,
-                                                                                            animation: () => {
-                                                                                                $("button_backup").alpha = 1
-                                                                                            },
-                                                                                            completion: () => {
-                                                                                                $("button_backup").alpha = 1
-                                                                                            }
-                                                                                        })
-                                                                                    }
-                                                                                })
-                                                                            }
-                                                                        })
-                                                                    })
-                                                                }
-                                                            },
-                                                            { title: $l10n("CANCEL") }
-                                                        ]
-                                                    })
-                                                }
-                                            },
-                                            layout: (make, view) => {
-                                                make.centerY.equalTo(view.super)
-                                                make.right.inset(20)
-                                                make.size.equalTo(20)
                                             }
                                         }
                                     ]
@@ -392,11 +349,336 @@ class ToolkitUI {
                                 }
                             },
                             layout: $layout.fillSafeArea
-                        }], $l10n("TOOLKIT"))
+                        }], $l10n("TOOLKIT"), [
+                            {
+                                type: "spinner",
+                                props: {
+                                    id: "spinner_backup",
+                                    loading: true,
+                                    alpha: 0
+                                },
+                                layout: make => {
+                                    make.right.inset(20)
+                                    make.size.equalTo(20)
+                                }
+                            },
+                            {
+                                type: "button",
+                                props: {
+                                    id: "button_backup",
+                                    symbol: "arrow.up.doc",
+                                    bgcolor: $color("clear"),
+                                    alpha: 1
+                                },
+                                events: {
+                                    tapped: () => {
+                                        $ui.alert({
+                                            title: $l10n("BACKUP"),
+                                            message: $l10n("BACKUP_NOW"),
+                                            actions: [
+                                                {
+                                                    title: $l10n("OK"),
+                                                    handler: () => {
+                                                        $("button_backup").alpha = 0
+                                                        $("spinner_backup").alpha = 1
+                                                        this.backup(async () => {
+                                                            // 更新列表
+                                                            $("list_backup").data = await template_backup_list()
+                                                            // 播放动画
+                                                            $("button_backup").symbol = "checkmark"
+                                                            $("spinner_backup").alpha = 0
+                                                            $ui.animate({
+                                                                duration: 0.6,
+                                                                animation: () => {
+                                                                    $("button_backup").alpha = 1
+                                                                },
+                                                                completion: () => {
+                                                                    setTimeout(() => {
+                                                                        $ui.animate({
+                                                                            duration: 0.4,
+                                                                            animation: () => {
+                                                                                $("button_backup").alpha = 0
+                                                                            },
+                                                                            completion: () => {
+                                                                                $("button_backup").symbol = "arrow.up.doc"
+                                                                                $ui.animate({
+                                                                                    duration: 0.4,
+                                                                                    animation: () => {
+                                                                                        $("button_backup").alpha = 1
+                                                                                    },
+                                                                                    completion: () => {
+                                                                                        $("button_backup").alpha = 1
+                                                                                    }
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                    }, 600)
+                                                                }
+                                                            })
+                                                        })
+                                                    }
+                                                },
+                                                { title: $l10n("CANCEL") }
+                                            ]
+                                        })
+                                    }
+                                },
+                                layout: make => {
+                                    make.right.inset(20)
+                                    make.size.equalTo(20)
+                                }
+                            }
+                        ])
+                    }
+                }
+            },
+            { // Today
+                icon: { symbol: "" },
+                title: {
+                    text: $l10n("TODAY")
+                },
+                events: {
+                    tapped: () => {
+                        const script_name = () => {
+                            let script = this.kernel.setting.get("today.script")
+                            script = script.slice(script.lastIndexOf("/") + 1)
+                            return script
+                        }
+                        let path_today = "/scripts/today/"
+                        let files = $file.list(path_today)
+                        let template_data = []
+                        for (let i = 0; i < files.length; i++) {
+                            template_data.push({
+                                label: { text: files[i] }
+                            })
+                        }
+                        this.factory.push([{
+                            type: "list",
+                            props: {
+                                header: {
+                                    type: "view",
+                                    props: {
+                                        height: 90,
+                                    },
+                                    views: [
+                                        {
+                                            type: "label",
+                                            props: {
+                                                text: $l10n("TODAY"),
+                                                textColor: $color("primaryText", "secondaryText"),
+                                                align: $align.left,
+                                                font: $font(34),
+                                                line: 1
+                                            },
+                                            layout: make => {
+                                                make.left.top.inset(10)
+                                            }
+                                        },
+                                        {
+                                            type: "label",
+                                            props: {
+                                                align: $align.left,
+                                                text: $l10n("SELECTED_SCRIPT") + ": "
+                                            },
+                                            layout: (make, view) => {
+                                                make.top.equalTo(view.prev.bottom).offset(12)
+                                                make.left.inset(10)
+                                            }
+                                        },
+                                        {
+                                            type: "label",
+                                            props: {
+                                                id: "selected_script",
+                                                align: $align.right,
+                                                text: script_name()
+                                            },
+                                            layout: (make, view) => {
+                                                make.top.equalTo(view.prev)
+                                                make.right.inset(10)
+                                            }
+                                        }
+                                    ]
+                                },
+                                data: template_data,
+                                template: [
+                                    {
+                                        type: "label",
+                                        props: {
+                                            id: "label",
+                                            textColor: $color("primaryText", "secondaryText"),
+                                        },
+                                        layout: (make, view) => {
+                                            make.left.inset(10)
+                                            make.centerY.equalTo(view.super)
+                                        }
+                                    }
+                                ],
+                                actions: [
+                                    { // delete
+                                        title: $l10n("DELETE"),
+                                        color: $color("red"),
+                                        handler: (sender, indexPath) => {
+                                            let name = sender.object(indexPath).label.text
+                                            $ui.alert({
+                                                title: $l10n("ALERT_INFO"),
+                                                message: `${$l10n("DELETE")} ${name} ?`,
+                                                actions: [
+                                                    {
+                                                        title: $l10n("OK"),
+                                                        handler: () => {
+                                                            let file = files[indexPath.item]
+                                                            $file.delete(path_today + file)
+                                                        }
+                                                    },
+                                                    { title: $l10n("CANCEL") }
+                                                ]
+                                            })
+                                        }
+                                    },
+                                    { // apply
+                                        title: $l10n("APPLY"),
+                                        color: $color("orange"),
+                                        handler: (sender, indexPath) => {
+                                            let script = path_today + sender.object(indexPath).label.text.trim()
+                                            this.kernel.setting.set("today.script", script)
+                                            $("selected_script").text = script_name()
+                                        }
+                                    }
+                                ]
+                            },
+                            events: {
+                                didSelect: (sender, indexPath, data) => {
+                                    this.factory.push([
+                                        {
+                                            type: "text",
+                                            props: {
+                                                id: "editor",
+                                                info: path_today + data.label.text,
+                                                textColor: $color("primaryText", "secondaryText"),
+                                                text: $file.read(path_today + data.label.text).string
+                                            },
+                                            layout: (make, view) => {
+                                                make.left.right.bottom.equalTo(view.super.safeArea)
+                                                make.top.equalTo(view.super.safeAreaTop).offset(10)
+                                            }
+                                        },
+                                        {
+                                            type: "canvas",
+                                            layout: (make, view) => {
+                                                make.top.equalTo(view.prev.top)
+                                                make.height.equalTo(1 / $device.info.screen.scale)
+                                                make.left.right.inset(0)
+                                            },
+                                            events: {
+                                                draw: (view, ctx) => {
+                                                    let width = view.frame.width
+                                                    let scale = $device.info.screen.scale
+                                                    ctx.strokeColor = $color("gray")
+                                                    ctx.setLineWidth(1 / scale)
+                                                    ctx.moveToPoint(0, 0)
+                                                    ctx.addLineToPoint(width, 0)
+                                                    ctx.strokePath()
+                                                }
+                                            }
+                                        }
+                                    ], $l10n("TODAY"), [
+                                        {
+                                            type: "button",
+                                            props: {
+                                                symbol: "checkmark",
+                                                tintColor: this.factory.text_color,
+                                                bgcolor: $color("clear")
+                                            },
+                                            layout: make => {
+                                                make.right.inset(20)
+                                                make.size.equalTo(20)
+                                            },
+                                            events: {
+                                                tapped: () => {
+                                                    $file.write({
+                                                        data: $data({ string: $("editor").text }),
+                                                        path: $("editor").info
+                                                    })
+                                                    $ui.toast($l10n("SUCCESS_SAVE"))
+                                                    setTimeout(() => { $ui.pop() }, 600)
+                                                }
+                                            }
+                                        }
+                                    ])
+                                }
+                            },
+                            layout: $layout.fillSafeArea
+                        }], $l10n("TOOLKIT"), [
+                            {
+                                type: "button",
+                                props: {
+                                    symbol: "arrow.clockwise",
+                                    id: "refresh_today_cache",
+                                    bgcolor: $color("clear")
+                                },
+                                events: {
+                                    tapped: () => {
+                                        $ui.alert({
+                                            title: $l10n("REFRESH"),
+                                            message: $l10n("REFRESH_TODAY_CACHE_NOW"),
+                                            actions: [
+                                                {
+                                                    title: $l10n("OK"),
+                                                    handler: () => {
+                                                        // 更新缓存
+                                                        this.update_today_cache()
+                                                        // 播放动画
+                                                        $("refresh_today_cache").alpha = 0
+                                                        $ui.animate({
+                                                            duration: 0.6,
+                                                            animation: () => {
+                                                                $("refresh_today_cache").symbol = "checkmark"
+                                                                $("refresh_today_cache").alpha = 1
+                                                            },
+                                                            completion: () => {
+                                                                setTimeout(() => {
+                                                                    $ui.animate({
+                                                                        duration: 0.4,
+                                                                        animation: () => {
+                                                                            $("refresh_today_cache").alpha = 0
+                                                                        },
+                                                                        completion: () => {
+                                                                            $("refresh_today_cache").symbol = "arrow.clockwise"
+                                                                            $ui.animate({
+                                                                                duration: 0.4,
+                                                                                animation: () => {
+                                                                                    $("refresh_today_cache").alpha = 1
+                                                                                },
+                                                                                completion: () => {
+                                                                                    $("refresh_today_cache").alpha = 1
+                                                                                }
+                                                                            })
+                                                                        }
+                                                                    })
+                                                                }, 600)
+                                                            }
+                                                        })
+                                                    }
+                                                },
+                                                { title: $l10n("CANCEL") }
+                                            ]
+                                        })
+                                    }
+                                },
+                                layout: make => {
+                                    make.right.inset(20)
+                                    make.size.equalTo(20)
+                                }
+                            }
+                        ])
                     }
                 }
             }
         ]
+    }
+
+    async update_today_cache() {
+        $cache.set("boxdata", await this.boxdata())
     }
 
     async boxdata() {

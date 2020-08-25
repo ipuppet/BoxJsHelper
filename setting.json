@@ -46,14 +46,16 @@
                 "value": 6060
             },
             {
-                "title": "LOG_REQUEST",
                 "key": "server.remote_access",
                 "value": false
             },
             {
-                "title": "LOG_REQUEST",
                 "key": "server.log_request",
                 "value": false
+            },
+            {
+                "key": "today.script",
+                "value": ""
             }
         ]
     },
