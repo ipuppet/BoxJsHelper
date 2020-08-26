@@ -677,9 +677,22 @@ class ToolkitUI {
                             },
                             layout: $layout.fillSafeArea
                         }], $l10n("TOOLKIT"), [
+                            {
+                                type: "spinner",
+                                props: {
+                                    id: "spinner_script_from_url",
+                                    loading: true,
+                                    alpha: 0
+                                },
+                                layout: make => {
+                                    make.right.inset(20)
+                                    make.size.equalTo(20)
+                                }
+                            },
                             { // 新脚本
                                 type: "button",
                                 props: {
+                                    id: "script_from_url",
                                     tintColor: this.factory.text_color,
                                     symbol: "plus",
                                     bgcolor: $color("clear")
@@ -687,8 +700,7 @@ class ToolkitUI {
                                 events: {
                                     tapped: () => {
                                         $ui.menu({
-                                            // items: [$l10n("NEW_FILE"), $l10n("URL")],
-                                            items: [$l10n("NEW_FILE")],
+                                            items: [$l10n("NEW_FILE"), $l10n("URL")],
                                             handler: (title, idx) => {
                                                 if (idx === 0) {
                                                     $input.text({
@@ -708,7 +720,20 @@ class ToolkitUI {
                                                         type: $kbType.url,
                                                         placeholder: $l10n("URL"),
                                                         handler: text => {
-                                                            // TODO 从URL添加
+                                                            this.buttpn_animate("script_from_url", "plus", async () => {
+                                                                $("spinner_script_from_url").alpha = 1
+                                                                let content = await $http.get(text)
+                                                                let name = text.slice(text.lastIndexOf("/") + 1)
+                                                                if (name.slice(-3) !== ".js") {
+                                                                    name = name + ".js"
+                                                                }
+                                                                $file.write({
+                                                                    data: $data({ string: content.data + "" }),
+                                                                    path: this.path_today + name
+                                                                })
+                                                                $("list_script").data = template_script(this.path_today)
+                                                                $("spinner_script_from_url").alpha = 0
+                                                            })
                                                         }
                                                     })
                                                 }
@@ -791,9 +816,9 @@ class ToolkitUI {
         ]
     }
 
-    buttpn_animate(id, symbol, func) {
+    async buttpn_animate(id, symbol, func) {
         $(id).alpha = 0
-        func()
+        await func()
         $(id).symbol = "checkmark"
         $ui.animate({
             duration: 0.6,
