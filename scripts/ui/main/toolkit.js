@@ -5,6 +5,7 @@ class ToolkitUI {
         this.kernel = kernel
         this.factory = factory
         this.iCloud = this.kernel.iCloud_path("/BoxJsHepler")
+        this.path_today = "/assets/today/"
         this.matrix = new Matrix()
         this.matrix.columns = 2
         this.matrix.height = 90
@@ -382,42 +383,39 @@ class ToolkitUI {
                                                 {
                                                     title: $l10n("OK"),
                                                     handler: () => {
-                                                        $("button_backup").alpha = 0
-                                                        $("spinner_backup").alpha = 1
-                                                        this.backup(async () => {
-                                                            // 更新列表
-                                                            $("list_backup").data = await template_backup_list()
-                                                            // 播放动画
-                                                            $("button_backup").symbol = "checkmark"
-                                                            $("spinner_backup").alpha = 0
-                                                            $ui.animate({
-                                                                duration: 0.6,
-                                                                animation: () => {
-                                                                    $("button_backup").alpha = 1
-                                                                },
-                                                                completion: () => {
-                                                                    setTimeout(() => {
-                                                                        $ui.animate({
-                                                                            duration: 0.4,
-                                                                            animation: () => {
-                                                                                $("button_backup").alpha = 0
-                                                                            },
-                                                                            completion: () => {
-                                                                                $("button_backup").symbol = "arrow.up.doc"
-                                                                                $ui.animate({
-                                                                                    duration: 0.4,
-                                                                                    animation: () => {
-                                                                                        $("button_backup").alpha = 1
-                                                                                    },
-                                                                                    completion: () => {
-                                                                                        $("button_backup").alpha = 1
-                                                                                    }
-                                                                                })
-                                                                            }
-                                                                        })
-                                                                    }, 600)
+                                                        this.buttpn_animate("button_backup", "arrow.up.doc", async () => {
+                                                            $("spinner_backup").alpha = 1
+                                                            let boxjs = await this.boxdata()
+                                                            let name = `BoxJsHelper-${boxjs.globalbaks.length + 1}`
+                                                            let date = new Date()
+                                                            let response = await $http.post({
+                                                                url: `${this.kernel.serverURL.string}api/saveGlobalBak`,
+                                                                body: {
+                                                                    id: this.kernel.uuid(),
+                                                                    createTime: date.toISOString(),
+                                                                    name: name,
+                                                                    tags: [
+                                                                        "BoxJsHelper",
+                                                                        boxjs.syscfgs.env,
+                                                                        boxjs.syscfgs.version,
+                                                                        boxjs.syscfgs.versionType
+                                                                    ],
+                                                                    version: boxjs.syscfgs.version,
+                                                                    versionType: boxjs.syscfgs.versionType,
+                                                                    env: boxjs.syscfgs.env,
                                                                 }
                                                             })
+                                                            if (null !== response.error) {
+                                                                $ui.toast($l10n("ERROE_BACKUP"))
+                                                                $("spinner_backup").alpha = 0
+                                                                return
+                                                            }
+                                                            if (!this.update_iCloud(JSON.stringify(response.data))) {
+                                                                $ui.toast($l10n("ERROE_BACKUP"))
+                                                            }
+                                                            // 更新列表
+                                                            $("list_backup").data = await template_backup_list()
+                                                            $("spinner_backup").alpha = 0
                                                         })
                                                     }
                                                 },
@@ -459,56 +457,28 @@ class ToolkitUI {
                                             actions: [
                                                 {
                                                     title: $l10n("OK"),
-                                                    handler: async () => {
-                                                        $("button_revert").alpha = 0
-                                                        $("spinner_revert").alpha = 1
-                                                        // 从iCloud恢复
-                                                        let globalbaks = $file.read(`${this.iCloud}globalbaks.json`)
-                                                        globalbaks = JSON.parse(globalbaks.string).globalbaks
-                                                        for (let item of globalbaks) {
-                                                            // 先删除，防止重复
-                                                            await $http.post({
-                                                                url: `${this.kernel.serverURL.string}api/delGlobalBak`,
-                                                                body: { id: item.id }
-                                                            })
-                                                            // 添加新的备份到BoxJs
-                                                            await $http.post({
-                                                                url: `${this.kernel.serverURL.string}api/impGlobalBak`,
-                                                                body: item
-                                                            })
-                                                        }
-                                                        // 更新列表
-                                                        $("list_backup").data = await template_backup_list()
+                                                    handler: () => {
                                                         // 播放动画
-                                                        $("button_revert").symbol = "checkmark"
-                                                        $("spinner_revert").alpha = 0
-                                                        $ui.animate({
-                                                            duration: 0.6,
-                                                            animation: () => {
-                                                                $("button_revert").alpha = 1
-                                                            },
-                                                            completion: () => {
-                                                                setTimeout(() => {
-                                                                    $ui.animate({
-                                                                        duration: 0.4,
-                                                                        animation: () => {
-                                                                            $("button_revert").alpha = 0
-                                                                        },
-                                                                        completion: () => {
-                                                                            $("button_revert").symbol = "arrow.clockwise"
-                                                                            $ui.animate({
-                                                                                duration: 0.4,
-                                                                                animation: () => {
-                                                                                    $("button_revert").alpha = 1
-                                                                                },
-                                                                                completion: () => {
-                                                                                    $("button_revert").alpha = 1
-                                                                                }
-                                                                            })
-                                                                        }
-                                                                    })
-                                                                }, 600)
+                                                        this.buttpn_animate("button_revert", "arrow.clockwise", async () => {
+                                                            $("spinner_revert").alpha = 1
+                                                            // 从iCloud恢复
+                                                            let globalbaks = $file.read(`${this.iCloud}globalbaks.json`)
+                                                            globalbaks = JSON.parse(globalbaks.string).globalbaks
+                                                            for (let item of globalbaks) {
+                                                                // 先删除，防止重复
+                                                                await $http.post({
+                                                                    url: `${this.kernel.serverURL.string}api/delGlobalBak`,
+                                                                    body: { id: item.id }
+                                                                })
+                                                                // 添加新的备份到BoxJs
+                                                                await $http.post({
+                                                                    url: `${this.kernel.serverURL.string}api/impGlobalBak`,
+                                                                    body: item
+                                                                })
                                                             }
+                                                            // 更新列表
+                                                            $("list_backup").data = await template_backup_list()
+                                                            $("spinner_revert").alpha = 0
                                                         })
                                                     }
                                                 },
@@ -538,7 +508,6 @@ class ToolkitUI {
                             script = script.slice(script.lastIndexOf("/") + 1)
                             return script
                         }
-                        let path_today = "/assets/today/"
                         const template_script = (path) => {
                             let files = $file.list(path)
                             let template_data = []
@@ -597,7 +566,7 @@ class ToolkitUI {
                                         }
                                     ]
                                 },
-                                data: template_script(path_today),
+                                data: template_script(this.path_today),
                                 template: [
                                     {
                                         type: "label",
@@ -625,7 +594,7 @@ class ToolkitUI {
                                                         title: $l10n("OK"),
                                                         handler: () => {
                                                             let file = sender.object(indexPath).label.text
-                                                            $file.delete(path_today + file)
+                                                            $file.delete(this.path_today + file)
                                                             sender.delete(indexPath)
                                                         }
                                                     },
@@ -638,7 +607,7 @@ class ToolkitUI {
                                         title: $l10n("APPLY"),
                                         color: $color("orange"),
                                         handler: (sender, indexPath) => {
-                                            let script = path_today + sender.object(indexPath).label.text.trim()
+                                            let script = this.path_today + sender.object(indexPath).label.text.trim()
                                             this.kernel.setting.set("today.script", script)
                                             $("selected_script").text = script_name()
                                         }
@@ -652,9 +621,9 @@ class ToolkitUI {
                                             type: "text",
                                             props: {
                                                 id: "editor",
-                                                info: path_today + data.label.text,
+                                                info: this.path_today + data.label.text,
                                                 textColor: $color("primaryText", "secondaryText"),
-                                                text: $file.read(path_today + data.label.text).string
+                                                text: $file.read(this.path_today + data.label.text).string
                                             },
                                             layout: (make, view) => {
                                                 make.left.right.bottom.equalTo(view.super.safeArea)
@@ -727,9 +696,9 @@ class ToolkitUI {
                                                         text: "MyScript",
                                                         placeholder: $l10n("FILE_NAME"),
                                                         handler: text => {
-                                                            this.new_file(path_today, text, () => {
+                                                            this.new_file(this.path_today, text, () => {
                                                                 setTimeout(() => {
-                                                                    $("list_script").data = template_script(path_today)
+                                                                    $("list_script").data = template_script(this.path_today)
                                                                 }, 500)
                                                             })
                                                         }
@@ -751,12 +720,109 @@ class ToolkitUI {
                                     make.right.inset(20)
                                     make.size.equalTo(20)
                                 }
+                            },
+                            {
+                                type: "spinner",
+                                props: {
+                                    id: "spinner_script_icloud",
+                                    loading: true,
+                                    alpha: 0
+                                },
+                                layout: make => {
+                                    make.right.inset(60)
+                                    make.size.equalTo(20)
+                                }
+                            },
+                            { // 备份恢复
+                                type: "button",
+                                props: {
+                                    id: "button_script_icloud",
+                                    tintColor: this.factory.text_color,
+                                    symbol: "cloud",
+                                    bgcolor: $color("clear")
+                                },
+                                events: {
+                                    tapped: () => {
+                                        $ui.menu({
+                                            items: [$l10n("BACKUP_ICLOUD"), $l10n("REVERT_FROM_ICLOUD")],
+                                            handler: (title, idx) => {
+                                                if (idx === 0) { // 备份
+                                                    this.buttpn_animate("button_script_icloud", "cloud", () => {
+                                                        // 备份文件
+                                                        $("spinner_script_icloud").alpha = 1
+                                                        let dst = this.iCloud + "Today"
+                                                        if (!$file.exists(dst)) {
+                                                            $file.mkdir(dst)
+                                                        }
+                                                        $file.copy({
+                                                            src: this.path_today,
+                                                            dst: dst
+                                                        })
+                                                        $("spinner_script_icloud").alpha = 0
+                                                    })
+                                                } else if (idx === 1) { // 恢复
+                                                    this.buttpn_animate("button_script_icloud", "cloud", () => {
+                                                        // 恢复文件
+                                                        $("spinner_script_icloud").alpha = 1
+                                                        if (!$file.exists(this.path_today)) {
+                                                            $file.mkdir(this.path_today)
+                                                        }
+                                                        $file.copy({
+                                                            src: this.iCloud + "Today",
+                                                            dst: this.path_today
+                                                        })
+                                                        $("list_script").data = template_script(this.path_today)
+                                                        $("spinner_script_icloud").alpha = 0
+                                                    })
+                                                }
+                                            }
+                                        })
+                                    }
+                                },
+                                layout: make => {
+                                    make.right.inset(60)
+                                    make.size.equalTo(20)
+                                }
                             }
                         ])
                     }
                 }
             }
         ]
+    }
+
+    buttpn_animate(id, symbol, func) {
+        $(id).alpha = 0
+        func()
+        $(id).symbol = "checkmark"
+        $ui.animate({
+            duration: 0.6,
+            animation: () => {
+                $(id).alpha = 1
+            },
+            completion: () => {
+                setTimeout(() => {
+                    $ui.animate({
+                        duration: 0.4,
+                        animation: () => {
+                            $(id).alpha = 0
+                        },
+                        completion: () => {
+                            $(id).symbol = symbol
+                            $ui.animate({
+                                duration: 0.4,
+                                animation: () => {
+                                    $(id).alpha = 1
+                                },
+                                completion: () => {
+                                    $(id).alpha = 1
+                                }
+                            })
+                        }
+                    })
+                }, 600)
+            }
+        })
     }
 
     new_file(path, name, callback) {
@@ -840,38 +906,6 @@ class ToolkitUI {
             data: $data({ string: data }),
             path: `${this.iCloud}globalbaks.json`
         })
-    }
-
-    async backup(callback) {
-        let boxjs = await this.boxdata()
-        let name = `BoxJsHelper-${boxjs.globalbaks.length + 1}`
-        let date = new Date()
-        let response = await $http.post({
-            url: `${this.kernel.serverURL.string}api/saveGlobalBak`,
-            body: {
-                id: this.kernel.uuid(),
-                createTime: date.toISOString(),
-                name: name,
-                tags: [
-                    "BoxJsHelper",
-                    boxjs.syscfgs.env,
-                    boxjs.syscfgs.version,
-                    boxjs.syscfgs.versionType
-                ],
-                version: boxjs.syscfgs.version,
-                versionType: boxjs.syscfgs.versionType,
-                env: boxjs.syscfgs.env,
-            }
-        })
-        if (null !== response.error) {
-            $ui.toast($l10n("ERROE_BACKUP"))
-            return
-        }
-        if (this.update_iCloud(JSON.stringify(response.data))) {
-            callback()
-        } else {
-            $ui.toast($l10n("ERROE_BACKUP"))
-        }
     }
 
     /**
