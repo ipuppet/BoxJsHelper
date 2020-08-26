@@ -57,22 +57,23 @@ class Server {
 
     async response(request) {
         let response = {}
+        let content = undefined
         if (request.method === "POST") {
-            let content = await $http.post({
+            content = await $http.post({
                 url: `http://${this.domain}${request.path}`,
                 body: JSON.parse(request.data.string)
             })
             if (content.data === "") {
                 content.data = {}
             }
-            response = { json: content.data }
         } else {
-            let content = await $http.get(`http://${this.domain}${request.path}`)
-            if (typeof content.data === "object")
-                response = { json: content.data }
-            else
-                response = { html: content.data + "" }
+            content = await $http.get(`http://${this.domain}${request.path}`)
         }
+        // 检查结构
+        if (typeof content.data === "object")
+            response = { json: content.data }
+        else
+            response = { html: content.data + "" }
         return response
     }
 
