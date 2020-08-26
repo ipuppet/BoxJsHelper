@@ -8,18 +8,18 @@ class TodayUI {
             $ui.alert($l10n("TF_ONLY"))
             return
         }
-        // 获取boxdata
-        let boxdata = $cache.get("boxdata")
-        if (!boxdata) {
-            $ui.alert($l10n("NO_TODAY_CACHE"))
-            return
-        }
         // 加载脚本
         let script = this.kernel.setting.get("today.script")
         if (script === "" || !$file.exists(script)) {
             $ui.alert($l10n("NO_SCRIPT"))
         } else {
-            require(script).main(boxdata)
+            // 获取boxdata
+            $http.get({
+                url: `http://boxjs.net/query/boxdata`,
+                handler: function (response) {
+                    require(script).main(response.data)
+                }
+            })
         }
     }
 }

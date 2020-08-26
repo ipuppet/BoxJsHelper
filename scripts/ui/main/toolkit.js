@@ -708,68 +708,6 @@ class ToolkitUI {
                             },
                             layout: $layout.fillSafeArea
                         }], $l10n("TOOLKIT"), [
-                            { // 更新缓存
-                                type: "button",
-                                props: {
-                                    tintColor: this.factory.text_color,
-                                    symbol: "arrow.clockwise",
-                                    id: "refresh_today_cache",
-                                    bgcolor: $color("clear")
-                                },
-                                events: {
-                                    tapped: () => {
-                                        $ui.alert({
-                                            title: $l10n("REFRESH"),
-                                            message: $l10n("REFRESH_TODAY_CACHE_NOW"),
-                                            actions: [
-                                                {
-                                                    title: $l10n("OK"),
-                                                    handler: () => {
-                                                        // 更新缓存
-                                                        this.update_today_cache()
-                                                        // 播放动画
-                                                        $("refresh_today_cache").alpha = 0
-                                                        $ui.animate({
-                                                            duration: 0.6,
-                                                            animation: () => {
-                                                                $("refresh_today_cache").symbol = "checkmark"
-                                                                $("refresh_today_cache").alpha = 1
-                                                            },
-                                                            completion: () => {
-                                                                setTimeout(() => {
-                                                                    $ui.animate({
-                                                                        duration: 0.4,
-                                                                        animation: () => {
-                                                                            $("refresh_today_cache").alpha = 0
-                                                                        },
-                                                                        completion: () => {
-                                                                            $("refresh_today_cache").symbol = "arrow.clockwise"
-                                                                            $ui.animate({
-                                                                                duration: 0.4,
-                                                                                animation: () => {
-                                                                                    $("refresh_today_cache").alpha = 1
-                                                                                },
-                                                                                completion: () => {
-                                                                                    $("refresh_today_cache").alpha = 1
-                                                                                }
-                                                                            })
-                                                                        }
-                                                                    })
-                                                                }, 600)
-                                                            }
-                                                        })
-                                                    }
-                                                },
-                                                { title: $l10n("CANCEL") }
-                                            ]
-                                        })
-                                    }
-                                },
-                                layout: make => {
-                                    make.right.inset(20)
-                                    make.size.equalTo(20)
-                                }
-                            },
                             { // 新脚本
                                 type: "button",
                                 props: {
@@ -810,7 +748,7 @@ class ToolkitUI {
                                     }
                                 },
                                 layout: make => {
-                                    make.right.inset(60)
+                                    make.right.inset(20)
                                     make.size.equalTo(20)
                                 }
                             }
@@ -882,10 +820,6 @@ class ToolkitUI {
                 }
             }
         ])
-    }
-
-    async update_today_cache() {
-        $cache.set("boxdata", await this.boxdata())
     }
 
     async boxdata() {
