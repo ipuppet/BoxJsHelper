@@ -47,17 +47,9 @@ class Server {
         return this.server.serverURL.host === req_host
     }
 
-    is_json_string(str) {
-        try {
-            if (typeof JSON.parse(str) === "object")
-                return true
-        } catch (e) { }
-        return false
-    }
-
     async response(request) {
-        let response = {}
-        let content = undefined
+        let response
+        let content
         if (request.method === "POST") {
             content = await $http.post({
                 url: `http://${this.domain}${request.path}`,
@@ -71,22 +63,22 @@ class Server {
         }
         // 检查结构
         if (typeof content.data === "object")
-            response = { json: content.data }
+            response = {json: content.data}
         else
-            response = { html: content.data + "" }
+            response = {html: content.data + ""}
         return response
     }
 
     async handle(request, completion) {
         this.log_request(request)
-        let response = {}
+        let response
         if (this.is_localhost(request)) {
             response = await this.response(request)
         } else {
             if (this.setting.get("server.remote_access")) {
                 response = await this.response(request)
             } else {
-                response = { statusCode: 400, hasBody: false }
+                response = {statusCode: 400, hasBody: false}
             }
         }
         completion({
@@ -96,7 +88,7 @@ class Server {
     }
 
     get_handler() {
-        this.handler.filter = (rules) => {
+        this.handler.filter = () => {
             // 全部使用data
             return "data"
         }

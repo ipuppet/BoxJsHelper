@@ -63,7 +63,7 @@ class BaseUISetting {
                                             $ui.toast($l10n("COPY_SUCCESS"))
                                         }
                                     },
-                                    { title: $l10n("OK") }
+                                    {title: $l10n("OK")}
                                 ]
                             })
                         }
@@ -194,11 +194,8 @@ class BaseUISetting {
                                 placeholder: title,
                                 handler: (text) => {
                                     const is_number = (str) => {
-                                        var reg = /^[0-9]+.?[0-9]*$/
-                                        if (reg.test(str)) {
-                                            return true
-                                        }
-                                        return false
+                                        let reg = /^[0-9]+.?[0-9]*$/
+                                        return reg.test(str)
                                     }
                                     if (text === "" || !is_number(text)) {
                                         $ui.toast($l10n("INVALID_VALUE"))

@@ -16,16 +16,16 @@ class Factory extends BaseUI {
         ]
         this.menu_data = [
             {
-                icon: { symbol: "cube" },
-                title: { text: $l10n("BOXJS") }
+                icon: {symbol: "cube"},
+                title: {text: $l10n("BOXJS")}
             },
             {
-                icon: { symbol: "square.grid.2x2" },
-                title: { text: $l10n("TOOLKIT") }
+                icon: {symbol: "square.grid.2x2"},
+                title: {text: $l10n("TOOLKIT")}
             },
             {
-                icon: { symbol: "gear" },
-                title: { text: $l10n("SETTING") }
+                icon: {symbol: "gear"},
+                title: {text: $l10n("SETTING")}
             }
         ]
     }

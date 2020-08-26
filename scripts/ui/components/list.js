@@ -11,8 +11,8 @@ class List {
      * 标准列表视图
      * @param {Object} header 该对象中需要包含一个标题label的id和title (info: { id: id, title: title }) 供动画使用
      * @param {*} footer 视图对象
-     * @param {*} data 
-     * @param {*} events 
+     * @param {*} data
+     * @param {*} events
      */
     standard_list(header, footer, data, events = {}) {
         return [

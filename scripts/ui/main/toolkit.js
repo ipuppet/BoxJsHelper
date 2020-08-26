@@ -12,7 +12,7 @@ class ToolkitUI {
         this.matrix.spacing = 15
         this.data = [ // 工具箱卡片
             { // 刷新BoxJs
-                icon: { symbol: "arrow.clockwise" },
+                icon: {symbol: "arrow.clockwise"},
                 title: {
                     text: $l10n("REFRESH") + $l10n("BOXJS")
                 },
@@ -23,11 +23,11 @@ class ToolkitUI {
                 }
             },
             { // 远程访问
-                icon: { symbol: "paperplane" },
-                title: { text: $l10n("REMOTE_ACCESS") },
+                icon: {symbol: "paperplane"},
+                title: {text: $l10n("REMOTE_ACCESS")},
                 extra: {
                     type: "switch",
-                    props: { on: this.kernel.setting.get("server.remote_access") },
+                    props: {on: this.kernel.setting.get("server.remote_access")},
                     events: {
                         changed: sender => {
                             if (sender.on) {
@@ -47,11 +47,11 @@ class ToolkitUI {
                 }
             },
             { // 日志记录
-                icon: { symbol: "doc.text" },
-                title: { text: $l10n("LOG") },
+                icon: {symbol: "doc.text"},
+                title: {text: $l10n("LOG")},
                 extra: {
                     type: "switch",
-                    props: { on: this.kernel.setting.get("server.log_request") },
+                    props: {on: this.kernel.setting.get("server.log_request")},
                     events: {
                         changed: sender => {
                             if (sender.on) {
@@ -70,7 +70,7 @@ class ToolkitUI {
                             let template_data = []
                             for (let file of files) {
                                 template_data.push({
-                                    label: { text: file }
+                                    label: {text: file}
                                 })
                             }
                             return template_data
@@ -159,7 +159,7 @@ class ToolkitUI {
                                                     $("list_log").data = template_log_list(path_log)
                                                 }
                                             },
-                                            { title: $l10n("CANCEL") }
+                                            {title: $l10n("CANCEL")}
                                         ]
                                     })
                                 }
@@ -173,8 +173,8 @@ class ToolkitUI {
                 }
             },
             { // 备份
-                icon: { symbol: "cloud" },
-                title: { text: $l10n("BACKUP") },
+                icon: {symbol: "cloud"},
+                title: {text: $l10n("BACKUP")},
                 events: {
                     tapped: async () => {
                         if (this.kernel.setting.get("advanced.domain") !== 1) {
@@ -187,10 +187,10 @@ class ToolkitUI {
                             let template_data = []
                             for (let item of globalbaks) {
                                 template_data.push({
-                                    id: { info: item.id },
-                                    name: { text: item.name },
-                                    tags: { text: item.tags.join(" ") },
-                                    date: { text: new Date(item.createTime).toLocaleString() },
+                                    id: {info: item.id},
+                                    name: {text: item.name},
+                                    tags: {text: item.tags.join(" ")},
+                                    date: {text: new Date(item.createTime).toLocaleString()},
                                 })
                             }
                             return template_data
@@ -238,7 +238,7 @@ class ToolkitUI {
                                                 font: $font(18),
                                                 align: $align.left
                                             },
-                                            layout: (make, view) => {
+                                            layout: make => {
                                                 make.top.inset(10)
                                                 make.left.inset(10)
                                             }
@@ -254,7 +254,7 @@ class ToolkitUI {
                                                 }),
                                                 align: $align.left
                                             },
-                                            layout: (make, view) => {
+                                            layout: make => {
                                                 make.bottom.inset(5)
                                                 make.left.inset(10)
                                             }
@@ -270,7 +270,7 @@ class ToolkitUI {
                                                 }),
                                                 align: $align.right
                                             },
-                                            layout: (make, view) => {
+                                            layout: make => {
                                                 make.bottom.inset(5)
                                                 make.right.inset(10)
                                             }
@@ -313,7 +313,7 @@ class ToolkitUI {
                                                             })
                                                         }
                                                     },
-                                                    { title: $l10n("CANCEL") }
+                                                    {title: $l10n("CANCEL")}
                                                 ]
                                             })
                                         }
@@ -321,7 +321,7 @@ class ToolkitUI {
                                 ]
                             },
                             events: {
-                                didSelect: (sender, indexPath, data) => {
+                                didSelect: (sender, indexPath) => {
                                     let id = sender.object(indexPath).id.info
                                     let name = sender.object(indexPath).name.text
                                     $ui.alert({
@@ -346,7 +346,7 @@ class ToolkitUI {
                                                     })
                                                 }
                                             },
-                                            { title: $l10n("CANCEL") }
+                                            {title: $l10n("CANCEL")}
                                         ]
                                     })
                                 }
@@ -384,7 +384,8 @@ class ToolkitUI {
                                                     title: $l10n("OK"),
                                                     handler: () => {
                                                         this.buttpn_animate("button_backup", "arrow.up.doc", async () => {
-                                                            $("spinner_backup").alpha = 1
+                                                            let spinner_backup = $("spinner_backup")
+                                                            spinner_backup.alpha = 1
                                                             let boxjs = await this.boxdata()
                                                             let name = `BoxJsHelper-${boxjs.globalbaks.length + 1}`
                                                             let date = new Date()
@@ -407,7 +408,7 @@ class ToolkitUI {
                                                             })
                                                             if (null !== response.error) {
                                                                 $ui.toast($l10n("ERROE_BACKUP"))
-                                                                $("spinner_backup").alpha = 0
+                                                                spinner_backup.alpha = 0
                                                                 return
                                                             }
                                                             if (!this.update_iCloud(JSON.stringify(response.data))) {
@@ -415,11 +416,11 @@ class ToolkitUI {
                                                             }
                                                             // 更新列表
                                                             $("list_backup").data = await template_backup_list()
-                                                            $("spinner_backup").alpha = 0
+                                                            spinner_backup.alpha = 0
                                                         })
                                                     }
                                                 },
-                                                { title: $l10n("CANCEL") }
+                                                {title: $l10n("CANCEL")}
                                             ]
                                         })
                                     }
@@ -460,7 +461,8 @@ class ToolkitUI {
                                                     handler: () => {
                                                         // 播放动画
                                                         this.buttpn_animate("button_revert", "arrow.clockwise", async () => {
-                                                            $("spinner_revert").alpha = 1
+                                                            let spinner_revert = $("spinner_revert")
+                                                            spinner_revert.alpha = 1
                                                             // 从iCloud恢复
                                                             let globalbaks = $file.read(`${this.iCloud}globalbaks.json`)
                                                             globalbaks = JSON.parse(globalbaks.string).globalbaks
@@ -468,7 +470,7 @@ class ToolkitUI {
                                                                 // 先删除，防止重复
                                                                 await $http.post({
                                                                     url: `${this.kernel.serverURL.string}api/delGlobalBak`,
-                                                                    body: { id: item.id }
+                                                                    body: {id: item.id}
                                                                 })
                                                                 // 添加新的备份到BoxJs
                                                                 await $http.post({
@@ -478,11 +480,11 @@ class ToolkitUI {
                                                             }
                                                             // 更新列表
                                                             $("list_backup").data = await template_backup_list()
-                                                            $("spinner_revert").alpha = 0
+                                                            spinner_revert.alpha = 0
                                                         })
                                                     }
                                                 },
-                                                { title: $l10n("CANCEL") }
+                                                {title: $l10n("CANCEL")}
                                             ]
                                         })
                                     }
@@ -497,7 +499,7 @@ class ToolkitUI {
                 }
             },
             { // Today
-                icon: { symbol: "calendar" },
+                icon: {symbol: "calendar"},
                 title: {
                     text: $l10n("TODAY")
                 },
@@ -513,7 +515,7 @@ class ToolkitUI {
                             let template_data = []
                             for (let i = 0; i < files.length; i++) {
                                 template_data.push({
-                                    label: { text: files[i] }
+                                    label: {text: files[i]}
                                 })
                             }
                             return template_data
@@ -598,7 +600,7 @@ class ToolkitUI {
                                                             sender.delete(indexPath)
                                                         }
                                                     },
-                                                    { title: $l10n("CANCEL") }
+                                                    {title: $l10n("CANCEL")}
                                                 ]
                                             })
                                         }
@@ -663,12 +665,15 @@ class ToolkitUI {
                                             },
                                             events: {
                                                 tapped: () => {
+                                                    let editor = $("editor")
                                                     $file.write({
-                                                        data: $data({ string: $("editor").text }),
-                                                        path: $("editor").info
+                                                        data: $data({string: editor.text}),
+                                                        path: editor.info
                                                     })
                                                     $ui.toast($l10n("SUCCESS_SAVE"))
-                                                    setTimeout(() => { $ui.pop() }, 600)
+                                                    setTimeout(() => {
+                                                        $ui.pop()
+                                                    }, 600)
                                                 }
                                             }
                                         }
@@ -721,18 +726,19 @@ class ToolkitUI {
                                                         placeholder: $l10n("URL"),
                                                         handler: text => {
                                                             this.buttpn_animate("script_from_url", "plus", async () => {
-                                                                $("spinner_script_from_url").alpha = 1
+                                                                let spinner_script_from_url = $("spinner_script_from_url")
+                                                                spinner_script_from_url.alpha = 1
                                                                 let content = await $http.get(text)
                                                                 let name = text.slice(text.lastIndexOf("/") + 1)
                                                                 if (name.slice(-3) !== ".js") {
                                                                     name = name + ".js"
                                                                 }
                                                                 $file.write({
-                                                                    data: $data({ string: content.data + "" }),
+                                                                    data: $data({string: content.data + ""}),
                                                                     path: this.path_today + name
                                                                 })
                                                                 $("list_script").data = template_script(this.path_today)
-                                                                $("spinner_script_from_url").alpha = 0
+                                                                spinner_script_from_url.alpha = 0
                                                             })
                                                         }
                                                     })
@@ -749,7 +755,7 @@ class ToolkitUI {
                             {
                                 type: "spinner",
                                 props: {
-                                    id: "spinner_script_icloud",
+                                    id: "spinner_script_iCloud",
                                     loading: true,
                                     alpha: 0
                                 },
@@ -761,7 +767,7 @@ class ToolkitUI {
                             { // 备份恢复
                                 type: "button",
                                 props: {
-                                    id: "button_script_icloud",
+                                    id: "button_script_iCloud",
                                     tintColor: this.factory.text_color,
                                     symbol: "cloud",
                                     bgcolor: $color("clear")
@@ -772,9 +778,10 @@ class ToolkitUI {
                                             items: [$l10n("BACKUP_ICLOUD"), $l10n("REVERT_FROM_ICLOUD")],
                                             handler: (title, idx) => {
                                                 if (idx === 0) { // 备份
-                                                    this.buttpn_animate("button_script_icloud", "cloud", () => {
+                                                    this.buttpn_animate("button_script_iCloud", "cloud", () => {
                                                         // 备份文件
-                                                        $("spinner_script_icloud").alpha = 1
+                                                        let spinner_script_iCloud = $("spinner_script_iCloud")
+                                                        spinner_script_iCloud.alpha = 1
                                                         let dst = this.iCloud + "Today"
                                                         if (!$file.exists(dst)) {
                                                             $file.mkdir(dst)
@@ -783,12 +790,13 @@ class ToolkitUI {
                                                             src: this.path_today,
                                                             dst: dst
                                                         })
-                                                        $("spinner_script_icloud").alpha = 0
+                                                        spinner_script_iCloud.alpha = 0
                                                     })
                                                 } else if (idx === 1) { // 恢复
-                                                    this.buttpn_animate("button_script_icloud", "cloud", () => {
+                                                    this.buttpn_animate("button_script_iCloud", "cloud", () => {
                                                         // 恢复文件
-                                                        $("spinner_script_icloud").alpha = 1
+                                                        let spinner_script_iCloud = $("spinner_script_iCloud")
+                                                        spinner_script_iCloud.alpha = 1
                                                         if (!$file.exists(this.path_today)) {
                                                             $file.mkdir(this.path_today)
                                                         }
@@ -797,7 +805,7 @@ class ToolkitUI {
                                                             dst: this.path_today
                                                         })
                                                         $("list_script").data = template_script(this.path_today)
-                                                        $("spinner_script_icloud").alpha = 0
+                                                        spinner_script_iCloud.alpha = 0
                                                     })
                                                 }
                                             }
@@ -898,9 +906,10 @@ class ToolkitUI {
                 },
                 events: {
                     tapped: () => {
+                        let editor_new = $("editor_new")
                         $file.write({
-                            data: $data({ string: $("editor_new").text }),
-                            path: $("editor_new").info
+                            data: $data({string: editor_new.text}),
+                            path: editor_new.info
                         })
                         $ui.toast($l10n("SUCCESS_SAVE"))
                         setTimeout(() => {
@@ -928,14 +937,14 @@ class ToolkitUI {
             $file.mkdir(this.iCloud)
         }
         return $file.write({
-            data: $data({ string: data }),
+            data: $data({string: data}),
             path: `${this.iCloud}globalbaks.json`
         })
     }
 
     /**
      * 卡片内容样式
-     * @param {*} data 
+     * @param {*} data
      */
     template(data) {
         let views = [

@@ -19,12 +19,16 @@ class HomeUI {
                 actions: [
                     {
                         title: $l10n("OK"),
-                        handler: () => { refresh_action() }
+                        handler: () => {
+                            refresh_action()
+                        }
                     },
-                    { title: $l10n("CANCEL") }
+                    {title: $l10n("CANCEL")}
                 ]
             })
-        } else { refresh_action() }
+        } else {
+            refresh_action()
+        }
     }
 
     get_views() {

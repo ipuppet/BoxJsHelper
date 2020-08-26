@@ -101,7 +101,7 @@ class BaseUI {
     standard_header(id, title) {
         return {
             type: "view",
-            info: { id: id, title: title }, // 供动画使用
+            info: {id: id, title: title}, // 供动画使用
             props: {
                 height: 90
             },
@@ -197,14 +197,11 @@ class BaseUI {
                 didSelect: (sender, indexPath) => {
                     this.selected_page = indexPath.item
                     for (let i = 0; i < this.page_index.length; i++) {
-                        if (i === this.selected_page) {
-                            $(this.page_index[i]).hidden = false
-                        }
-                        else {
-                            $(this.page_index[i]).hidden = true
-                        }
+                        $(this.page_index[i]).hidden = i !== this.selected_page
                     }
-                    setTimeout(() => { sender.data = this.template_menu() }, 100)
+                    setTimeout(() => {
+                        sender.data = this.template_menu()
+                    }, 100)
                 }
             }
         }
