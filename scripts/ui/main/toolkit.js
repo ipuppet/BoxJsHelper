@@ -140,6 +140,7 @@ class ToolkitUI {
                         }], $l10n("TOOLKIT"), [{
                             type: "button",
                             props: {
+                                tintColor: this.factory.text_color,
                                 symbol: "trash",
                                 bgcolor: $color("clear")
                             },
@@ -366,6 +367,7 @@ class ToolkitUI {
                             {
                                 type: "button",
                                 props: {
+                                    tintColor: this.factory.text_color,
                                     id: "button_backup",
                                     symbol: "arrow.up.doc",
                                     bgcolor: $color("clear"),
@@ -444,6 +446,7 @@ class ToolkitUI {
                             {
                                 type: "button",
                                 props: {
+                                    tintColor: this.factory.text_color,
                                     id: "button_revert",
                                     symbol: "arrow.clockwise",
                                     bgcolor: $color("clear"),
@@ -535,17 +538,21 @@ class ToolkitUI {
                             script = script.slice(script.lastIndexOf("/") + 1)
                             return script
                         }
-                        let path_today = "/scripts/today/"
-                        let files = $file.list(path_today)
-                        let template_data = []
-                        for (let i = 0; i < files.length; i++) {
-                            template_data.push({
-                                label: { text: files[i] }
-                            })
+                        let path_today = "/assets/today/"
+                        const template_script = (path) => {
+                            let files = $file.list(path)
+                            let template_data = []
+                            for (let i = 0; i < files.length; i++) {
+                                template_data.push({
+                                    label: { text: files[i] }
+                                })
+                            }
+                            return template_data
                         }
                         this.factory.push([{
                             type: "list",
                             props: {
+                                id: "list_script",
                                 header: {
                                     type: "view",
                                     props: {
@@ -590,7 +597,7 @@ class ToolkitUI {
                                         }
                                     ]
                                 },
-                                data: template_data,
+                                data: template_script(path_today),
                                 template: [
                                     {
                                         type: "label",
@@ -617,8 +624,9 @@ class ToolkitUI {
                                                     {
                                                         title: $l10n("OK"),
                                                         handler: () => {
-                                                            let file = files[indexPath.item]
+                                                            let file = sender.object(indexPath).label.text
                                                             $file.delete(path_today + file)
+                                                            sender.delete(indexPath)
                                                         }
                                                     },
                                                     { title: $l10n("CANCEL") }
@@ -700,9 +708,10 @@ class ToolkitUI {
                             },
                             layout: $layout.fillSafeArea
                         }], $l10n("TOOLKIT"), [
-                            {
+                            { // 更新缓存
                                 type: "button",
                                 props: {
+                                    tintColor: this.factory.text_color,
                                     symbol: "arrow.clockwise",
                                     id: "refresh_today_cache",
                                     bgcolor: $color("clear")
@@ -760,12 +769,119 @@ class ToolkitUI {
                                     make.right.inset(20)
                                     make.size.equalTo(20)
                                 }
+                            },
+                            { // 新脚本
+                                type: "button",
+                                props: {
+                                    tintColor: this.factory.text_color,
+                                    symbol: "plus",
+                                    bgcolor: $color("clear")
+                                },
+                                events: {
+                                    tapped: () => {
+                                        $ui.menu({
+                                            // items: [$l10n("NEW_FILE"), $l10n("URL")],
+                                            items: [$l10n("NEW_FILE")],
+                                            handler: (title, idx) => {
+                                                if (idx === 0) {
+                                                    $input.text({
+                                                        type: $kbType.default,
+                                                        text: "MyScript",
+                                                        placeholder: $l10n("FILE_NAME"),
+                                                        handler: text => {
+                                                            this.new_file(path_today, text, () => {
+                                                                setTimeout(() => {
+                                                                    $("list_script").data = template_script(path_today)
+                                                                }, 500)
+                                                            })
+                                                        }
+                                                    })
+                                                } else if (idx === 1) {
+                                                    $input.text({
+                                                        type: $kbType.url,
+                                                        placeholder: $l10n("URL"),
+                                                        handler: text => {
+                                                            // TODO 从URL添加
+                                                        }
+                                                    })
+                                                }
+                                            }
+                                        })
+                                    }
+                                },
+                                layout: make => {
+                                    make.right.inset(60)
+                                    make.size.equalTo(20)
+                                }
                             }
                         ])
                     }
                 }
             }
         ]
+    }
+
+    new_file(path, name, callback) {
+        this.factory.push([
+            {
+                type: "text",
+                props: {
+                    id: "editor_new",
+                    info: path + name + ".js",
+                    textColor: $color("primaryText", "secondaryText"),
+                    text: ""
+                },
+                layout: (make, view) => {
+                    make.left.right.bottom.equalTo(view.super.safeArea)
+                    make.top.equalTo(view.super.safeAreaTop).offset(10)
+                }
+            },
+            {
+                type: "canvas",
+                layout: (make, view) => {
+                    make.top.equalTo(view.prev.top)
+                    make.height.equalTo(1 / $device.info.screen.scale)
+                    make.left.right.inset(0)
+                },
+                events: {
+                    draw: (view, ctx) => {
+                        let width = view.frame.width
+                        let scale = $device.info.screen.scale
+                        ctx.strokeColor = $color("gray")
+                        ctx.setLineWidth(1 / scale)
+                        ctx.moveToPoint(0, 0)
+                        ctx.addLineToPoint(width, 0)
+                        ctx.strokePath()
+                    }
+                }
+            }
+        ], $l10n("TODAY"), [
+            {
+                type: "button",
+                props: {
+                    symbol: "checkmark",
+                    tintColor: this.factory.text_color,
+                    bgcolor: $color("clear")
+                },
+                layout: make => {
+                    make.right.inset(20)
+                    make.size.equalTo(20)
+                },
+                events: {
+                    tapped: () => {
+                        $file.write({
+                            data: $data({ string: $("editor_new").text }),
+                            path: $("editor_new").info
+                        })
+                        $ui.toast($l10n("SUCCESS_SAVE"))
+                        setTimeout(() => {
+                            $ui.pop()
+                            callback()
+                        }, 600)
+                    }
+                }
+            }
+        ])
     }
 
     async update_today_cache() {
@@ -832,7 +948,9 @@ class ToolkitUI {
         let views = [
             {
                 type: "image",
-                props: Object.assign({}, data.icon),
+                props: Object.assign({
+                    tintColor: this.factory.text_color
+                }, data.icon),
                 layout: make => {
                     make.top.left.inset(10)
                     make.size.equalTo(30)

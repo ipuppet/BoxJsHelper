@@ -2,6 +2,7 @@
 "TF_ONLY" = "仅TF版BoxJs可用，若已是TF版，可在设置中将入口切换到'.net'";
 "SUCCESS" = "成功";
 "ERROR" = "发生错误";
+"INVALID_VALUE" = "该值无效";
 "OK" = "好";
 "CANCEL" = "取消";
 "BACK" = "返回";
@@ -32,6 +33,9 @@
 "TODAY" = "Today小组件";
 "SELECTED_SCRIPT" = "当前脚本";
 "REFRESH_TODAY_CACHE_NOW" = "立即刷新Today数据缓存？";
+"URL" = "从URL添加";
+"NEW_FILE" = "新建文件";
+"FILE_NAME" = "文件名称";
 "APPLY" = "应用";
 "SUCCESS_SAVE" = "保存成功";
 

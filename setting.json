@@ -41,7 +41,7 @@
             },
             {
                 "title": "PORT",
-                "type": "string",
+                "type": "number",
                 "key": "advanced.server_port",
                 "value": 6060
             },
