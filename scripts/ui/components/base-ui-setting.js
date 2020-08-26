@@ -174,6 +174,55 @@ class BaseUISetting {
         }
     }
 
+    create_number(key, title, number = "") {
+        return {
+            type: "view",
+            views: [
+                this.create_line_label(title),
+                {
+                    type: "label",
+                    props: {
+                        id: key,
+                        align: $align.right,
+                        text: number
+                    },
+                    events: {
+                        tapped: () => {
+                            $input.text({
+                                type: $kbType.number,
+                                text: number,
+                                placeholder: title,
+                                handler: (text) => {
+                                    const is_number = (str) => {
+                                        var reg = /^[0-9]+.?[0-9]*$/
+                                        if (reg.test(str)) {
+                                            return true
+                                        }
+                                        return false
+                                    }
+                                    if (text === "" || !is_number(text)) {
+                                        $ui.toast($l10n("INVALID_VALUE"))
+                                        return
+                                    }
+                                    if (this.update_setting(key, text)) {
+                                        $(key).text = text
+                                    }
+                                }
+                            })
+                        }
+                    },
+                    layout: (make, view) => {
+                        make.centerY.equalTo(view.prev)
+                        make.right.inset(15)
+                        make.height.equalTo(50)
+                        make.width.equalTo(100)
+                    }
+                }
+            ],
+            layout: $layout.fill,
+        }
+    }
+
     create_stepper(key, title, value = 1, min = 1, max = 12) {
         return {
             type: "view",
@@ -338,6 +387,9 @@ class BaseUISetting {
                         break
                     case "string":
                         row = this.create_string(item.key, $l10n(item.title), value)
+                        break
+                    case "number":
+                        row = this.create_number(item.key, $l10n(item.title), value)
                         break
                     case "info":
                         row = this.create_info($l10n(item.title), value)
