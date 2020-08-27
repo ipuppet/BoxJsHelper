@@ -33,10 +33,13 @@
 "DELETE" = "删除";
 "TODAY" = "Today小组件";
 "SELECTED_SCRIPT" = "选中的脚本";
-"REFRESH_TODAY_CACHE_NOW" = "立即刷新Today数据缓存？";
+"NO_SCRIPT_FROM_URL" = "没有从URL获取的脚本";
+"UPDATE_ALL_SCRIPT" = "更新所有脚本？";
+"UPDATE" = "更新所有脚本？";
 "URL" = "从URL添加";
 "NEW_FILE" = "新建文件";
 "FILE_NAME" = "文件名称";
+"EDIT" = "编辑";
 "APPLY" = "应用";
 "SUCCESS_SAVE" = "保存成功";
 
