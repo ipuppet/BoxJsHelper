@@ -9,9 +9,7 @@ class SettingUI extends BaseUISetting {
         const content = $file.read("/README.md").string
         this.factory.push([{
             type: "markdown",
-            props: {
-                content: content,
-            },
+            props: { content: content },
             layout: (make, view) => {
                 make.size.equalTo(view.super)
             }
@@ -25,7 +23,7 @@ class SettingUI extends BaseUISetting {
         可在底部README中查看更多信息。`
         $ui.alert({
             title: $l10n("TIPS"),
-            message: message,
+            message: message
         })
     }
 }

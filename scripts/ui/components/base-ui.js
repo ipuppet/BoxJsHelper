@@ -64,9 +64,7 @@ class BaseUI {
             views: [
                 {
                     type: "view",
-                    props: {
-                        clipsToBounds: true,
-                    },
+                    props: { clipsToBounds: true },
                     layout: $layout.fillSafeArea,
                     views: [
                         {
@@ -101,7 +99,7 @@ class BaseUI {
     standard_header(id, title) {
         return {
             type: "view",
-            info: {id: id, title: title}, // 供动画使用
+            info: { id: id, title: title }, // 供动画使用
             props: {
                 height: 90
             },
@@ -167,7 +165,7 @@ class BaseUI {
                             make.centerX.equalTo(view.super)
                             make.size.equalTo(25)
                             make.top.inset(7)
-                        },
+                        }
                     },
                     {
                         type: "label",
@@ -181,7 +179,7 @@ class BaseUI {
                         }
                     }
                 ],
-                data: this.template_menu(),
+                data: this.template_menu()
             },
             layout: (make, view) => {
                 make.top.inset(0)
@@ -218,7 +216,7 @@ class BaseUI {
             props: {
                 id: this.page_index[index],
                 hidden: this.selected_page !== index,
-                clipsToBounds: true,
+                clipsToBounds: true
             },
             layout: (make, view) => {
                 make.size.equalTo(view.super)
@@ -235,15 +233,13 @@ class BaseUI {
             type: "view",
             props: {
                 navBarHidden: true,
-                statusBarStyle: 0,
+                statusBarStyle: 0
             },
             layout: $layout.fill,
             views: [
                 {
                     type: "view",
-                    props: {
-                        clipsToBounds: true,
-                    },
+                    props: { clipsToBounds: true },
                     layout: $layout.fill,
                     views: this.views
                 },
@@ -256,13 +252,11 @@ class BaseUI {
                     views: [
                         {
                             type: "blur",
-                            props: {
-                                style: this.blur_style,
-                            },
-                            layout: $layout.fill,
+                            props: { style: this.blur_style },
+                            layout: $layout.fill
                         },
                         this.menu()
-                    ],
+                    ]
                 },
                 {
                     type: "canvas",

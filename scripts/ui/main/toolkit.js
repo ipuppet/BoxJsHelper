@@ -12,22 +12,22 @@ class ToolkitUI {
         this.matrix.spacing = 15
         this.data = [ // 工具箱卡片
             { // 刷新BoxJs
-                icon: {symbol: "arrow.clockwise"},
+                icon: { symbol: "arrow.clockwise" },
                 title: {
                     text: $l10n("REFRESH") + $l10n("BOXJS")
                 },
                 events: {
                     tapped: () => {
-                        require('/scripts/ui/main/home').refresh(this.kernel.setting.get("general.refresh_confirm"))
+                        require("/scripts/ui/main/home").refresh(this.kernel.setting.get("general.refresh_confirm"))
                     }
                 }
             },
             { // 远程访问
-                icon: {symbol: "paperplane"},
-                title: {text: $l10n("REMOTE_ACCESS")},
+                icon: { symbol: "paperplane" },
+                title: { text: $l10n("REMOTE_ACCESS") },
                 extra: {
                     type: "switch",
-                    props: {on: this.kernel.setting.get("server.remote_access")},
+                    props: { on: this.kernel.setting.get("server.remote_access") },
                     events: {
                         changed: sender => {
                             if (sender.on) {
@@ -47,11 +47,11 @@ class ToolkitUI {
                 }
             },
             { // 日志记录
-                icon: {symbol: "doc.text"},
-                title: {text: $l10n("LOG")},
+                icon: { symbol: "doc.text" },
+                title: { text: $l10n("LOG") },
                 extra: {
                     type: "switch",
-                    props: {on: this.kernel.setting.get("server.log_request")},
+                    props: { on: this.kernel.setting.get("server.log_request") },
                     events: {
                         changed: sender => {
                             if (sender.on) {
@@ -69,9 +69,7 @@ class ToolkitUI {
                             let files = $file.list(path)
                             let template_data = []
                             for (let file of files) {
-                                template_data.push({
-                                    label: {text: file}
-                                })
+                                template_data.push({ label: { text: file } })
                             }
                             return template_data
                         }
@@ -82,9 +80,7 @@ class ToolkitUI {
                                 id: "list_log",
                                 header: {
                                     type: "view",
-                                    props: {
-                                        height: 70,
-                                    },
+                                    props: { height: 70 },
                                     views: [
                                         {
                                             type: "label",
@@ -106,7 +102,7 @@ class ToolkitUI {
                                         type: "label",
                                         props: {
                                             id: "label",
-                                            textColor: $color("primaryText", "secondaryText"),
+                                            textColor: $color("primaryText", "secondaryText")
                                         },
                                         layout: (make, view) => {
                                             make.left.inset(10)
@@ -159,7 +155,7 @@ class ToolkitUI {
                                                     $("list_log").data = template_log_list(path_log)
                                                 }
                                             },
-                                            {title: $l10n("CANCEL")}
+                                            { title: $l10n("CANCEL") }
                                         ]
                                     })
                                 }
@@ -173,8 +169,8 @@ class ToolkitUI {
                 }
             },
             { // 备份
-                icon: {symbol: "cloud"},
-                title: {text: $l10n("BACKUP")},
+                icon: { symbol: "cloud" },
+                title: { text: $l10n("BACKUP") },
                 events: {
                     tapped: async () => {
                         if (this.kernel.setting.get("advanced.domain") !== 1) {
@@ -187,10 +183,10 @@ class ToolkitUI {
                             let template_data = []
                             for (let item of globalbaks) {
                                 template_data.push({
-                                    id: {info: item.id},
-                                    name: {text: item.name},
-                                    tags: {text: item.tags.join(" ")},
-                                    date: {text: new Date(item.createTime).toLocaleString()},
+                                    id: { info: item.id },
+                                    name: { text: item.name },
+                                    tags: { text: item.tags.join(" ") },
+                                    date: { text: new Date(item.createTime).toLocaleString() }
                                 })
                             }
                             return template_data
@@ -203,9 +199,7 @@ class ToolkitUI {
                                 id: "list_backup",
                                 header: {
                                     type: "view",
-                                    props: {
-                                        height: 70,
-                                    },
+                                    props: { height: 70 },
                                     views: [
                                         {
                                             type: "label",
@@ -313,7 +307,7 @@ class ToolkitUI {
                                                             })
                                                         }
                                                     },
-                                                    {title: $l10n("CANCEL")}
+                                                    { title: $l10n("CANCEL") }
                                                 ]
                                             })
                                         }
@@ -346,7 +340,7 @@ class ToolkitUI {
                                                     })
                                                 }
                                             },
-                                            {title: $l10n("CANCEL")}
+                                            { title: $l10n("CANCEL") }
                                         ]
                                     })
                                 }
@@ -403,7 +397,7 @@ class ToolkitUI {
                                                                     ],
                                                                     version: boxjs.syscfgs.version,
                                                                     versionType: boxjs.syscfgs.versionType,
-                                                                    env: boxjs.syscfgs.env,
+                                                                    env: boxjs.syscfgs.env
                                                                 }
                                                             })
                                                             if (null !== response.error) {
@@ -420,7 +414,7 @@ class ToolkitUI {
                                                         })
                                                     }
                                                 },
-                                                {title: $l10n("CANCEL")}
+                                                { title: $l10n("CANCEL") }
                                             ]
                                         })
                                     }
@@ -470,7 +464,7 @@ class ToolkitUI {
                                                                 // 先删除，防止重复
                                                                 await $http.post({
                                                                     url: `${this.kernel.serverURL.string}api/delGlobalBak`,
-                                                                    body: {id: item.id}
+                                                                    body: { id: item.id }
                                                                 })
                                                                 // 添加新的备份到BoxJs
                                                                 await $http.post({
@@ -484,7 +478,7 @@ class ToolkitUI {
                                                         })
                                                     }
                                                 },
-                                                {title: $l10n("CANCEL")}
+                                                { title: $l10n("CANCEL") }
                                             ]
                                         })
                                     }
@@ -499,7 +493,7 @@ class ToolkitUI {
                 }
             },
             { // Today
-                icon: {symbol: "calendar"},
+                icon: { symbol: "calendar" },
                 title: {
                     text: $l10n("TODAY")
                 },
@@ -514,9 +508,7 @@ class ToolkitUI {
                             let files = $file.list(path)
                             let template_data = []
                             for (let i = 0; i < files.length; i++) {
-                                template_data.push({
-                                    label: {text: files[i]}
-                                })
+                                template_data.push({ label: { text: files[i] } })
                             }
                             return template_data
                         }
@@ -526,9 +518,7 @@ class ToolkitUI {
                                 id: "list_script",
                                 header: {
                                     type: "view",
-                                    props: {
-                                        height: 90,
-                                    },
+                                    props: { height: 90 },
                                     views: [
                                         {
                                             type: "label",
@@ -574,7 +564,7 @@ class ToolkitUI {
                                         type: "label",
                                         props: {
                                             id: "label",
-                                            textColor: $color("primaryText", "secondaryText"),
+                                            textColor: $color("primaryText", "secondaryText")
                                         },
                                         layout: (make, view) => {
                                             make.left.inset(10)
@@ -600,7 +590,7 @@ class ToolkitUI {
                                                             sender.delete(indexPath)
                                                         }
                                                     },
-                                                    {title: $l10n("CANCEL")}
+                                                    { title: $l10n("CANCEL") }
                                                 ]
                                             })
                                         }
@@ -667,7 +657,7 @@ class ToolkitUI {
                                                 tapped: () => {
                                                     let editor = $("editor")
                                                     $file.write({
-                                                        data: $data({string: editor.text}),
+                                                        data: $data({ string: editor.text }),
                                                         path: editor.info
                                                     })
                                                     $ui.toast($l10n("SUCCESS_SAVE"))
@@ -734,7 +724,7 @@ class ToolkitUI {
                                                                     name = name + ".js"
                                                                 }
                                                                 $file.write({
-                                                                    data: $data({string: content.data + ""}),
+                                                                    data: $data({ string: content.data + "" }),
                                                                     path: this.path_today + name
                                                                 })
                                                                 $("list_script").data = template_script(this.path_today)
@@ -908,7 +898,7 @@ class ToolkitUI {
                     tapped: () => {
                         let editor_new = $("editor_new")
                         $file.write({
-                            data: $data({string: editor_new.text}),
+                            data: $data({ string: editor_new.text }),
                             path: editor_new.info
                         })
                         $ui.toast($l10n("SUCCESS_SAVE"))
@@ -937,7 +927,7 @@ class ToolkitUI {
             $file.mkdir(this.iCloud)
         }
         return $file.write({
-            data: $data({string: data}),
+            data: $data({ string: data }),
             path: `${this.iCloud}globalbaks.json`
         })
     }
@@ -962,12 +952,12 @@ class ToolkitUI {
                 type: "label",
                 props: Object.assign({
                     font: $font(18),
-                    textColor: $color("primaryText", "secondaryText"),
+                    textColor: $color("primaryText", "secondaryText")
                 }, data.title),
                 layout: make => {
                     make.bottom.left.inset(10)
                 }
-            },
+            }
         ]
         if (data.extra) {
             views.push({
@@ -1001,7 +991,7 @@ class ToolkitUI {
                     align: $align.left,
                     font: $font("bold", 34),
                     textColor: $color("primaryText", "secondaryText"),
-                    line: 1,
+                    line: 1
                 },
                 layout: (make, view) => {
                     make.left.inset(10)

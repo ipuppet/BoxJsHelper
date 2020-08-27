@@ -23,7 +23,7 @@ class HomeUI {
                             refresh_action()
                         }
                     },
-                    {title: $l10n("CANCEL")}
+                    { title: $l10n("CANCEL") }
                 ]
             })
         } else {

@@ -63,9 +63,9 @@ class Server {
         }
         // 检查结构
         if (typeof content.data === "object")
-            response = {json: content.data}
+            response = { json: content.data }
         else
-            response = {html: content.data + ""}
+            response = { html: content.data + "" }
         return response
     }
 
@@ -78,7 +78,7 @@ class Server {
             if (this.setting.get("server.remote_access")) {
                 response = await this.response(request)
             } else {
-                response = {statusCode: 400, hasBody: false}
+                response = { statusCode: 400, hasBody: false }
             }
         }
         completion({

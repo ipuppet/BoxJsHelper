@@ -7,7 +7,7 @@ function cache_data(boxdata) {
     if (new Date().getTime() - $cache.get("today_10010_cache_date") < 1000 * 60 * 60 * 24) {
         return
     }
-    let cookie = JSON.parse(boxdata.datas["chavy_signheader_10010"])['Cookie']
+    let cookie = JSON.parse(boxdata.datas["chavy_signheader_10010"])["Cookie"]
     $cache.set("today_10010_cookie", cookie)
     let start_index = cookie.indexOf("req_mobile=")
     let end_index = cookie.indexOf(";", start_index)
@@ -57,7 +57,7 @@ function template_fee(data) {
                 type: "label",
                 props: {
                     text: `${data.title}: ${data.number}${data.unit}`,
-                    font: $font(14),
+                    font: $font(14)
                 },
                 layout: make => {
                     make.left.right.inset(10)
@@ -100,7 +100,7 @@ function template(data) {
                 type: "label",
                 props: {
                     text: text_left,
-                    font: $font(14),
+                    font: $font(14)
                 },
                 layout: make => {
                     make.left.right.inset(10)
@@ -126,7 +126,7 @@ function template(data) {
                     cornerRadius: 3,
                     hidden: persent_hidden,
                     progressColor: get_color(data.persent / 100),
-                    trackColor: $color("clear"),
+                    trackColor: $color("clear")
 
                 },
                 layout: (make, view) => {

@@ -7,25 +7,25 @@ class Factory extends BaseUI {
         this.page_index = [// 通过索引获取页面id
             "home",// 0 => 首页
             "server",// 1 => 服务器
-            "setting",// 2 => 设置
+            "setting"// 2 => 设置
         ]
         this.views = [
             this.home(),
             this.server(),
-            this.setting(),
+            this.setting()
         ]
         this.menu_data = [
             {
-                icon: {symbol: "cube"},
-                title: {text: $l10n("BOXJS")}
+                icon: { symbol: "cube" },
+                title: { text: $l10n("BOXJS") }
             },
             {
-                icon: {symbol: "square.grid.2x2"},
-                title: {text: $l10n("TOOLKIT")}
+                icon: { symbol: "square.grid.2x2" },
+                title: { text: $l10n("TOOLKIT") }
             },
             {
-                icon: {symbol: "gear"},
-                title: {text: $l10n("SETTING")}
+                icon: { symbol: "gear" },
+                title: { text: $l10n("SETTING") }
             }
         ]
     }

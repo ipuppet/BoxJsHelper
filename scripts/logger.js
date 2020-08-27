@@ -24,7 +24,7 @@ class Logger {
         let old_content = file ? file.string : ""
         let content = `${new Date().toISOString()} [${level}] ${message}\n`
         $file.write({
-            data: $data({string: old_content + content}),
+            data: $data({ string: old_content + content }),
             path: path
         })
     }

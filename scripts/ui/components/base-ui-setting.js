@@ -1,4 +1,4 @@
-const info = JSON.parse($file.read("/config.json"))['info']
+const info = JSON.parse($file.read("/config.json"))["info"]
 const List = require("./list")
 
 class BaseUISetting {
@@ -63,7 +63,7 @@ class BaseUISetting {
                                             $ui.toast($l10n("COPY_SUCCESS"))
                                         }
                                     },
-                                    {title: $l10n("OK")}
+                                    { title: $l10n("OK") }
                                 ]
                             })
                         }
@@ -74,7 +74,7 @@ class BaseUISetting {
                     }
                 }
             ],
-            layout: $layout.fill,
+            layout: $layout.fill
         }
     }
 
@@ -101,7 +101,7 @@ class BaseUISetting {
                     }
                 }
             ],
-            layout: $layout.fill,
+            layout: $layout.fill
         }
     }
 
@@ -115,7 +115,7 @@ class BaseUISetting {
                     props: {
                         symbol: "square.and.pencil",
                         bgcolor: $color("clear"),
-                        tintColor: $color("primaryText"),
+                        tintColor: $color("primaryText")
                     },
                     events: {
                         tapped: sender => {
@@ -144,7 +144,7 @@ class BaseUISetting {
                                             symbol: "checkmark",
                                             bgcolor: $color("clear"),
                                             titleEdgeInsets: 10,
-                                            contentEdgeInsets: 0,
+                                            contentEdgeInsets: 0
                                         },
                                         layout: make => {
                                             make.right.inset(10)
@@ -170,7 +170,7 @@ class BaseUISetting {
                     }
                 }
             ],
-            layout: $layout.fill,
+            layout: $layout.fill
         }
     }
 
@@ -216,7 +216,7 @@ class BaseUISetting {
                     }
                 }
             ],
-            layout: $layout.fill,
+            layout: $layout.fill
         }
     }
 
@@ -259,7 +259,7 @@ class BaseUISetting {
                     }
                 }
             ],
-            layout: $layout.fill,
+            layout: $layout.fill
         }
     }
 
@@ -305,7 +305,7 @@ class BaseUISetting {
                     }
                 }
             ],
-            layout: $layout.fill,
+            layout: $layout.fill
         }
     }
 
@@ -322,7 +322,7 @@ class BaseUISetting {
                     props: {
                         items: items,
                         index: value,
-                        dynamicWidth: true,
+                        dynamicWidth: true
                     },
                     layout: (make, view) => {
                         make.right.inset(15)
@@ -335,7 +335,7 @@ class BaseUISetting {
                     }
                 }
             ],
-            layout: $layout.fill,
+            layout: $layout.fill
         }
     }
 
@@ -343,9 +343,7 @@ class BaseUISetting {
         let header = this.factory.standard_header("setting_title", $l10n("SETTING"))
         let footer = {
             type: "view",
-            props: {
-                height: 130,
-            },
+            props: { height: 130 },
             views: [
                 {
                     type: "label",

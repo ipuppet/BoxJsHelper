@@ -25,7 +25,7 @@ class MainUI {
             default:
                 $ui.alert({
                     title: $l10n("ALERT_INFO"),
-                    message: "未开发！",
+                    message: "未开发！"
                 })
         }
     }

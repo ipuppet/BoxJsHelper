@@ -8,7 +8,7 @@
 function main(boxdata) {
     $ui.alert({
         title: "Hi",
-        message: boxdata.sysapps[0].author,
+        message: boxdata.sysapps[0].author
     })
 }
 

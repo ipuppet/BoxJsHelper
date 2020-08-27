@@ -21,7 +21,7 @@ class Setting {
     set(key, value) {
         this.setting[key] = value
         $file.write({
-            data: $data({string: JSON.stringify(this.setting)}),
+            data: $data({ string: JSON.stringify(this.setting) }),
             path: this.path
         })
         return true

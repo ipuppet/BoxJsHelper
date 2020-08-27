@@ -28,7 +28,7 @@ class List {
                         indicatorInsets: $insets(40, 0, 50, 0),
                         header: header,
                         footer: footer,
-                        data: data,
+                        data: data
                     },
                     events: Object.assign({
                         didScroll: sender => {
@@ -45,14 +45,14 @@ class List {
                                     duration: 0.2,
                                     animation: () => {
                                         $(header.info.id + "_header").alpha = 1
-                                    },
+                                    }
                                 })
                             } else if (sender.contentOffset.y < 5) {
                                 $ui.animate({
                                     duration: 0.2,
                                     animation: () => {
                                         $(header.info.id + "_header").alpha = 0
-                                    },
+                                    }
                                 })
                             }
                         }
@@ -65,7 +65,7 @@ class List {
                 props: {
                     id: header.info.id + "_header",
                     hidden: false,
-                    alpha: 0,
+                    alpha: 0
                 },
                 layout: (make, view) => {
                     make.left.top.right.inset(0)
@@ -75,9 +75,9 @@ class List {
                     {
                         type: "blur",
                         props: {
-                            style: this.factory.blur_style,
+                            style: this.factory.blur_style
                         },
-                        layout: $layout.fill,
+                        layout: $layout.fill
                     },
                     {
                         type: "canvas",
@@ -108,13 +108,13 @@ class List {
                                 font: $font("bold", 17),
                                 align: $align.center,
                                 bgcolor: $color("clear"),
-                                textColor: this.text_color,
+                                textColor: this.text_color
                             },
                             layout: (make, view) => {
                                 make.left.right.inset(0)
                                 make.top.equalTo(view.super.safeAreaTop)
                                 make.bottom.equalTo(view.super)
-                            },
+                            }
                         }]
                     }
                 ]
