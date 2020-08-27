@@ -14,7 +14,7 @@ class BaseUI {
      * @param {*} nav_buttons 右侧按钮，需要自己调整位置
      */
     push(views, parent_title = $l10n("BACK"), nav_buttons = []) {
-        nav_buttons = [
+        nav_buttons = nav_buttons.concat([
             {
                 type: "button",
                 props: {
@@ -55,7 +55,7 @@ class BaseUI {
                     }
                 }
             }
-        ].concat(nav_buttons)
+        ])
         $ui.push({
             props: {
                 navBarHidden: true,
