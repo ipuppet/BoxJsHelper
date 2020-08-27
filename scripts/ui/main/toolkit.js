@@ -71,7 +71,8 @@ class ToolkitUI {
         // TODO 排序
         let data = []
         for (let i = 0; i < this.cards.length; i++) {
-            data[i] = this.matrix.template_card(this.template(this.cards[i]), this.cards[i]["events"])
+            let card = this.cards[i]
+            data[i] = this.matrix.template_card(this.template(card), card["events"])
         }
         return data
     }
