@@ -295,6 +295,7 @@ class TodayCard extends Card {
                                 }
                             })
                         }),
+                        // 备份脚本
                         this.factory.nav_button("script_backup", "cloud", (start, done) => {
                             $ui.menu({
                                 items: [$l10n("BACKUP_ICLOUD"), $l10n("REVERT_FROM_ICLOUD")],
@@ -326,6 +327,10 @@ class TodayCard extends Card {
                                     }
                                 }
                             })
+                        }),
+                        // 更新脚本
+                        this.factory.nav_button("script_update", "arrow.clockwise", (start, done) => {
+
                         })
                     ])
                 }
