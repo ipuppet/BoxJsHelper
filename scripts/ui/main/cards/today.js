@@ -71,7 +71,7 @@ class TodayCard extends Card {
     }
 
     card() {
-        return { // Today
+        return {
             icon: { symbol: "calendar" },
             title: { text: $l10n("TODAY") },
             events: {
