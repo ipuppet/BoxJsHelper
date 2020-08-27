@@ -92,6 +92,113 @@ class BaseUI {
     }
 
     /**
+     * 用于创建一个靠右侧按钮（自动布局）
+     * @param {String} id 不可重复
+     * @param {String} symbol symbol图标（目前只用symbol）
+     * @param {CallableFunction} tapped 按钮点击事件，会传入两个函数，start()和done(status, message)
+     *     调用 start() 表明按钮被点击，准备开始动画
+     *     调用 done() 表明您的操作已经全部完成，默认操作成功完成，播放一个按钮变成对号的动画
+     *                 若第一个参数传出false则表示运行出错
+     *                 第二个参数为错误原因($ui.toast(message))
+     *     示例：
+     *      (start, done) => {
+     *          start()
+     *          const upload = (data) => { return false }
+     *          if(upload(data)) { done() }
+     *          else { done(false, "Upload Error!") }
+     *      }
+     */
+    nav_button(id, symbol, tapped) {
+        let action_start = () => {
+            // 隐藏button，显示spinner
+            $(id).alpha = 0
+            $("spinner_" + id).alpha = 1
+        }
+
+        let action_done = (status = true, message = $l10n("ERROR")) => {
+            $("spinner_" + id).alpha = 0
+            let button = $(id)
+            if (!status) { // 失败
+                $ui.toast(message)
+                button.alpha = 1
+                return
+            }
+            // 成功动画
+            button.symbol = "checkmark"
+            $ui.animate({
+                duration: 0.6,
+                animation: () => {
+                    button.alpha = 1
+                },
+                completion: () => {
+                    setTimeout(() => {
+                        $ui.animate({
+                            duration: 0.4,
+                            animation: () => {
+                                button.alpha = 0
+                            },
+                            completion: () => {
+                                button.symbol = symbol
+                                $ui.animate({
+                                    duration: 0.4,
+                                    animation: () => {
+                                        button.alpha = 1
+                                    },
+                                    completion: () => {
+                                        button.alpha = 1
+                                    }
+                                })
+                            }
+                        })
+                    }, 600)
+                }
+            })
+        }
+        return {
+            type: "view",
+            props: { id: id },
+            views: [
+                {
+                    type: "button",
+                    props: {
+                        id: id,
+                        tintColor: this.text_color,
+                        symbol: symbol,
+                        bgcolor: $color("clear")
+                    },
+                    events: {
+                        tapped: () => {
+                            tapped(action_start, action_done)
+                        }
+                    },
+                    layout: (make, view) => {
+                        make.size.equalTo(view.super)
+                    }
+                },
+                {
+                    type: "spinner",
+                    props: {
+                        id: "spinner_" + id,
+                        loading: true,
+                        alpha: 0
+                    },
+                    layout: (make, view) => {
+                        make.size.equalTo(view.prev)
+                    }
+                }
+            ],
+            layout: (make, view) => {
+                make.size.equalTo(20)
+                if (view.prev) {
+                    make.right.equalTo(view.prev.left).offset(-20)
+                } else {
+                    make.right.inset(20)
+                }
+            }
+        }
+    }
+
+    /**
      * 标准页面头
      * @param {*} id 标题id
      * @param {*} title 标题文本
