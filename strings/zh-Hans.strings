@@ -32,7 +32,7 @@
 "SUCCESS_RECOVER" = "恢复成功";
 "DELETE" = "删除";
 "TODAY" = "Today小组件";
-"SELECTED_SCRIPT" = "当前脚本";
+"SELECTED_SCRIPT" = "选中的脚本";
 "REFRESH_TODAY_CACHE_NOW" = "立即刷新Today数据缓存？";
 "URL" = "从URL添加";
 "NEW_FILE" = "新建文件";
