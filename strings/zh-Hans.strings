@@ -6,6 +6,8 @@
 "OK" = "好";
 "CANCEL" = "取消";
 "BACK" = "返回";
+"COPY" = "复制";
+"COPY_SUCCESS" = "复制成功";
 
 "NO_TODAY_CACHE" = "获取数据失败，请打开工具箱中的Today卡片，点击刷新按钮。";
 "NO_SCRIPT" = "未选择脚本或脚本被删除，请在工具箱中选择脚本";

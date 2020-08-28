@@ -2,6 +2,8 @@
 // 注意，并非超过一小时后立即重新获取，而是你查看小部件时重新获取数据，会有一段时间的空白
 const validity = 1
 
+const version = "1.0.0"
+
 async function get_data(boxdata) {
     if (!$cache.get("today_10010_date")) {
         // 首次写入时间信息
@@ -140,7 +142,49 @@ function get_color(persent) {
     }
 }
 
+/**
+ * 该函数用来检查是否有更新
+ */
+function update() {
+    let name = "10010"
+    let url = "https://raw.githubusercontent.com/ipuppet/BoxJsHelper/master/assets/today/10010.js"
+    const update_alert = () => {
+        $ui.alert({
+            title: "你该升级啦！",
+            actions: [
+                {
+                    title: "更新",
+                    handler: () => {
+                        $file.write({
+                            data: $data({ string: $cache.get(`today_update_${name}_script`) }),
+                            path: `/assets/today/${name}.js`
+                        })
+                        $ui.alert("操作成功，重新进入Today即可完成更新")
+                    }
+                },
+                { title: $l10n("CANCEL") }
+            ]
+        })
+    }
+    if ($cache.get(`today_update_${name}`)) {
+        update_alert()
+        return
+    }
+    $http.get({
+        url: url,
+        handler: response => {
+            let remote_version = eval(response.data).version
+            if (remote_version !== version) {
+                $cache.set(`today_update_${name}`, true)
+                $cache.set(`today_update_${name}_script`, response.data)
+                update_alert()
+            }
+        }
+    })
+}
+
 async function main(boxdata) {
+    update()
     let responst = await get_data(boxdata)
     let needed = ["flow", "voice"] // 需要显示的内容
     let data = []
@@ -168,5 +212,6 @@ async function main(boxdata) {
 }
 
 module.exports = {
-    main: main
+    main: main,
+    version: version // 用于检查更新
 }
