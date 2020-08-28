@@ -6,7 +6,7 @@ class Storage {
         this.iCloud_db = this.iCloud_path + "BoxJsHelper.db"
         this.iCloud_auto_db = this.iCloud_path + "auto.db"
         this.sqlite = $sqlite.open(this.local_db)
-        this.sqlite.update("CREATE TABLE IF NOT EXISTS today(id INTEGER PRIMARY KEY NOT NULL, name TEXT, url TEXT, date TEXT)")
+        this.sqlite.update("CREATE TABLE IF NOT EXISTS today(id INTEGER PRIMARY KEY NOT NULL, name TEXT, url TEXT, script TEXT, date TEXT)")
     }
 
     parse(result) {
@@ -20,6 +20,7 @@ class Storage {
                 id: result.result.get("id"),
                 name: result.result.get("name"),
                 url: result.result.get("url"),
+                script: result.result.get("script"),
                 date: result.result.get("date")
             })
         }
@@ -43,8 +44,8 @@ class Storage {
     save(data) {
         let result
         result = this.sqlite.update({
-            sql: "INSERT INTO today (name, url, date) values(?, ?, ?)",
-            args: [data.name, data.url, data.date]
+            sql: "INSERT INTO today (name, url, script, date) values(?, ?, ?)",
+            args: [data.name, data.url, data.script, data.date]
         })
         if (result.result) {
             if (this.setting.get("setting.backup.auto_backup")) {
@@ -90,8 +91,8 @@ class Storage {
     update(data) {
         let result
         result = this.sqlite.update({
-            sql: "UPDATE today SET name = ?, url = ?, date = ? WHERE id = ?",
-            args: [data.name, data.url, data.date, data.id]
+            sql: "UPDATE today SET name = ?, url = ?, script = ?, date = ? WHERE id = ?",
+            args: [data.name, data.url, data.script, data.date, data.id]
         })
         if (result.result) {
             return true
