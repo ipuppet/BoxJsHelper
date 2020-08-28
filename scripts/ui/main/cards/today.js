@@ -190,80 +190,20 @@ class TodayCard extends Card {
                                         this.kernel.setting.set("today.script", script)
                                         $("selected_script").text = script_name()
                                     }
-                                },
-                                { // edit
-                                    title: $l10n("EDIT"),
-                                    handler: (sender, indexPath) => {
-                                        let data = sender.object(indexPath)
-                                        this.editor(data.label.text,
-                                            $file.read(this.path_today + data.label.text).string,
-                                            () => {
-                                                setTimeout(() => {
-                                                    // 更新列表
-                                                    $("list_script").data = template_script()
-                                                }, 500)
-                                            }
-                                        )
-                                    }
                                 }
                             ]
                         },
                         events: {
                             didSelect: (sender, indexPath, data) => {
-                                // TODO 脚本细节设置
-                                this.factory.push([
-                                    {
-                                        type: "view",
-                                        props: {
-                                            id: "detail",
-                                            info: data
-                                        },
-                                        layout: (make, view) => {
-                                            make.left.right.bottom.equalTo(view.super.safeArea)
-                                            make.top.equalTo(view.super.safeAreaTop).offset(10)
-                                        }
-                                    },
-                                    {
-                                        type: "canvas",
-                                        layout: (make, view) => {
-                                            make.top.equalTo(view.prev.top)
-                                            make.height.equalTo(1 / $device.info.screen.scale)
-                                            make.left.right.inset(0)
-                                        },
-                                        events: {
-                                            draw: (view, ctx) => {
-                                                let width = view.frame.width
-                                                let scale = $device.info.screen.scale
-                                                ctx.strokeColor = $color("gray")
-                                                ctx.setLineWidth(1 / scale)
-                                                ctx.moveToPoint(0, 0)
-                                                ctx.addLineToPoint(width, 0)
-                                                ctx.strokePath()
-                                            }
-                                        }
+                                this.editor(data.label.text,
+                                    $file.read(this.path_today + data.label.text).string,
+                                    () => {
+                                        setTimeout(() => {
+                                            // 更新列表
+                                            $("list_script").data = template_script()
+                                        }, 500)
                                     }
-                                ], $l10n("TODAY"), [
-                                    {
-                                        type: "button",
-                                        props: {
-                                            symbol: "checkmark",
-                                            tintColor: this.factory.text_color,
-                                            bgcolor: $color("clear")
-                                        },
-                                        layout: make => {
-                                            make.right.inset(20)
-                                            make.size.equalTo(20)
-                                        },
-                                        events: {
-                                            tapped: () => {
-                                                let detail = {
-                                                    name: data.label.text
-                                                }
-                                                console.log(detail)
-                                            }
-                                        }
-                                    }
-                                ])
+                                )
                             }
                         },
                         layout: $layout.fillSafeArea
@@ -297,13 +237,15 @@ class TodayCard extends Card {
                                                     url: text,
                                                     handler: response => {
                                                         let name = text.slice(text.lastIndexOf("/") + 1)
-                                                        // 保存到数据库
-                                                        this.kernel.storage.save({
+                                                        this.save_script(name, response.data + "")
+                                                        // 保存信息到数据库
+                                                        // 换更新脚本思路
+                                                        /* this.kernel.storage.save({
                                                             name: name,
                                                             url: text,
                                                             script: response.data + "",
                                                             date: new Date().getTime()
-                                                        })
+                                                        }) */
                                                         $("list_script").data = template_script()
                                                         done()
                                                     }
@@ -345,26 +287,6 @@ class TodayCard extends Card {
                                         done()
                                     }
                                 }
-                            })
-                        }),
-                        // TODO 更新脚本
-                        this.factory.nav_button("script_update", "arrow.clockwise", (start, done) => {
-                            let scripts = this.kernel.storage.all()
-                            if (scripts.length === 0) {
-                                $ui.toast($l10n("NO_SCRIPT_FROM_URL"))
-                                return
-                            }
-                            $ui.alert({
-                                title: $l10n("UPDATE_ALL_SCRIPT"),
-                                actions: [
-                                    {
-                                        title: $l10n("OK"),
-                                        handler: () => {
-                                            console.log(scripts)
-                                        }
-                                    },
-                                    { title: $l10n("CANCEL") }
-                                ]
                             })
                         })
                     ])
