@@ -1,13 +1,11 @@
 const MainUI = require("./ui/main")
 const Setting = require("./setting")
 const Server = require("./server")
-const Storage = require("./storage")
 
 class Kernel {
     constructor() {
         this.setting = new Setting()
         this.server = new Server(this.setting)
-        this.storage = new Storage(this.setting)
     }
 
     uuid() {
