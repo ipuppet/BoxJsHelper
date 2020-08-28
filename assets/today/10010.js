@@ -146,6 +146,7 @@ function get_color(persent) {
  * 该函数用来检查是否有更新
  */
 function update() {
+    // TODO 展开小组件后显示更新按钮~
     let name = "10010"
     let url = "https://raw.githubusercontent.com/ipuppet/BoxJsHelper/master/assets/today/10010.js"
     const update_alert = () => {
