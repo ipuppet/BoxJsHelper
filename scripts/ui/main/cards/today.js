@@ -6,15 +6,15 @@ class TodayCard extends Card {
         this.path_today = "/assets/today/"
     }
 
-    new_file(name, callback) {
+    editor(name, content, callback) {
         this.factory.push([
             {
                 type: "text",
                 props: {
-                    id: "editor_new",
+                    id: "editor",
                     info: name,
                     textColor: $color("primaryText", "secondaryText"),
-                    text: ""
+                    text: content
                 },
                 layout: (make, view) => {
                     make.left.right.bottom.equalTo(view.super.safeArea)
@@ -54,8 +54,8 @@ class TodayCard extends Card {
                 },
                 events: {
                     tapped: () => {
-                        let editor_new = $("editor_new")
-                        this.save_script(editor_new.info, editor_new.text)
+                        let editor = $("editor")
+                        this.save_script(editor.info, editor.text)
                         $ui.toast($l10n("SUCCESS_SAVE"))
                         setTimeout(() => {
                             $ui.pop()
@@ -195,63 +195,15 @@ class TodayCard extends Card {
                                     title: $l10n("EDIT"),
                                     handler: (sender, indexPath) => {
                                         let data = sender.object(indexPath)
-                                        this.factory.push([
-                                            {
-                                                type: "text",
-                                                props: {
-                                                    id: "editor",
-                                                    info: data.label.text,
-                                                    textColor: $color("primaryText", "secondaryText"),
-                                                    text: $file.read(this.path_today + data.label.text).string
-                                                },
-                                                layout: (make, view) => {
-                                                    make.left.right.bottom.equalTo(view.super.safeArea)
-                                                    make.top.equalTo(view.super.safeAreaTop).offset(10)
-                                                }
-                                            },
-                                            {
-                                                type: "canvas",
-                                                layout: (make, view) => {
-                                                    make.top.equalTo(view.prev.top)
-                                                    make.height.equalTo(1 / $device.info.screen.scale)
-                                                    make.left.right.inset(0)
-                                                },
-                                                events: {
-                                                    draw: (view, ctx) => {
-                                                        let width = view.frame.width
-                                                        let scale = $device.info.screen.scale
-                                                        ctx.strokeColor = $color("gray")
-                                                        ctx.setLineWidth(1 / scale)
-                                                        ctx.moveToPoint(0, 0)
-                                                        ctx.addLineToPoint(width, 0)
-                                                        ctx.strokePath()
-                                                    }
-                                                }
+                                        this.editor(data.label.text,
+                                            $file.read(this.path_today + data.label.text).string,
+                                            () => {
+                                                setTimeout(() => {
+                                                    // 更新列表
+                                                    $("list_script").data = template_script()
+                                                }, 500)
                                             }
-                                        ], $l10n("TODAY"), [
-                                            {
-                                                type: "button",
-                                                props: {
-                                                    symbol: "checkmark",
-                                                    tintColor: this.factory.text_color,
-                                                    bgcolor: $color("clear")
-                                                },
-                                                layout: make => {
-                                                    make.right.inset(20)
-                                                    make.size.equalTo(20)
-                                                },
-                                                events: {
-                                                    tapped: () => {
-                                                        let editor = $("editor")
-                                                        this.save_script(editor.info, editor.text)
-                                                        $ui.toast($l10n("SUCCESS_SAVE"))
-                                                        setTimeout(() => {
-                                                            $ui.pop()
-                                                        }, 600)
-                                                    }
-                                                }
-                                            }
-                                        ])
+                                        )
                                     }
                                 }
                             ]
@@ -327,7 +279,7 @@ class TodayCard extends Card {
                                             text: "MyScript",
                                             placeholder: $l10n("FILE_NAME"),
                                             handler: text => {
-                                                this.new_file(text, () => {
+                                                this.editor(text, "", () => {
                                                     setTimeout(() => {
                                                         // 更新列表
                                                         $("list_script").data = template_script()
@@ -345,11 +297,11 @@ class TodayCard extends Card {
                                                     url: text,
                                                     handler: response => {
                                                         let name = text.slice(text.lastIndexOf("/") + 1)
-                                                        this.save_script(name, response.data + "")
-                                                        // 同时保存到数据库
+                                                        // 保存到数据库
                                                         this.kernel.storage.save({
                                                             name: name,
                                                             url: text,
+                                                            script: response.data + "",
                                                             date: new Date().getTime()
                                                         })
                                                         $("list_script").data = template_script()
