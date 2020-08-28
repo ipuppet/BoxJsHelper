@@ -1,39 +1,30 @@
-function cache_data(boxdata) {
-    if (!$cache.get("today_10010_cache_date")) {
+// 查询有效期，单位小时。1就是数据缓存1个小时，超过后重新获取。
+// 注意，并非超过一小时后立即重新获取，而是你查看小部件时重新获取数据，会有一段时间的空白
+const validity = 1
+
+async function get_data(boxdata) {
+    if (!$cache.get("today_10010_date")) {
         // 首次写入时间信息
-        $cache.set("today_10010_cache_date", new Date().getTime() - 1000 * 60 * 60 * 24 + 1)
+        $cache.set("today_10010_date", new Date().getTime() - 1000 * 60 * 60 * validity + 1)
     }
-    // 每天只更新一次
-    if (new Date().getTime() - $cache.get("today_10010_cache_date") < 1000 * 60 * 60 * 24) {
-        return
+    // 每小时只查询一次
+    if (new Date().getTime() - $cache.get("today_10010_date") < 1000 * 60 * 60 * validity) {
+        return $cache.get("today_10010_data")
     }
+    // 从boxjs获取信息
     let cookie = JSON.parse(boxdata.datas["chavy_signheader_10010"])["Cookie"]
-    $cache.set("today_10010_cookie", cookie)
     let start_index = cookie.indexOf("req_mobile=")
     let end_index = cookie.indexOf(";", start_index)
     let phone = cookie.slice(start_index, end_index).split("=")[1]
-    $cache.set("today_10010_phone", phone)
-    $cache.set("today_10010_cache_date", new Date().getTime())
-}
-
-async function get_data() {
-    if (!$cache.get("today_10010_date")) {
-        // 首次写入时间信息
-        $cache.set("today_10010_date", new Date().getTime() - 1000 * 60 * 60 + 1)
-    }
-    // 每小时只查询一次
-    if (new Date().getTime() - $cache.get("today_10010_date") < 1000 * 60 * 60) {
-        return $cache.get("today_10010_data")
-    }
+    // 从10010获取信息
     let response = await $http.get({
-        url: `https://m.client.10010.com/mobileService/home/queryUserInfoSeven.htm?version=iphone_c@7.0403&desmobiel=${$cache.get("today_10010_phone")}&showType=3`,
+        url: `https://m.client.10010.com/mobileService/home/queryUserInfoSeven.htm?version=iphone_c@7.0403&desmobiel=${phone}&showType=3`,
         header: {
-            "Cookie": $cache.get("today_10010_cookie"),
+            "Cookie": cookie,
             "Accept": "*/*",
             "Content-Type": "application/json"
         }
     })
-    console.log(response)
     if (response.error !== null) {
         $ui.toast("查询失败")
         return
@@ -150,8 +141,7 @@ function get_color(persent) {
 }
 
 async function main(boxdata) {
-    cache_data(boxdata) // 从boxjs获取信息
-    let responst = await get_data() // 从10010获取信息
+    let responst = await get_data(boxdata)
     let needed = ["flow", "voice"] // 需要显示的内容
     let data = []
     for (let item of responst.data.dataList) {
