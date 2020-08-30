@@ -4,7 +4,14 @@ class HomeUI {
         this.factory = factory
         // 开启服务器并记录访问url
         this.kernel.server.start_server()
-        this.kernel.serverURL = this.kernel.server.server.serverURL
+        // 无法获取地址可能是ipv6的问题
+        if (this.kernel.server.server.serverURL) {
+            this.kernel.serverURL = this.kernel.server.server.serverURL.string
+            this.kernel.remoteURL = this.kernel.serverURL
+        } else {
+            this.kernel.serverURL = `http://localhost:${this.kernel.server.port}`
+            this.kernel.remoteURL = `http://${$device.wlanAddress}:${this.kernel.server.port}`
+        }
     }
 
     static refresh(refresh_confirm) {
@@ -37,7 +44,7 @@ class HomeUI {
                 type: "web",
                 props: {
                     id: "web_boxjs",
-                    url: this.kernel.serverURL.string,
+                    url: this.kernel.serverURL,
                     opaque: false
                 },
                 layout: (make, view) => {

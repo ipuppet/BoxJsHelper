@@ -7,7 +7,7 @@ class BackupCard extends Card {
 
     boxdata(callback) {
         $http.get({
-            url: `${this.kernel.serverURL.string}query/boxdata`,
+            url: `${this.kernel.serverURL}query/boxdata`,
             handler: response => {
                 if (null !== response.error) {
                     $ui.toast($l10n("ERROR_GET_DATA"))
@@ -139,7 +139,7 @@ class BackupCard extends Card {
                                                     title: $l10n("OK"),
                                                     handler: () => {
                                                         $http.post({
-                                                            url: `${this.kernel.serverURL.string}api/delGlobalBak`,
+                                                            url: `${this.kernel.serverURL}api/delGlobalBak`,
                                                             body: {
                                                                 id: id
                                                             },
@@ -173,7 +173,7 @@ class BackupCard extends Card {
                                             title: $l10n("OK"),
                                             handler: () => {
                                                 $http.post({
-                                                    url: `${this.kernel.serverURL.string}api/revertGlobalBak`,
+                                                    url: `${this.kernel.serverURL}api/revertGlobalBak`,
                                                     body: {
                                                         id: id
                                                     },
@@ -212,7 +212,7 @@ class BackupCard extends Card {
                                             start()
                                             this.boxdata(boxjs => {
                                                 $http.post({
-                                                    url: `${this.kernel.serverURL.string}api/saveGlobalBak`,
+                                                    url: `${this.kernel.serverURL}api/saveGlobalBak`,
                                                     body: {
                                                         id: this.kernel.uuid(),
                                                         createTime: new Date().toISOString(),
@@ -274,12 +274,12 @@ class BackupCard extends Card {
                                             const update = (data, index = 0) => {
                                                 // 先删除，防止重复
                                                 $http.post({
-                                                    url: `${this.kernel.serverURL.string}api/delGlobalBak`,
+                                                    url: `${this.kernel.serverURL}api/delGlobalBak`,
                                                     body: { id: data.id },
                                                     handler: () => {
                                                         // 添加新的备份到BoxJs
                                                         $http.post({
-                                                            url: `${this.kernel.serverURL.string}api/impGlobalBak`,
+                                                            url: `${this.kernel.serverURL}api/impGlobalBak`,
                                                             body: data,
                                                             handler: () => {
                                                                 index++

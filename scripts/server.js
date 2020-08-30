@@ -62,7 +62,7 @@ class Server {
             content = await $http.get(`http://${this.domain}${request.path}`)
         }
         // 检查结构
-        if (typeof content.data === "object")
+        if (content.data !== null && typeof content.data === "object")
             response = { json: content.data }
         else
             response = { html: content.data + "" }
