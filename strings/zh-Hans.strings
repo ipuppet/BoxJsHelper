@@ -9,6 +9,7 @@
 "COPY" = "复制";
 "COPY_SUCCESS" = "复制成功";
 
+"GET_BOXJS_DATA_ERROR" = "从BoxJs获取数据失败";
 "NO_TODAY_CACHE" = "获取数据失败，请打开工具箱中的Today卡片，点击刷新按钮。";
 "NO_SCRIPT" = "未选择脚本或脚本被删除，请在工具箱中选择脚本";
 

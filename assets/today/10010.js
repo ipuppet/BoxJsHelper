@@ -2,40 +2,13 @@
 // 注意，并非超过一小时后立即重新获取，而是你查看小部件时重新获取数据，会有一段时间的空白
 const validity = 1
 
-const version = "1.0.0"
+// 需要显示的内容 fee(话费) 默认显示
+// flow: 流量
+// voice: 语音
+// credit: 信用积分
+const needed = ["flow", "voice"]
 
-async function get_data(boxdata) {
-    if (!$cache.get("today_10010_date")) {
-        // 首次写入时间信息
-        $cache.set("today_10010_date", new Date().getTime() - 1000 * 60 * 60 * validity + 1)
-    }
-    // 每小时只查询一次
-    if (new Date().getTime() - $cache.get("today_10010_date") < 1000 * 60 * 60 * validity) {
-        return $cache.get("today_10010_data")
-    }
-    // 从boxjs获取信息
-    let cookie = JSON.parse(boxdata.datas["chavy_signheader_10010"])["Cookie"]
-    let start_index = cookie.indexOf("req_mobile=")
-    let end_index = cookie.indexOf(";", start_index)
-    let phone = cookie.slice(start_index, end_index).split("=")[1]
-    // 从10010获取信息
-    let response = await $http.get({
-        url: `https://m.client.10010.com/mobileService/home/queryUserInfoSeven.htm?version=iphone_c@7.0403&desmobiel=${phone}&showType=3`,
-        header: {
-            "Cookie": cookie,
-            "Accept": "*/*",
-            "Content-Type": "application/json"
-        }
-    })
-    if (response.error !== null) {
-        $ui.toast("查询失败")
-        return
-    }
-    // 更新
-    $cache.set("today_10010_date", new Date().getTime())
-    $cache.set("today_10010_data", response.data)
-    return $cache.get("today_10010_data")
-}
+const version = "1.0.0"
 
 function template_fee(data) {
     return {
@@ -142,10 +115,78 @@ function get_color(persent) {
     }
 }
 
+function render(data) {
+    let views = []
+    for (let item of data.data.dataList) {
+        if (item.type === "fee") {
+            views.unshift(template_fee({
+                title: item.remainTitle, // 标题
+                number: item.number, // 以用数值
+                unit: item.unit, // 单位
+                flush_date_time: data.flush_date_time
+            }))
+        } else if (needed.includes(item.type))
+            views.push(template({
+                title: item.remainTitle, // 标题
+                number: item.number, // 以用数值
+                persent: item.persent, // 以用百分比
+                unit: item.unit // 单位
+            }))
+    }
+    $ui.render({
+        type: "view",
+        layout: $layout.fill,
+        views: views
+    })
+}
+
+function get_data(boxdata) {
+    // 从boxjs获取信息
+    let cookie = JSON.parse(boxdata.datas["chavy_signheader_10010"])["Cookie"]
+    let start_index = cookie.indexOf("req_mobile=")
+    let end_index = cookie.indexOf(";", start_index)
+    let phone = cookie.slice(start_index, end_index).split("=")[1]
+    // 从10010获取信息
+    $http.get({
+        url: `https://m.client.10010.com/mobileService/home/queryUserInfoSeven.htm?version=iphone_c@7.0403&desmobiel=${phone}&showType=3`,
+        header: {
+            "Cookie": cookie,
+            "Accept": "*/*",
+            "Content-Type": "application/json"
+        },
+        handler: response => {
+            if (response.error !== null) {
+                $ui.toast("查询失败")
+                return
+            }
+            // 更新
+            $cache.set("today_10010_date", new Date().getTime())
+            $cache.set("today_10010_data", response.data)
+            render(response.data)
+        }
+    })
+}
+
+function get_cache() {
+    if (!$cache.get("today_10010_date")) {
+        // 首次写入时间信息
+        $cache.set("today_10010_date", new Date().getTime() - 1000 * 60 * 60 * validity + 1)
+    }
+    // 每小时只查询一次
+    if (new Date().getTime() - $cache.get("today_10010_date") < 1000 * 60 * 60 * validity) {
+        let data = $cache.get("today_10010_data")
+        if (data) {
+            render(data)
+            return true
+        }
+    }
+    return false
+}
+
 /**
  * 该函数用来检查是否有更新
  */
-function update() {
+async function update() {
     // TODO 展开小组件后显示更新按钮~
     let name = "10010"
     let url = "https://raw.githubusercontent.com/ipuppet/BoxJsHelper/master/assets/today/10010.js"
@@ -186,30 +227,10 @@ function update() {
 
 async function main(boxdata) {
     update()
-    let responst = await get_data(boxdata)
-    let needed = ["flow", "voice"] // 需要显示的内容
-    let data = []
-    for (let item of responst.data.dataList) {
-        if (item.type === "fee") {
-            data.unshift(template_fee({
-                title: item.remainTitle, // 标题
-                number: item.number, // 以用数值
-                unit: item.unit, // 单位
-                flush_date_time: responst.flush_date_time
-            }))
-        } else if (needed.includes(item.type))
-            data.push(template({
-                title: item.remainTitle, // 标题
-                number: item.number, // 以用数值
-                persent: item.persent, // 以用百分比
-                unit: item.unit // 单位
-            }))
+    if (!get_cache()) {
+        let data = await boxdata()
+        get_data(data)
     }
-    $ui.render({
-        type: "view",
-        layout: $layout.fill,
-        views: data
-    })
 }
 
 module.exports = {
