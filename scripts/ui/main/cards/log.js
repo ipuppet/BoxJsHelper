@@ -72,10 +72,12 @@ class LogCard extends Card {
                             ],
                             actions: [
                                 {
-                                    title: "delete",
+                                    title: $l10n("DELETE"),
+                                    color: $color("red"),
                                     handler: (sender, indexPath) => {
-                                        let file = files[indexPath.item]
+                                        let file = sender.object(indexPath).label.text
                                         $file.delete(path_log + file)
+                                        sender.delete(indexPath)
                                     }
                                 }
                             ]
