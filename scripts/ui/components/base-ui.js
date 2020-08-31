@@ -311,6 +311,7 @@ class BaseUI {
                 },
                 events: {
                     tapped: sender => {
+                        if (this.selected_page === sender.info.index) return
                         // menu动画
                         $ui.animate({
                             duration: 0.4,
