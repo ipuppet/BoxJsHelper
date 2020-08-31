@@ -23,13 +23,14 @@ class Server {
             port: this.port
         }
         this.server.start(options)
-        if (this.setting.get("server.log_request"))
+        if (this.setting.get("server.log_request")) {
             this.logger.info("Server Start.")
+        }
+        // 访问地址
+        this.serverURL = `http://localhost:${this.port}`
         if (this.server.serverURL) {
-            this.serverURL = this.server.serverURL.string
-            this.remoteURL = this.serverURL
+            this.remoteURL = this.server.serverURL.string
         } else {
-            this.serverURL = `http://localhost:${this.port}`
             this.remoteURL = `http://${$device.wlanAddress}:${this.port}`
         }
     }
