@@ -26,7 +26,7 @@ class RemoteAccessCard extends Card {
             },
             events: {
                 tapped: () => {
-                    $ui.alert(this.kernel.remoteURL)
+                    $ui.alert(this.kernel.server.remoteURL)
                 }
             }
         }

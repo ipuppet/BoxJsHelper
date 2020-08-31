@@ -25,6 +25,13 @@ class Server {
         this.server.start(options)
         if (this.setting.get("server.log_request"))
             this.logger.info("Server Start.")
+        if (this.server.serverURL) {
+            this.serverURL = this.server.serverURL.string
+            this.remoteURL = this.serverURL
+        } else {
+            this.serverURL = `http://localhost:${this.port}`
+            this.remoteURL = `http://${$device.wlanAddress}:${this.port}`
+        }
     }
 
     stop_server() {
