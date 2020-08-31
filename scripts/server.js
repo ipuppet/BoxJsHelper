@@ -30,6 +30,9 @@ class Server {
         this.serverURL = `http://localhost:${this.port}`
         if (this.server.serverURL) {
             this.remoteURL = this.server.serverURL.string
+            if (this.remoteURL.lastIndexOf("/") === this.remoteURL.length - 1) {
+                this.remoteURL = this.remoteURL.slice(0, -1)
+            }
         } else {
             this.remoteURL = `http://${$device.wlanAddress}:${this.port}`
         }
