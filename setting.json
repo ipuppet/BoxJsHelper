@@ -3,18 +3,29 @@
         "title": "GENERAL",
         "items": [
             {
+                "icon": [
+                    "tag.fill",
+                    "#9B59B6"
+                ],
                 "title": "TIPS",
                 "type": "script",
                 "key": "tips_domain",
                 "value": "this.tips_domain()"
             },
             {
+                "icon": [
+                    "arrow.clockwise",
+                    "#1ABC9C"
+                ],
                 "title": "REFRESH_CONFIRM",
                 "type": "switch",
                 "key": "general.refresh_confirm",
                 "value": true
             },
             {
+                "icon": [
+                    "tv.fill"
+                ],
                 "title": "FIRST_SCREEN",
                 "type": "tab",
                 "key": "general.first_screen",
@@ -30,6 +41,10 @@
         "title": "ADVANCED",
         "items": [
             {
+                "icon": [
+                    "location.fill",
+                    "#FF9900"
+                ],
                 "title": "DOMAIN",
                 "type": "tab",
                 "key": "advanced.domain",
@@ -40,6 +55,10 @@
                 "value": 0
             },
             {
+                "icon": [
+                    "dot.radiowaves.right",
+                    "#3498DB"
+                ],
                 "title": "PORT",
                 "type": "number",
                 "key": "advanced.server_port",
@@ -63,12 +82,20 @@
         "title": "ABOUT",
         "items": [
             {
+                "icon": [
+                    "/assets/icon/github.com.ico",
+                    "clear"
+                ],
                 "title": "Github",
                 "type": "info",
                 "key": "about.github",
                 "value": "https://github.com/ipuppet/BoxJsHelper"
             },
             {
+                "icon": [
+                    "person.fill",
+                    "#FF9900"
+                ],
                 "title": "AUTHOR",
                 "type": "info",
                 "key": "about.author",
@@ -78,6 +105,10 @@
                 ]
             },
             {
+                "icon": [
+                    "book.fill",
+                    "#A569BD"
+                ],
                 "title": "README",
                 "type": "script",
                 "key": "about.readme",
