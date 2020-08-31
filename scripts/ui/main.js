@@ -1,7 +1,6 @@
 class MainUI {
     constructor(kernel) {
         this.kernel = kernel
-        this.password = null
     }
 
     ui_main() {
