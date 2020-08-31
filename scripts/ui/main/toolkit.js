@@ -90,7 +90,7 @@ class ToolkitUI {
                     line: 1
                 },
                 layout: (make, view) => {
-                    make.left.inset(10)
+                    make.left.inset(20)
                     make.width.equalTo(120)
                     make.height.equalTo(40)
                     make.top.equalTo(view.super.safeAreaTop).offset(50)
