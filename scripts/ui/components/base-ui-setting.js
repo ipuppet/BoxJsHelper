@@ -1,40 +1,82 @@
 const info = JSON.parse($file.read("/config.json"))["info"]
-const List = require("./list")
 
 class BaseUISetting {
     constructor(kernel, factory) {
         this.kernel = kernel
         this.factory = factory
-        this.list = new List(factory)
+        this.title_size = 35
+        this.title_size_max = 40
+        this.title_offset = 50
+        this.top_offset = -10
     }
 
     update_setting(key, value) {
         return this.kernel.setting.set(key, value)
     }
 
-    create_line_label(title) {
+    create_line_label(title, icon) {
+        if (!icon[1]) icon[1] = "#00CC00"
+        // 选择是图片还是symbol
+        let icon_props = { symbol: icon[0] }
+        if (icon[0][0] === "/") icon_props = { image: $image(icon[0]) }
         return {
-            type: "label",
-            props: {
-                text: title,
-                textColor: this.factory.text_color,
-                align: $align.left
-            },
+            type: "view",
+            views: [
+                {// icon
+                    type: "view",
+                    props: {
+                        bgcolor: $color(icon[1]),
+                        cornerRadius: 5,
+                        smoothCorners: true
+                    },
+                    views: [
+                        {
+                            type: "image",
+                            props: Object.assign({
+                                tintColor: $color("white")
+                            }, icon_props),
+                            layout: (make, view) => {
+                                make.center.equalTo(view.super)
+                                make.size.equalTo(20)
+                            }
+                        },
+                    ],
+                    layout: (make, view) => {
+                        make.centerY.equalTo(view.super)
+                        make.size.equalTo(30)
+                        make.left.inset(10)
+                    }
+                },
+                {// title
+                    type: "label",
+                    props: {
+                        text: title,
+                        textColor: this.factory.text_color,
+                        align: $align.left
+                    },
+                    layout: (make, view) => {
+                        make.centerY.equalTo(view.super)
+                        make.height.equalTo(view.super)
+                        make.left.equalTo(view.prev.right).offset(10)
+                    }
+                }
+            ],
             layout: (make, view) => {
+                make.centerY.equalTo(view.super)
                 make.height.equalTo(view.super)
-                make.left.inset(15)
+                make.left.inset(0)
             }
         }
     }
 
-    create_info(title, value) {
+    create_info(icon, title, value) {
         let is_array = Array.isArray(value)
         let text = is_array ? value[0] : value
         let more_info = is_array ? value[1] : value
         return {
             type: "view",
             views: [
-                this.create_line_label(title),
+                this.create_line_label(title, icon),
                 {
                     type: "label",
                     props: {
@@ -45,7 +87,7 @@ class BaseUISetting {
                     layout: (make, view) => {
                         make.centerY.equalTo(view.prev)
                         make.right.inset(15)
-                        make.width.equalTo(200)
+                        make.width.equalTo(180)
                     }
                 },
                 {// 监听点击动作
@@ -78,15 +120,16 @@ class BaseUISetting {
         }
     }
 
-    create_switch(key, title, on = true) {
+    create_switch(key, icon, title, on = true) {
         return {
             type: "view",
             views: [
-                this.create_line_label(title),
+                this.create_line_label(title, icon),
                 {
                     type: "switch",
                     props: {
-                        on: on
+                        on: on,
+                        onColor: $color("#00CC00")
                     },
                     events: {
                         changed: sender => {
@@ -105,11 +148,11 @@ class BaseUISetting {
         }
     }
 
-    create_string(key, title, text = "") {
+    create_string(key, icon, title, text = "") {
         return {
             type: "view",
             views: [
-                this.create_line_label(title),
+                this.create_line_label(title, icon),
                 {
                     type: "button",
                     props: {
@@ -174,11 +217,11 @@ class BaseUISetting {
         }
     }
 
-    create_number(key, title, number = "") {
+    create_number(key, icon, title, number = "") {
         return {
             type: "view",
             views: [
-                this.create_line_label(title),
+                this.create_line_label(title, icon),
                 {
                     type: "label",
                     props: {
@@ -220,11 +263,11 @@ class BaseUISetting {
         }
     }
 
-    create_stepper(key, title, value = 1, min = 1, max = 12) {
+    create_stepper(key, icon, title, value = 1, min = 1, max = 12) {
         return {
             type: "view",
             views: [
-                this.create_line_label(title),
+                this.create_line_label(title, icon),
                 {
                     type: "label",
                     props: {
@@ -263,11 +306,11 @@ class BaseUISetting {
         }
     }
 
-    create_script(title, script) {
+    create_script(icon, title, script) {
         return {
             type: "view",
             views: [
-                this.create_line_label(title),
+                this.create_line_label(title, icon),
                 {
                     type: "view",
                     views: [
@@ -276,7 +319,7 @@ class BaseUISetting {
                             props: {
                                 symbol: "chevron.right",
                                 bgcolor: $color("clear"),
-                                tintColor: this.factory.text_color
+                                tintColor: $color("secondaryText")
                             },
                             layout: (make, view) => {
                                 make.centerY.equalTo(view.super)
@@ -309,14 +352,14 @@ class BaseUISetting {
         }
     }
 
-    create_tab(key, title, items, value) {
+    create_tab(key, icon, title, items, value) {
         for (let i = 0; i < items.length; i++) {
             items[i] = $l10n(items[i])
         }
         return {
             type: "view",
             views: [
-                this.create_line_label(title),
+                this.create_line_label(title, icon),
                 {
                     type: "tab",
                     props: {
@@ -363,7 +406,7 @@ class BaseUISetting {
                 }
             ]
         }
-        return this.list.standard_list(header, footer, this.get_sections())
+        return this.standard_list(header, footer, this.get_sections())
     }
 
     get_sections() {
@@ -373,27 +416,28 @@ class BaseUISetting {
             for (let item of section.items) {
                 let value = this.kernel.setting.get(item.key)
                 let row = null
+                if (!item.icon) item.icon = ["square.grid.2x2.fill", "#00CC00"]
                 switch (item.type) {
                     case "switch":
-                        row = this.create_switch(item.key, $l10n(item.title), value)
+                        row = this.create_switch(item.key, item.icon, $l10n(item.title), value)
                         break
                     case "stepper":
-                        row = this.create_stepper(item.key, $l10n(item.title), value, 1, 12)
+                        row = this.create_stepper(item.key, item.icon, $l10n(item.title), value, 1, 12)
                         break
                     case "string":
-                        row = this.create_string(item.key, $l10n(item.title), value)
+                        row = this.create_string(item.key, item.icon, $l10n(item.title), value)
                         break
                     case "number":
-                        row = this.create_number(item.key, $l10n(item.title), value)
+                        row = this.create_number(item.key, item.icon, $l10n(item.title), value)
                         break
                     case "info":
-                        row = this.create_info($l10n(item.title), value)
+                        row = this.create_info(item.icon, $l10n(item.title), value)
                         break
                     case "script":
-                        row = this.create_script($l10n(item.title), value)
+                        row = this.create_script(item.icon, $l10n(item.title), value)
                         break
                     case "tab":
-                        row = this.create_tab(item.key, $l10n(item.title), item.items, value)
+                        row = this.create_tab(item.key, item.icon, $l10n(item.title), item.items, value)
                         break
                     default:
                         continue
@@ -406,6 +450,120 @@ class BaseUISetting {
             })
         }
         return sections
+    }
+
+    /**
+     * 标准列表视图
+     * @param {Object} header 该对象中需要包含一个标题label的id和title (info: { id: id, title: title }) 供动画使用
+     * @param {*} footer 视图对象
+     * @param {*} data
+     * @param {*} events
+     */
+    standard_list(header, footer, data, events = {}) {
+        return [
+            {
+                type: "view",
+                layout: $layout.fill,
+                views: [{
+                    type: "list",
+                    props: {
+                        style: 2,
+                        separatorInset: $insets(0, 50, 0, 10),
+                        rowHeight: 50,
+                        indicatorInsets: $insets(55, 0, 50, 0),
+                        header: header,
+                        footer: footer,
+                        data: data
+                    },
+                    events: Object.assign({
+                        didScroll: sender => {
+                            // 下拉放大字体
+                            if (sender.contentOffset.y <= this.top_offset) {
+                                let size = 35 - sender.contentOffset.y * 0.04
+                                if (size > this.title_size_max)
+                                    size = this.title_size_max
+                                $(header.info.id).font = $font("bold", size)
+                            }
+                            // 顶部信息栏
+                            if (sender.contentOffset.y >= 25) {
+                                $ui.animate({
+                                    duration: 0.2,
+                                    animation: () => {
+                                        $(header.info.id + "_header").alpha = 1
+                                        $(header.info.id).alpha = 0
+                                    }
+                                })
+                            } else if (sender.contentOffset.y < 25) {
+                                $ui.animate({
+                                    duration: 0.2,
+                                    animation: () => {
+                                        $(header.info.id + "_header").alpha = 0
+                                        $(header.info.id).alpha = 1
+                                    }
+                                })
+                            }
+                        }
+                    }, events),
+                    layout: $layout.fill
+                }]
+            },
+            {
+                type: "view",
+                props: {
+                    id: header.info.id + "_header",
+                    alpha: 0
+                },
+                layout: (make, view) => {
+                    make.left.top.right.inset(0)
+                    make.bottom.equalTo(view.super.safeAreaTop).offset(45)
+                },
+                views: [
+                    {
+                        type: "blur",
+                        props: { style: this.factory.blur_style },
+                        layout: $layout.fill
+                    },
+                    {
+                        type: "canvas",
+                        layout: (make, view) => {
+                            make.top.equalTo(view.prev.bottom)
+                            make.height.equalTo(1 / $device.info.screen.scale)
+                            make.left.right.inset(0)
+                        },
+                        events: {
+                            draw: (view, ctx) => {
+                                let width = view.frame.width
+                                let scale = $device.info.screen.scale
+                                ctx.strokeColor = $color("gray")
+                                ctx.setLineWidth(1 / scale)
+                                ctx.moveToPoint(0, 0)
+                                ctx.addLineToPoint(width, 0)
+                                ctx.strokePath()
+                            }
+                        }
+                    },
+                    {
+                        type: "view",
+                        layout: $layout.fill,
+                        views: [{
+                            type: "label",
+                            props: {
+                                text: header.info.title,
+                                font: $font("bold", 17),
+                                align: $align.center,
+                                bgcolor: $color("clear"),
+                                textColor: this.text_color
+                            },
+                            layout: (make, view) => {
+                                make.left.right.inset(0)
+                                make.top.equalTo(view.super.safeAreaTop)
+                                make.bottom.equalTo(view.super)
+                            }
+                        }]
+                    }
+                ]
+            }
+        ]
     }
 }
 
