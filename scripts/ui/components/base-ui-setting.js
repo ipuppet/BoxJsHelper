@@ -16,25 +16,29 @@ class BaseUISetting {
 
     create_line_label(title, icon) {
         if (!icon[1]) icon[1] = "#00CC00"
-        // 选择是图片还是symbol
-        let icon_props = { symbol: icon[0] }
-        if (icon[0][0] === "/") icon_props = { image: $image(icon[0]) }
+        if (typeof icon[1] !== "object") {
+            icon[1] = [icon[1], icon[1]]
+        }
+        if (typeof icon[0] !== "object") {
+            icon[0] = [icon[0], icon[0]]
+        }
         return {
             type: "view",
             views: [
                 {// icon
                     type: "view",
                     props: {
-                        bgcolor: $color(icon[1]),
+                        bgcolor: $color(icon[1][0], icon[1][1]),
                         cornerRadius: 5,
                         smoothCorners: true
                     },
                     views: [
                         {
                             type: "image",
-                            props: Object.assign({
-                                tintColor: $color("white")
-                            }, icon_props),
+                            props: {
+                                tintColor: $color("white"),
+                                image: $image(icon[0][0], icon[0][1])
+                            },
                             layout: (make, view) => {
                                 make.center.equalTo(view.super)
                                 make.size.equalTo(20)
