@@ -50,8 +50,9 @@ class Server {
 
     is_localhost(request) {
         let req_host = request.remoteAddress
-        req_host = req_host.substring(0, req_host.indexOf(":"))
-        return this.server.serverURL.host === req_host
+        req_host = req_host.substring(0, req_host.lastIndexOf(":"))
+        const localhost = ["localhost", "::1", "127.0.0.1", $device.wlanAddress]
+        return localhost.includes(req_host)
     }
 
     async response(request) {
