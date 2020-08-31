@@ -221,7 +221,7 @@ class BaseUI {
                     line: 1
                 },
                 layout: (make, view) => {
-                    make.left.inset(10)
+                    make.left.inset(20)
                     make.top.equalTo(view.super.safeAreaTop).offset(50)
                 }
             }]
