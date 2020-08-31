@@ -232,42 +232,55 @@ class BaseUI {
      * 菜单内容转换成模板（通常在点击后触发）
      */
     template_menu() {
-        for (let i = 0; i < this.menu_data.length; i++) {
-            if (this.selected_page === i) {
-                this.menu_data[i].icon["alpha"] = 1
-                this.menu_data[i].title["alpha"] = 1
-                this.menu_data[i].icon["tintColor"] = $color("systemLink")
-                this.menu_data[i].title["textColor"] = $color("systemLink")
-            } else {
-                this.menu_data[i].icon["alpha"] = 0.5
-                this.menu_data[i].title["alpha"] = 0.5
-                this.menu_data[i].icon["tintColor"] = $color("primaryText")
-                this.menu_data[i].title["textColor"] = $color("primaryText")
+        let views = []
+        for (let i = 0; i < this.menus.length; i++) {
+            if (typeof this.menus[i].icon !== "object") {
+                this.menus[i].icon = [this.menus[i].icon, this.menus[i].icon]
+            } else if (this.menus[i].icon.length === 1) {
+                this.menus[i].icon = [this.menus[i].icon[0], this.menus[i].icon[0]]
             }
-        }
-        return this.menu_data
-    }
-
-    /**
-     * 菜单
-     */
-    menu() {
-        return {
-            type: "matrix",
-            props: {
-                id: "menu",
-                columns: this.menu_data.length,
-                itemHeight: 50,
-                spacing: 0,
-                scrollEnabled: false,
-                bgcolor: $color("clear"),
-                template: [
+            let menu = {
+                info: {
+                    index: i,
+                    icon: {
+                        id: `menu-item-icon-${i}`,
+                        icon: this.menus[i].icon,
+                        tintColor: ["lightGray", "systemLink"]
+                    },
+                    title: {
+                        id: `menu-item-title-${i}`,
+                        textColor: ["lightGray", "systemLink"]
+                    }
+                },
+                icon: {
+                    id: `menu-item-icon-${i}`,
+                    image: $image(this.menus[i].icon[0]),
+                    tintColor: $color("lightGray")
+                },
+                title: {
+                    id: `menu-item-title-${i}`,
+                    text: this.menus[i].title,
+                    textColor: $color("lightGray")
+                }
+            }
+            // 当前页面
+            if (this.selected_page === i) {
+                menu.icon.image = $image(this.menus[i].icon[1])
+                menu.icon.tintColor = $color("systemLink")
+                menu.title.textColor = $color("systemLink")
+            }
+            views.push({
+                type: "view",
+                props: {
+                    info: menu.info,
+                    id: `menu-item-${i}`
+                },
+                views: [
                     {
                         type: "image",
-                        props: {
-                            id: "icon",
+                        props: Object.assign({
                             bgcolor: $color("clear")
-                        },
+                        }, menu.icon),
                         layout: (make, view) => {
                             make.centerX.equalTo(view.super)
                             make.size.equalTo(25)
@@ -276,18 +289,71 @@ class BaseUI {
                     },
                     {
                         type: "label",
-                        props: {
-                            id: "title",
+                        props: Object.assign({
                             font: $font(10)
-                        },
+                        }, menu.title),
                         layout: (make, view) => {
                             make.centerX.equalTo(view.prev)
                             make.bottom.inset(5)
                         }
                     }
                 ],
-                data: this.template_menu()
+                layout: (make, view) => {
+                    make.size.equalTo(50)
+                    let width = $device.info.screen.width
+                    let length = this.menus.length
+                    let spacing = (width - length * 50) / (length + 1)
+                    if (view.prev) {
+                        make.left.equalTo(view.prev.right).offset(spacing)
+                    } else {
+                        make.left.inset(spacing)
+                    }
+                },
+                events: {
+                    tapped: sender => {
+                        // menu动画
+                        $ui.animate({
+                            duration: 0.4,
+                            animation: () => {
+                                // 点击的图标
+                                let data = sender.info
+                                let icon = $(data.icon.id)
+                                icon.image = $image(data.icon.icon[1])
+                                icon.tintColor = $color(data.icon.tintColor[1])
+                                $(data.title.id).textColor = $color(data.title.textColor[1])
+
+                            }
+                        })
+                        // 之前的图标
+                        let data = $(`menu-item-${this.selected_page}`).info
+                        let icon = $(data.icon.id)
+                        icon.image = $image(data.icon.icon[0])
+                        icon.tintColor = $color(data.icon.tintColor[0])
+                        $(data.title.id).textColor = $color(data.title.textColor[0])
+                        // 切换页面
+                        for (let i = 0; i < this.page_index.length; i++) {
+                            $(this.page_index[i]).hidden = i !== sender.info.index
+                        }
+                        this.selected_page = sender.info.index
+                    }
+                }
+            })
+        }
+        return views
+    }
+
+    /**
+     * 菜单
+     */
+    menu() {
+        return {
+            type: "view",
+            props: {
+                id: "menu",
+                bgcolor: $color("clear"),
+
             },
+            views: this.template_menu(),
             layout: (make, view) => {
                 make.top.inset(0)
                 if ($device.info.screen.width > 500) {
@@ -297,17 +363,6 @@ class BaseUI {
                 }
                 make.centerX.equalTo(view.super)
                 make.height.equalTo(50)
-            },
-            events: {
-                didSelect: (sender, indexPath) => {
-                    this.selected_page = indexPath.item
-                    for (let i = 0; i < this.page_index.length; i++) {
-                        $(this.page_index[i]).hidden = i !== this.selected_page
-                    }
-                    setTimeout(() => {
-                        sender.data = this.template_menu()
-                    }, 100)
-                }
             }
         }
     }
