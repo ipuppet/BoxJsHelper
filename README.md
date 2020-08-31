@@ -10,6 +10,8 @@
 
 注：本人只有Loon，所以仅限Loon用户
 
+设置页面参考 Aligege [影视大全](https://liuguogy.github.io/JSBox-addins/?q=show&objectId=5ec5f46dc1c17600084c5f23)
+
 # 服务器
 
 ### 开启服务器需JSBox在前台运行
