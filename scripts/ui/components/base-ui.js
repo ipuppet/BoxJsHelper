@@ -7,6 +7,14 @@ class BaseUI {
         this.text_color = $color("primaryText", "secondaryText")
     }
 
+    set_menus(menus) {
+        this.menus = menus
+    }
+
+    set_views(views) {
+        this.views = views
+    }
+
     /**
      * 重新设计$ui.push()
      * @param {*} views 视图
@@ -322,7 +330,7 @@ class BaseUI {
                                 icon.image = $image(data.icon.icon[1])
                                 icon.tintColor = $color(data.icon.tintColor[1])
                                 $(data.title.id).textColor = $color(data.title.textColor[1])
-
+                                $(`page-${data.index}`).hidden = false
                             }
                         })
                         // 之前的图标
@@ -331,10 +339,7 @@ class BaseUI {
                         icon.image = $image(data.icon.icon[0])
                         icon.tintColor = $color(data.icon.tintColor[0])
                         $(data.title.id).textColor = $color(data.title.textColor[0])
-                        // 切换页面
-                        for (let i = 0; i < this.page_index.length; i++) {
-                            $(this.page_index[i]).hidden = i !== sender.info.index
-                        }
+                        $(`page-${data.index}`).hidden = true
                         this.selected_page = sender.info.index
                     }
                 }
@@ -377,7 +382,7 @@ class BaseUI {
         return {
             type: "view",
             props: {
-                id: this.page_index[index],
+                id: `page-${index}`,
                 hidden: this.selected_page !== index,
                 clipsToBounds: true
             },
@@ -392,6 +397,10 @@ class BaseUI {
      * 渲染页面
      */
     render() {
+        if (!this.menus || !this.views) {
+            $ui.toast("Lack of necessary data!")
+            return
+        }
         $ui.render({
             type: "view",
             props: {
