@@ -310,7 +310,143 @@ class BaseUISetting {
         }
     }
 
+    script_button(id, symbol, tapped) {
+        let action_start = () => {
+            // 隐藏button，显示spinner
+            $(id).alpha = 0
+            $("spinner_" + id).alpha = 1
+        }
+
+        let action_done = (status = true, message = $l10n("ERROR")) => {
+            $("spinner_" + id).alpha = 0
+            let button = $(id)
+            if (!status) { // 失败
+                $ui.toast(message)
+                button.alpha = 1
+                return
+            }
+            // 成功动画
+            button.symbol = "checkmark"
+            $ui.animate({
+                duration: 0.6,
+                animation: () => {
+                    button.alpha = 1
+                },
+                completion: () => {
+                    setTimeout(() => {
+                        $ui.animate({
+                            duration: 0.4,
+                            animation: () => {
+                                button.alpha = 0
+                            },
+                            completion: () => {
+                                button.symbol = symbol
+                                $ui.animate({
+                                    duration: 0.4,
+                                    animation: () => {
+                                        button.alpha = 1
+                                    },
+                                    completion: () => {
+                                        button.alpha = 1
+                                    }
+                                })
+                            }
+                        })
+                    }, 600)
+                }
+            })
+        }
+        return {
+            type: "view",
+            props: { id: id },
+            views: [
+                {
+                    type: "button",
+                    props: {
+                        id: id,
+                        tintColor: this.text_color,
+                        symbol: symbol,
+                        bgcolor: $color("clear")
+                    },
+                    events: {
+                        tapped: () => {
+                            tapped(action_start, action_done)
+                        }
+                    },
+                    layout: (make, view) => {
+                        make.size.equalTo(view.super)
+                    }
+                },
+                {
+                    type: "spinner",
+                    props: {
+                        id: "spinner_" + id,
+                        loading: true,
+                        alpha: 0
+                    },
+                    layout: (make, view) => {
+                        make.size.equalTo(view.prev)
+                    }
+                }
+            ],
+            layout: (make, view) => {
+                make.size.equalTo(20)
+                if (view.prev) {
+                    make.right.equalTo(view.prev.left).offset(-20)
+                } else {
+                    make.right.inset(20)
+                }
+            }
+        }
+    }
+
     create_script(icon, title, script) {
+        let id = `script_${title}`
+        let action_start = () => {
+            // 隐藏button，显示spinner
+            $(id).alpha = 0
+            $(`script_spinner_${id}`).alpha = 1
+        }
+
+        let action_done = (status = true, message = $l10n("ERROR")) => {
+            $(`script_spinner_${id}`).alpha = 0
+            let button = $(id)
+            if (!status) { // 失败
+                $ui.toast(message)
+                button.alpha = 1
+                return
+            }
+            // 成功动画
+            button.symbol = "checkmark"
+            $ui.animate({
+                duration: 0.6,
+                animation: () => {
+                    button.alpha = 1
+                },
+                completion: () => {
+                    setTimeout(() => {
+                        $ui.animate({
+                            duration: 0.4,
+                            animation: () => {
+                                button.alpha = 0
+                            },
+                            completion: () => {
+                                button.symbol = "chevron.right"
+                                $ui.animate({
+                                    duration: 0.4,
+                                    animation: () => {
+                                        button.alpha = 1
+                                    },
+                                    completion: () => {
+                                        button.alpha = 1
+                                    }
+                                })
+                            }
+                        })
+                    }, 600)
+                }
+            })
+        }
         return {
             type: "view",
             views: [
@@ -319,10 +455,10 @@ class BaseUISetting {
                     type: "view",
                     views: [
                         {// 仅用于显示图片
-                            type: "button",
+                            type: "image",
                             props: {
+                                id: id,
                                 symbol: "chevron.right",
-                                bgcolor: $color("clear"),
                                 tintColor: $color("secondaryText")
                             },
                             layout: (make, view) => {
@@ -331,10 +467,25 @@ class BaseUISetting {
                                 make.size.equalTo(15)
                             }
                         },
+                        {
+                            type: "spinner",
+                            props: {
+                                id: `script_spinner_${id}`,
+                                loading: true,
+                                alpha: 0
+                            },
+                            layout: (make, view) => {
+                                make.size.equalTo(view.prev)
+                                make.left.top.equalTo(view.prev)
+                            }
+                        },
                         {// 覆盖在图片上监听点击动作
                             type: "view",
                             events: {
                                 tapped: () => {
+                                    // 生成开始事件和结束事件动画，供函数调用
+                                    this.start = action_start
+                                    this.done = action_done
                                     // 执行代码
                                     eval(script)
                                 }
