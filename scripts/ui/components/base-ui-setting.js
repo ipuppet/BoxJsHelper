@@ -408,6 +408,11 @@ class BaseUISetting {
             $(`script_spinner_${id}`).alpha = 1
         }
 
+        let action_cancel = () => {
+            $(id).alpha = 1
+            $(`script_spinner_${id}`).alpha = 0
+        }
+
         let action_done = (status = true, message = $l10n("ERROR")) => {
             $(`script_spinner_${id}`).alpha = 0
             let button = $(id)
@@ -485,6 +490,7 @@ class BaseUISetting {
                                 tapped: () => {
                                     // 生成开始事件和结束事件动画，供函数调用
                                     this.start = action_start
+                                    this.cancel = action_cancel
                                     this.done = action_done
                                     // 执行代码
                                     eval(script)
