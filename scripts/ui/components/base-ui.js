@@ -5,6 +5,8 @@ class BaseUI {
         // all
         this.blur_style = $blurStyle.thinMaterial
         this.text_color = $color("primaryText", "secondaryText")
+        // 首页加载页面
+        this.prepare()
     }
 
     set_menus(menus) {
@@ -391,6 +393,31 @@ class BaseUI {
             },
             views: views
         }
+    }
+
+    prepare() {
+        $ui.render({
+            props: {
+                navBarHidden: true,
+                statusBarStyle: 0
+            },
+            views: [{
+                type: "view",
+                props: {
+                    id: "base-ui-prepare"
+                },
+                views: [{
+                    type: "spinner",
+                    props: {
+                        loading: true
+                    },
+                    layout: (make, view) => {
+                        make.center.equalTo(view.super)
+                    }
+                }],
+                layout: $layout.fill
+            }]
+        })
     }
 
     /**
