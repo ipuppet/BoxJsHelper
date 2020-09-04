@@ -8,7 +8,7 @@ const validity = 1
 // credit: 信用积分
 const needed = ["flow", "voice"]
 
-const version = "1.0.0"
+const version = "1.0.1"
 
 function template_fee(data) {
     return {
@@ -133,6 +133,7 @@ function render(data) {
                 unit: item.unit // 单位
             }))
     }
+    $("base-ui-prepare").remove()
     $ui.render({
         type: "view",
         layout: $layout.fill,
@@ -156,6 +157,7 @@ function get_data(boxdata) {
         },
         handler: response => {
             if (response.error !== null) {
+                $("base-ui-prepare").remove()
                 $ui.toast("查询失败")
                 return
             }
@@ -181,6 +183,31 @@ function get_cache() {
         }
     }
     return false
+}
+
+function prepare() {
+    $ui.render({
+        props: {
+            navBarHidden: true,
+            statusBarStyle: 0
+        },
+        views: [{
+            type: "view",
+            props: {
+                id: "base-ui-prepare"
+            },
+            views: [{
+                type: "spinner",
+                props: {
+                    loading: true
+                },
+                layout: (make, view) => {
+                    make.center.equalTo(view.super)
+                }
+            }],
+            layout: $layout.fill
+        }]
+    })
 }
 
 /**
@@ -226,6 +253,7 @@ async function update() {
 }
 
 async function main(boxdata) {
+    prepare()
     update()
     if (!get_cache()) {
         let data = await boxdata()
