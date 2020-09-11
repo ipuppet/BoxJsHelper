@@ -425,7 +425,7 @@ class BaseUI {
      */
     render() {
         if (!this.menus || !this.views) {
-            $ui.toast("Lack of necessary data!")
+            $ui.toast("No necessary data!")
             return
         }
         $ui.render({
