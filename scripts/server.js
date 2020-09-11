@@ -5,7 +5,7 @@ class Server {
         this.setting = setting
         this.logger = new Logger("server-access")
         if (port === null) {
-            port = this.setting.get("advanced.server_port")
+            port = this.setting.get("advanced.serverPort")
         }
         this.port = port
         this.domain = "boxjs.com"
@@ -16,14 +16,14 @@ class Server {
         this.server = $server.new()
     }
 
-    start_server() {
+    startServer() {
         if (this.server.running) return
-        this.server.addHandler(this.get_handler())
+        this.server.addHandler(this.getHandler())
         let options = {
             port: this.port
         }
         this.server.start(options)
-        if (this.setting.get("server.log_request")) {
+        if (this.setting.get("server.logRequest")) {
             this.logger.info("Server Start.")
         }
         // 访问地址
@@ -38,25 +38,25 @@ class Server {
         }
     }
 
-    stop_server() {
+    stopServer() {
         this.server.stop()
-        if (this.setting.get("server.log_request"))
+        if (this.setting.get("server.logRequest"))
             this.logger.info("Server Stop.")
     }
 
-    async log_request(request) {
+    async logRequest(request) {
         // 判断是否记录日志
-        if (this.setting.get("server.log_request")) {
+        if (this.setting.get("server.logRequest")) {
             let message = ` ${request.remoteAddress} "${request.method}" ${request.path}`
             this.logger.info(message)
         }
     }
 
-    is_localhost(request) {
-        let req_host = request.remoteAddress
-        req_host = req_host.substring(0, req_host.lastIndexOf(":"))
+    isLocalhost(request) {
+        let reqHost = request.remoteAddress
+        reqHost = reqHost.substring(0, reqHost.lastIndexOf(":"))
         const localhost = ["localhost", "::1", "127.0.0.1", $device.wlanAddress]
-        return localhost.includes(req_host)
+        return localhost.includes(reqHost)
     }
 
     async response(request) {
@@ -82,12 +82,12 @@ class Server {
     }
 
     async handle(request, completion) {
-        this.log_request(request)
+        this.logRequest(request)
         let response
-        if (this.is_localhost(request)) {
+        if (this.isLocalhost(request)) {
             response = await this.response(request)
         } else {
-            if (this.setting.get("server.remote_access")) {
+            if (this.setting.get("server.remoteAccess")) {
                 response = await this.response(request)
             } else {
                 response = { statusCode: 400, hasBody: false }
@@ -99,7 +99,7 @@ class Server {
         })
     }
 
-    get_handler() {
+    getHandler() {
         this.handler.filter = () => {
             // 全部使用data
             return "data"

@@ -3,25 +3,25 @@ const BaseUI = require("/scripts/ui/components/base-ui")
 class Factory extends BaseUI {
     constructor(kernel) {
         super(kernel)
-        this.selected_page = this.kernel.setting.get("general.first_screen") // 当前显示的页面
+        this.selectedPage = this.kernel.setting.get("general.firstScreen") // 当前显示的页面
     }
 
     home() {
         const HomeUI = require("./home")
-        let ui_interface = new HomeUI(this.kernel, this)
-        return this.creator(ui_interface.get_views(), 0)
+        let interfaceUi = new HomeUI(this.kernel, this)
+        return this.creator(interfaceUi.getViews(), 0)
     }
 
     server() {
         const ToolkitUI = require("./toolkit")
-        let ui_interface = new ToolkitUI(this.kernel, this)
-        return this.creator(ui_interface.get_views(), 1)
+        let interfaceUi = new ToolkitUI(this.kernel, this)
+        return this.creator(interfaceUi.getViews(), 1)
     }
 
     setting() {
         const SettingUI = require("./setting")
-        let ui_interface = new SettingUI(this.kernel, this)
-        return this.creator(ui_interface.get_views(), 2)
+        let interfaceUi = new SettingUI(this.kernel, this)
+        return this.creator(interfaceUi.getViews(), 2)
     }
 
     /**
@@ -29,12 +29,12 @@ class Factory extends BaseUI {
      */
     async render() {
         // 视图
-        this.set_views([
+        this.setViews([
             this.home(),
             this.server(),
             this.setting()
         ])
-        this.set_menus([
+        this.setMenus([
             {
                 icon: ["cube", "cube.fill"],
                 title: $l10n("BOXJS")

@@ -16,7 +16,7 @@ class ToolkitUI {
         this.matrix.spacing = 15
     }
 
-    load_cards() {
+    loadCards() {
         this.cards = [
             new RefreshCard(this.kernel, this.factory).card(),
             new RemoteAccessCard(this.kernel, this.factory).card(),
@@ -35,7 +35,7 @@ class ToolkitUI {
             {
                 type: "image",
                 props: Object.assign({
-                    tintColor: this.factory.text_color
+                    tintColor: this.factory.textColor
                 }, data.icon),
                 layout: make => {
                     make.top.left.inset(10)
@@ -67,18 +67,18 @@ class ToolkitUI {
         return views
     }
 
-    template_card() {
+    cardTemplate() {
         // TODO 排序
         let data = []
         for (let i = 0; i < this.cards.length; i++) {
             let card = this.cards[i]
-            data[i] = this.matrix.template_card(this.template(card), card["events"])
+            data[i] = this.matrix.cardTemplate(this.template(card), card["events"])
         }
         return data
     }
 
-    get_views() {
-        this.load_cards()
+    getViews() {
+        this.loadCards()
         return [
             {
                 type: "label",
@@ -97,7 +97,7 @@ class ToolkitUI {
                 }
             },
             // 第二个参数是为了防止被下面菜单挡住最后一行的内容
-            this.matrix.template_scroll(this.template_card(), 50 + this.matrix.spacing)
+            this.matrix.scrollTemplate(this.cardTemplate(), 50 + this.matrix.spacing)
         ]
     }
 }

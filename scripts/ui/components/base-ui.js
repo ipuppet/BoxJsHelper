@@ -1,35 +1,35 @@
 class BaseUI {
     constructor(kernel) {
         this.kernel = kernel
-        this.selected_page = 0 // 当前显示的页面
+        this.selectedPage = 0 // 当前显示的页面
         // all
-        this.blur_style = $blurStyle.thinMaterial
-        this.text_color = $color("primaryText", "secondaryText")
+        this.blurStyle = $blurStyle.thinMaterial
+        this.textColor = $color("primaryText", "secondaryText")
         // 首页加载页面
         this.prepare()
     }
 
-    set_menus(menus) {
+    setMenus(menus) {
         this.menus = menus
     }
 
-    set_views(views) {
+    setViews(views) {
         this.views = views
     }
 
     /**
      * 重新设计$ui.push()
      * @param {*} views 视图
-     * @param {*} parent_title 上级目录名称，显示在返回按钮旁边
-     * @param {*} nav_buttons 右侧按钮，需要自己调整位置
+     * @param {*} parentTitle 上级目录名称，显示在返回按钮旁边
+     * @param {*} navButtons 右侧按钮，需要自己调整位置
      */
-    push(views, parent_title = $l10n("BACK"), nav_buttons = []) {
-        nav_buttons = nav_buttons.concat([
+    push(views, parentTitle = $l10n("BACK"), navButtons = []) {
+        navButtons = navButtons.concat([
             {
                 type: "button",
                 props: {
                     symbol: "chevron.left",
-                    tintColor: this.text_color,
+                    tintColor: this.textColor,
                     bgcolor: $color("clear")
                 },
                 layout: make => {
@@ -40,8 +40,8 @@ class BaseUI {
             {
                 type: "label",
                 props: {
-                    text: parent_title,
-                    textColor: this.text_color,
+                    text: parentTitle,
+                    textColor: this.textColor,
                     font: $font(18)
                 },
                 layout: (make, view) => {
@@ -79,7 +79,7 @@ class BaseUI {
                     views: [
                         {
                             type: "view",
-                            views: nav_buttons,
+                            views: navButtons,
                             layout: (make, view) => {
                                 make.top.inset(20)
                                 make.width.equalTo(view.super)
@@ -118,15 +118,15 @@ class BaseUI {
      *          else { done(false, "Upload Error!") }
      *      }
      */
-    nav_button(id, symbol, tapped) {
-        let action_start = () => {
+    navButton(id, symbol, tapped) {
+        let actionStart = () => {
             // 隐藏button，显示spinner
             $(id).alpha = 0
-            $("spinner_" + id).alpha = 1
+            $("spinner-" + id).alpha = 1
         }
 
-        let action_done = (status = true, message = $l10n("ERROR")) => {
-            $("spinner_" + id).alpha = 0
+        let actionDone = (status = true, message = $l10n("ERROR")) => {
+            $("spinner-" + id).alpha = 0
             let button = $(id)
             if (!status) { // 失败
                 $ui.toast(message)
@@ -172,13 +172,13 @@ class BaseUI {
                     type: "button",
                     props: {
                         id: id,
-                        tintColor: this.text_color,
+                        tintColor: this.textColor,
                         symbol: symbol,
                         bgcolor: $color("clear")
                     },
                     events: {
                         tapped: () => {
-                            tapped(action_start, action_done)
+                            tapped(actionStart, actionDone)
                         }
                     },
                     layout: (make, view) => {
@@ -188,7 +188,7 @@ class BaseUI {
                 {
                     type: "spinner",
                     props: {
-                        id: "spinner_" + id,
+                        id: "spinner-" + id,
                         loading: true,
                         alpha: 0
                     },
@@ -213,7 +213,7 @@ class BaseUI {
      * @param {*} id 标题id
      * @param {*} title 标题文本
      */
-    standard_header(id, title) {
+    standardHeader(id, title) {
         return {
             type: "view",
             info: { id: id, title: title }, // 供动画使用
@@ -225,7 +225,7 @@ class BaseUI {
                 props: {
                     id: id,
                     text: title,
-                    textColor: this.text_color,
+                    textColor: this.textColor,
                     align: $align.left,
                     font: $font("bold", 35),
                     line: 1
@@ -241,7 +241,7 @@ class BaseUI {
     /**
      * 菜单内容转换成模板（通常在点击后触发）
      */
-    template_menu() {
+    menuTemplate() {
         let views = []
         for (let i = 0; i < this.menus.length; i++) {
             if (typeof this.menus[i].icon !== "object") {
@@ -274,7 +274,7 @@ class BaseUI {
                 }
             }
             // 当前页面
-            if (this.selected_page === i) {
+            if (this.selectedPage === i) {
                 menu.icon.image = $image(this.menus[i].icon[1])
                 menu.icon.tintColor = $color("systemLink")
                 menu.title.textColor = $color("systemLink")
@@ -321,7 +321,7 @@ class BaseUI {
                 },
                 events: {
                     tapped: sender => {
-                        if (this.selected_page === sender.info.index) return
+                        if (this.selectedPage === sender.info.index) return
                         // menu动画
                         $ui.animate({
                             duration: 0.4,
@@ -336,13 +336,13 @@ class BaseUI {
                             }
                         })
                         // 之前的图标
-                        let data = $(`menu-item-${this.selected_page}`).info
+                        let data = $(`menu-item-${this.selectedPage}`).info
                         let icon = $(data.icon.id)
                         icon.image = $image(data.icon.icon[0])
                         icon.tintColor = $color(data.icon.tintColor[0])
                         $(data.title.id).textColor = $color(data.title.textColor[0])
                         $(`page-${data.index}`).hidden = true
-                        this.selected_page = sender.info.index
+                        this.selectedPage = sender.info.index
                     }
                 }
             })
@@ -358,10 +358,10 @@ class BaseUI {
             type: "view",
             props: {
                 id: "menu",
-                bgcolor: $color("clear"),
+                bgcolor: $color("clear")
 
             },
-            views: this.template_menu(),
+            views: this.menuTemplate(),
             layout: (make, view) => {
                 make.top.inset(0)
                 if ($device.info.screen.width > 500) {
@@ -385,7 +385,7 @@ class BaseUI {
             type: "view",
             props: {
                 id: `page-${index}`,
-                hidden: this.selected_page !== index,
+                hidden: this.selectedPage !== index,
                 clipsToBounds: true
             },
             layout: (make, view) => {
@@ -451,7 +451,7 @@ class BaseUI {
                     views: [
                         {
                             type: "blur",
-                            props: { style: this.blur_style },
+                            props: { style: this.blurStyle },
                             layout: $layout.fill
                         },
                         this.menu()

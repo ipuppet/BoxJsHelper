@@ -3,15 +3,15 @@ class HomeUI {
         this.kernel = kernel
         this.factory = factory
         // 开启服务器并记录访问url
-        this.kernel.server.start_server()
+        this.kernel.server.startServer()
     }
 
-    static refresh(refresh_confirm) {
-        const refresh_action = () => {
-            $("web_boxjs").reload()
+    static refresh(refreshConfirm) {
+        const refreshAction = () => {
+            $("web-boxjs").reload()
             $ui.toast($l10n("REFRESH_SUCCESS"))
         }
-        if (refresh_confirm) {
+        if (refreshConfirm) {
             $ui.alert({
                 title: $l10n("ALERT_INFO"),
                 message: `${$l10n("REFRESH")} ${$l10n("BOXJS")}?`,
@@ -19,23 +19,23 @@ class HomeUI {
                     {
                         title: $l10n("OK"),
                         handler: () => {
-                            refresh_action()
+                            refreshAction()
                         }
                     },
                     { title: $l10n("CANCEL") }
                 ]
             })
         } else {
-            refresh_action()
+            refreshAction()
         }
     }
 
-    get_views() {
+    getViews() {
         return [
             {
                 type: "web",
                 props: {
-                    id: "web_boxjs",
+                    id: "web-boxjs",
                     url: this.kernel.server.serverURL,
                     opaque: false
                 },

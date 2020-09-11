@@ -9,8 +9,8 @@
                 ],
                 "title": "TIPS",
                 "type": "script",
-                "key": "tips_domain",
-                "value": "this.tips_domain()"
+                "key": "tipsDomain",
+                "value": "this.tipsDomain()"
             },
             {
                 "icon": [
@@ -19,7 +19,7 @@
                 ],
                 "title": "REFRESH_CONFIRM",
                 "type": "switch",
-                "key": "general.refresh_confirm",
+                "key": "general.refreshConfirm",
                 "value": true
             },
             {
@@ -28,7 +28,7 @@
                 ],
                 "title": "FIRST_SCREEN",
                 "type": "tab",
-                "key": "general.first_screen",
+                "key": "general.firstScreen",
                 "items": [
                     "BOXJS",
                     "TOOLKIT"
@@ -61,15 +61,15 @@
                 ],
                 "title": "PORT",
                 "type": "number",
-                "key": "advanced.server_port",
+                "key": "advanced.serverPort",
                 "value": 6060
             },
             {
-                "key": "server.remote_access",
+                "key": "server.remoteAccess",
                 "value": false
             },
             {
-                "key": "server.log_request",
+                "key": "server.logRequest",
                 "value": false
             },
             {

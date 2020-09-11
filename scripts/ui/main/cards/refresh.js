@@ -13,7 +13,7 @@ class RefreshCard extends Card {
             },
             events: {
                 tapped: () => {
-                    require("/scripts/ui/main/home").refresh(this.kernel.setting.get("general.refresh_confirm"))
+                    require("/scripts/ui/main/home").refresh(this.kernel.setting.get("general.refreshConfirm"))
                 }
             }
         }

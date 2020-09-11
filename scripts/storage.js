@@ -1,11 +1,11 @@
 class Storage {
     constructor(setting) {
         this.setting = setting
-        this.local_db = "/assets/BoxJsHelper.db"
-        this.iCloud_path = "drive://BoxJsHelper/"
-        this.iCloud_db = this.iCloud_path + "BoxJsHelper.db"
-        this.iCloud_auto_db = this.iCloud_path + "auto.db"
-        this.sqlite = $sqlite.open(this.local_db)
+        this.localDb = "/assets/BoxJsHelper.db"
+        this.iCloudPath = "drive://BoxJsHelper/"
+        this.iCloudDb = this.iCloudPath + "BoxJsHelper.db"
+        this.iCloudAutoDb = this.iCloudPath + "auto.db"
+        this.sqlite = $sqlite.open(this.localDb)
         this.sqlite.update("CREATE TABLE IF NOT EXISTS today(id INTEGER PRIMARY KEY NOT NULL, name TEXT, url TEXT, script TEXT, date TEXT)")
     }
 
@@ -44,17 +44,17 @@ class Storage {
     save(data) {
         let result
         result = this.sqlite.update({
-            sql: "INSERT INTO today (name, url, script, date) values(?, ?, ?)",
+            sql: "INSERT INTO today (name, url, script, date) values(?, ?, ?, ?)",
             args: [data.name, data.url, data.script, data.date]
         })
         if (result.result) {
-            if (this.setting.get("setting.backup.auto_backup")) {
-                if (!$file.exists(this.iCloud_path)) {
-                    $file.mkdir(this.iCloud_path)
+            if (this.setting.get("setting.backup.autoBackup")) {
+                if (!$file.exists(this.iCloudPath)) {
+                    $file.mkdir(this.iCloudPath)
                 }
                 $file.write({
-                    data: $data({ path: this.local_db }),
-                    path: this.iCloud_auto_db
+                    data: $data({ path: this.localDb }),
+                    path: this.iCloudAutoDb
                 })
             }
             return true
@@ -63,27 +63,27 @@ class Storage {
         return false
     }
 
-    has_backup() {
-        return $file.exists(this.iCloud_db)
+    hasBackup() {
+        return $file.exists(this.iCloudDb)
     }
 
-    backup_to_iCloud() {
-        if (!$file.exists(this.iCloud_path)) {
-            $file.mkdir(this.iCloud_path)
+    backupToICloud() {
+        if (!$file.exists(this.iCloudPath)) {
+            $file.mkdir(this.iCloudPath)
         }
         return $file.write({
-            data: $data({ path: this.local_db }),
-            path: this.iCloud_db
+            data: $data({ path: this.localDb }),
+            path: this.iCloudDb
         })
     }
 
-    recover_from_iCloud(data) {
+    recoverFromICloud(data) {
         let result = $file.write({
             data: data,
-            path: this.local_db
+            path: this.localDb
         })
         if (result) {
-            this.sqlite = $sqlite.open(this.local_db)
+            this.sqlite = $sqlite.open(this.localDb)
         }
         return result
     }

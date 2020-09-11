@@ -4,17 +4,17 @@ class BaseUISetting {
     constructor(kernel, factory) {
         this.kernel = kernel
         this.factory = factory
-        this.title_size = 35
-        this.title_size_max = 40
-        this.title_offset = 50
-        this.top_offset = -10
+        this.titleSize = 35
+        this.titleSizeMax = 40
+        this.titleOffset = 50
+        this.topOffset = -10
     }
 
-    update_setting(key, value) {
+    updateSetting(key, value) {
         return this.kernel.setting.set(key, value)
     }
 
-    create_line_label(title, icon) {
+    createLineLabel(title, icon) {
         if (!icon[1]) icon[1] = "#00CC00"
         if (typeof icon[1] !== "object") {
             icon[1] = [icon[1], icon[1]]
@@ -55,7 +55,7 @@ class BaseUISetting {
                     type: "label",
                     props: {
                         text: title,
-                        textColor: this.factory.text_color,
+                        textColor: this.factory.textColor,
                         align: $align.left
                     },
                     layout: (make, view) => {
@@ -73,14 +73,14 @@ class BaseUISetting {
         }
     }
 
-    create_info(icon, title, value) {
-        let is_array = Array.isArray(value)
-        let text = is_array ? value[0] : value
-        let more_info = is_array ? value[1] : value
+    createInfo(icon, title, value) {
+        let isArray = Array.isArray(value)
+        let text = isArray ? value[0] : value
+        let moreInfo = isArray ? value[1] : value
         return {
             type: "view",
             views: [
-                this.create_line_label(title, icon),
+                this.createLineLabel(title, icon),
                 {
                     type: "label",
                     props: {
@@ -100,12 +100,12 @@ class BaseUISetting {
                         tapped: () => {
                             $ui.alert({
                                 title: title,
-                                message: more_info,
+                                message: moreInfo,
                                 actions: [
                                     {
                                         title: $l10n("COPY"),
                                         handler: () => {
-                                            $clipboard.text = more_info
+                                            $clipboard.text = moreInfo
                                             $ui.toast($l10n("COPY_SUCCESS"))
                                         }
                                     },
@@ -124,11 +124,11 @@ class BaseUISetting {
         }
     }
 
-    create_switch(key, icon, title, on = true) {
+    createSwitch(key, icon, title, on = true) {
         return {
             type: "view",
             views: [
-                this.create_line_label(title, icon),
+                this.createLineLabel(title, icon),
                 {
                     type: "switch",
                     props: {
@@ -137,7 +137,7 @@ class BaseUISetting {
                     },
                     events: {
                         changed: sender => {
-                            if (!this.update_setting(key, sender.on)) {
+                            if (!this.updateSetting(key, sender.on)) {
                                 sender.on = !sender.on
                             }
                         }
@@ -152,11 +152,11 @@ class BaseUISetting {
         }
     }
 
-    create_string(key, icon, title, text = "") {
+    createString(key, icon, title, text = "") {
         return {
             type: "view",
             views: [
-                this.create_line_label(title, icon),
+                this.createLineLabel(title, icon),
                 {
                     type: "button",
                     props: {
@@ -200,7 +200,7 @@ class BaseUISetting {
                                         },
                                         events: {
                                             tapped: () => {
-                                                if (this.update_setting(key, $(key).text)) {
+                                                if (this.updateSetting(key, $(key).text)) {
                                                     popover.dismiss()
                                                 }
                                             }
@@ -221,11 +221,11 @@ class BaseUISetting {
         }
     }
 
-    create_number(key, icon, title, number = "") {
+    createNumber(key, icon, title, number = "") {
         return {
             type: "view",
             views: [
-                this.create_line_label(title, icon),
+                this.createLineLabel(title, icon),
                 {
                     type: "label",
                     props: {
@@ -240,15 +240,15 @@ class BaseUISetting {
                                 text: number,
                                 placeholder: title,
                                 handler: (text) => {
-                                    const is_number = (str) => {
+                                    const isNumber = (str) => {
                                         let reg = /^[0-9]+.?[0-9]*$/
                                         return reg.test(str)
                                     }
-                                    if (text === "" || !is_number(text)) {
+                                    if (text === "" || !isNumber(text)) {
                                         $ui.toast($l10n("INVALID_VALUE"))
                                         return
                                     }
-                                    if (this.update_setting(key, text)) {
+                                    if (this.updateSetting(key, text)) {
                                         $(key).text = text
                                     }
                                 }
@@ -267,17 +267,17 @@ class BaseUISetting {
         }
     }
 
-    create_stepper(key, icon, title, value = 1, min = 1, max = 12) {
+    createStepper(key, icon, title, value = 1, min = 1, max = 12) {
         return {
             type: "view",
             views: [
-                this.create_line_label(title, icon),
+                this.createLineLabel(title, icon),
                 {
                     type: "label",
                     props: {
                         id: key,
                         text: value,
-                        textColor: this.factory.text_color,
+                        textColor: this.factory.textColor,
                         align: $align.left
                     },
                     layout: (make, view) => {
@@ -295,7 +295,7 @@ class BaseUISetting {
                     events: {
                         changed: (sender) => {
                             $(key).text = sender.value
-                            if (!this.update_setting(key, sender.value)) {
+                            if (!this.updateSetting(key, sender.value)) {
                                 $(key).text = this.kernel.setting.get(key)
                             }
                         }
@@ -310,15 +310,15 @@ class BaseUISetting {
         }
     }
 
-    script_button(id, symbol, tapped) {
-        let action_start = () => {
+    scriptButton(id, symbol, tapped) {
+        let actionStart = () => {
             // 隐藏button，显示spinner
             $(id).alpha = 0
-            $("spinner_" + id).alpha = 1
+            $("spinner-" + id).alpha = 1
         }
 
-        let action_done = (status = true, message = $l10n("ERROR")) => {
-            $("spinner_" + id).alpha = 0
+        let actionDone = (status = true, message = $l10n("ERROR")) => {
+            $("spinner-" + id).alpha = 0
             let button = $(id)
             if (!status) { // 失败
                 $ui.toast(message)
@@ -364,13 +364,13 @@ class BaseUISetting {
                     type: "button",
                     props: {
                         id: id,
-                        tintColor: this.text_color,
+                        tintColor: this.textColor,
                         symbol: symbol,
                         bgcolor: $color("clear")
                     },
                     events: {
                         tapped: () => {
-                            tapped(action_start, action_done)
+                            tapped(actionStart, actionDone)
                         }
                     },
                     layout: (make, view) => {
@@ -380,7 +380,7 @@ class BaseUISetting {
                 {
                     type: "spinner",
                     props: {
-                        id: "spinner_" + id,
+                        id: "spinner-" + id,
                         loading: true,
                         alpha: 0
                     },
@@ -400,21 +400,21 @@ class BaseUISetting {
         }
     }
 
-    create_script(icon, title, script) {
-        let id = `script_${title}`
-        let action_start = () => {
+    createScript(icon, title, script) {
+        let id = `script-${title}`
+        let actionStart = () => {
             // 隐藏button，显示spinner
             $(id).alpha = 0
-            $(`script_spinner_${id}`).alpha = 1
+            $(`script-spinner-${id}`).alpha = 1
         }
 
-        let action_cancel = () => {
+        let actionCancel = () => {
             $(id).alpha = 1
-            $(`script_spinner_${id}`).alpha = 0
+            $(`script-spinner-${id}`).alpha = 0
         }
 
-        let action_done = (status = true, message = $l10n("ERROR")) => {
-            $(`script_spinner_${id}`).alpha = 0
+        let actionDone = (status = true, message = $l10n("ERROR")) => {
+            $(`script-spinner-${id}`).alpha = 0
             let button = $(id)
             if (!status) { // 失败
                 $ui.toast(message)
@@ -455,7 +455,7 @@ class BaseUISetting {
         return {
             type: "view",
             views: [
-                this.create_line_label(title, icon),
+                this.createLineLabel(title, icon),
                 {
                     type: "view",
                     views: [
@@ -475,7 +475,7 @@ class BaseUISetting {
                         {
                             type: "spinner",
                             props: {
-                                id: `script_spinner_${id}`,
+                                id: `script-spinner-${id}`,
                                 loading: true,
                                 alpha: 0
                             },
@@ -489,9 +489,9 @@ class BaseUISetting {
                             events: {
                                 tapped: () => {
                                     // 生成开始事件和结束事件动画，供函数调用
-                                    this.start = action_start
-                                    this.cancel = action_cancel
-                                    this.done = action_done
+                                    this.start = actionStart
+                                    this.cancel = actionCancel
+                                    this.done = actionDone
                                     // 执行代码
                                     eval(script)
                                 }
@@ -513,14 +513,14 @@ class BaseUISetting {
         }
     }
 
-    create_tab(key, icon, title, items, value) {
+    createTab(key, icon, title, items, value) {
         for (let i = 0; i < items.length; i++) {
             items[i] = $l10n(items[i])
         }
         return {
             type: "view",
             views: [
-                this.create_line_label(title, icon),
+                this.createLineLabel(title, icon),
                 {
                     type: "tab",
                     props: {
@@ -534,7 +534,7 @@ class BaseUISetting {
                     },
                     events: {
                         changed: (sender) => {
-                            this.update_setting(key, sender.index)
+                            this.updateSetting(key, sender.index)
                         }
                     }
                 }
@@ -543,8 +543,8 @@ class BaseUISetting {
         }
     }
 
-    get_views() {
-        let header = this.factory.standard_header("setting_title", $l10n("SETTING"))
+    getViews() {
+        let header = this.factory.standardHeader("setting-title", $l10n("SETTING"))
         let footer = {
             type: "view",
             props: { height: 130 },
@@ -567,10 +567,10 @@ class BaseUISetting {
                 }
             ]
         }
-        return this.standard_list(header, footer, this.get_sections())
+        return this.standardList(header, footer, this.getSections())
     }
 
-    get_sections() {
+    getSections() {
         let sections = []
         for (let section of this.kernel.setting.struct) {
             let rows = []
@@ -580,25 +580,25 @@ class BaseUISetting {
                 if (!item.icon) item.icon = ["square.grid.2x2.fill", "#00CC00"]
                 switch (item.type) {
                     case "switch":
-                        row = this.create_switch(item.key, item.icon, $l10n(item.title), value)
+                        row = this.createSwitch(item.key, item.icon, $l10n(item.title), value)
                         break
                     case "stepper":
-                        row = this.create_stepper(item.key, item.icon, $l10n(item.title), value, 1, 12)
+                        row = this.createStepper(item.key, item.icon, $l10n(item.title), value, 1, 12)
                         break
                     case "string":
-                        row = this.create_string(item.key, item.icon, $l10n(item.title), value)
+                        row = this.createString(item.key, item.icon, $l10n(item.title), value)
                         break
                     case "number":
-                        row = this.create_number(item.key, item.icon, $l10n(item.title), value)
+                        row = this.createNumber(item.key, item.icon, $l10n(item.title), value)
                         break
                     case "info":
-                        row = this.create_info(item.icon, $l10n(item.title), value)
+                        row = this.createInfo(item.icon, $l10n(item.title), value)
                         break
                     case "script":
-                        row = this.create_script(item.icon, $l10n(item.title), value)
+                        row = this.createScript(item.icon, $l10n(item.title), value)
                         break
                     case "tab":
-                        row = this.create_tab(item.key, item.icon, $l10n(item.title), item.items, value)
+                        row = this.createTab(item.key, item.icon, $l10n(item.title), item.items, value)
                         break
                     default:
                         continue
@@ -620,7 +620,7 @@ class BaseUISetting {
      * @param {*} data
      * @param {*} events
      */
-    standard_list(header, footer, data, events = {}) {
+    standardList(header, footer, data, events = {}) {
         return [
             {
                 type: "view",
@@ -639,10 +639,10 @@ class BaseUISetting {
                     events: Object.assign({
                         didScroll: sender => {
                             // 下拉放大字体
-                            if (sender.contentOffset.y <= this.top_offset) {
+                            if (sender.contentOffset.y <= this.topOffset) {
                                 let size = 35 - sender.contentOffset.y * 0.04
-                                if (size > this.title_size_max)
-                                    size = this.title_size_max
+                                if (size > this.titleSizeMax)
+                                    size = this.titleSizeMax
                                 $(header.info.id).font = $font("bold", size)
                             }
                             // 顶部信息栏
@@ -650,7 +650,7 @@ class BaseUISetting {
                                 $ui.animate({
                                     duration: 0.2,
                                     animation: () => {
-                                        $(header.info.id + "_header").alpha = 1
+                                        $(header.info.id + "-header").alpha = 1
                                         $(header.info.id).alpha = 0
                                     }
                                 })
@@ -658,7 +658,7 @@ class BaseUISetting {
                                 $ui.animate({
                                     duration: 0.2,
                                     animation: () => {
-                                        $(header.info.id + "_header").alpha = 0
+                                        $(header.info.id + "-header").alpha = 0
                                         $(header.info.id).alpha = 1
                                     }
                                 })
@@ -671,7 +671,7 @@ class BaseUISetting {
             {
                 type: "view",
                 props: {
-                    id: header.info.id + "_header",
+                    id: header.info.id + "-header",
                     alpha: 0
                 },
                 layout: (make, view) => {
@@ -681,7 +681,7 @@ class BaseUISetting {
                 views: [
                     {
                         type: "blur",
-                        props: { style: this.factory.blur_style },
+                        props: { style: this.factory.blurStyle },
                         layout: $layout.fill
                     },
                     {
@@ -713,7 +713,7 @@ class BaseUISetting {
                                 font: $font("bold", 17),
                                 align: $align.center,
                                 bgcolor: $color("clear"),
-                                textColor: this.text_color
+                                textColor: this.textColor
                             },
                             layout: (make, view) => {
                                 make.left.right.inset(0)

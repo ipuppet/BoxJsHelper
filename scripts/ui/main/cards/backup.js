@@ -18,7 +18,7 @@ class BackupCard extends Card {
         })
     }
 
-    template_backup_list(callback) {
+    backupListTemplate(callback) {
         this.boxdata(boxdata => {
             let globalbaks = boxdata.globalbaks
             let list = []
@@ -49,7 +49,7 @@ class BackupCard extends Card {
                         props: {
                             rowHeight: 60,
                             data: [],
-                            id: "list_backup",
+                            id: "list-backup",
                             header: {
                                 type: "view",
                                 props: { height: 70 },
@@ -193,7 +193,7 @@ class BackupCard extends Card {
                             },
                             ready: sender => {
                                 // 加载数据
-                                this.template_backup_list(list => {
+                                this.backupListTemplate(list => {
                                     sender.data = list
                                 })
                             }
@@ -201,7 +201,7 @@ class BackupCard extends Card {
                         layout: $layout.fillSafeArea
                     }], $l10n("TOOLKIT"), [
                         // 备份
-                        this.factory.nav_button("boxdata_backup", "arrow.up.doc", (start, done) => {
+                        this.factory.navButton("boxdata-backup", "arrow.up.doc", (start, done) => {
                             $ui.alert({
                                 title: $l10n("BACKUP"),
                                 message: $l10n("BACKUP_NOW"),
@@ -235,17 +235,17 @@ class BackupCard extends Card {
                                                         if (!$file.exists(this.iCloud)) {
                                                             $file.mkdir(this.iCloud)
                                                         }
-                                                        let status_iCloud = $file.write({
+                                                        let statusICloud = $file.write({
                                                             data: $data({ string: JSON.stringify(response.data) }),
                                                             path: `${this.iCloud}globalbaks.json`
                                                         })
-                                                        if (!status_iCloud) {
+                                                        if (!statusICloud) {
                                                             done(false, $l10n("ERROE_BACKUP"))
                                                             return
                                                         }
                                                         // 操作成功，更新列表
-                                                        this.template_backup_list(list => {
-                                                            $("list_backup").data = list
+                                                        this.backupListTemplate(list => {
+                                                            $("list-backup").data = list
                                                             // 动作结束
                                                             done()
                                                         })
@@ -259,7 +259,7 @@ class BackupCard extends Card {
                             })
                         }),
                         // 恢复
-                        this.factory.nav_button("boxdata_revert", "arrow.clockwise", (start, done) => {
+                        this.factory.navButton("boxdata-revert", "arrow.clockwise", (start, done) => {
                             $ui.alert({
                                 title: $l10n("REVERT_FROM_ICLOUD"),
                                 actions: [
@@ -285,8 +285,8 @@ class BackupCard extends Card {
                                                                 index++
                                                                 // 控制行为
                                                                 if (index > globalbaks.length)
-                                                                    this.template_backup_list(list => {
-                                                                        $("list_backup").data = list
+                                                                    this.backupListTemplate(list => {
+                                                                        $("list-backup").data = list
                                                                         done()
                                                                     })
                                                                 else

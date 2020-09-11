@@ -3,7 +3,7 @@ const Card = require("./card")
 class TodayCard extends Card {
     constructor(kernel, factory) {
         super(kernel, factory)
-        this.path_today = "/assets/today/"
+        this.todayPath = "/assets/today/"
     }
 
     editor(name, content, callback) {
@@ -45,7 +45,7 @@ class TodayCard extends Card {
                 type: "button",
                 props: {
                     symbol: "checkmark",
-                    tintColor: this.factory.text_color,
+                    tintColor: this.factory.textColor,
                     bgcolor: $color("clear")
                 },
                 layout: make => {
@@ -55,7 +55,7 @@ class TodayCard extends Card {
                 events: {
                     tapped: () => {
                         let editor = $("editor")
-                        this.save_script(editor.info, editor.text)
+                        this.saveScript(editor.info, editor.text)
                         $ui.toast($l10n("SUCCESS_SAVE"))
                         setTimeout(() => {
                             $ui.pop()
@@ -67,7 +67,7 @@ class TodayCard extends Card {
         ])
     }
 
-    save_script(name, content) {
+    saveScript(name, content) {
         if (name.slice(-3) !== ".js") {
             name = name + ".js"
         }
@@ -76,7 +76,7 @@ class TodayCard extends Card {
         }
         $file.write({
             data: $data({ string: content }),
-            path: this.path_today + name
+            path: this.todayPath + name
         })
     }
 
@@ -86,23 +86,23 @@ class TodayCard extends Card {
             title: { text: $l10n("TODAY") },
             events: {
                 tapped: () => {
-                    const script_name = () => {
+                    const scriptName = () => {
                         let script = this.kernel.setting.get("today.script")
                         script = script.slice(script.lastIndexOf("/") + 1)
                         return script
                     }
-                    const template_script = () => {
-                        let files = $file.list(this.path_today)
-                        let template_data = []
+                    const scriptTemplate = () => {
+                        let files = $file.list(this.todayPath)
+                        let dataTemplate = []
                         for (let i = 0; i < files.length; i++) {
-                            template_data.push({ label: { text: files[i] } })
+                            dataTemplate.push({ label: { text: files[i] } })
                         }
-                        return template_data
+                        return dataTemplate
                     }
                     this.factory.push([{
                         type: "list",
                         props: {
-                            id: "list_script",
+                            id: "list-script",
                             header: {
                                 type: "view",
                                 props: { height: 90 },
@@ -134,9 +134,9 @@ class TodayCard extends Card {
                                     {
                                         type: "label",
                                         props: {
-                                            id: "selected_script",
+                                            id: "selected-script",
                                             align: $align.right,
-                                            text: script_name()
+                                            text: scriptName()
                                         },
                                         layout: (make, view) => {
                                             make.top.equalTo(view.prev)
@@ -145,7 +145,7 @@ class TodayCard extends Card {
                                     }
                                 ]
                             },
-                            data: template_script(),
+                            data: scriptTemplate(),
                             template: [
                                 {
                                     type: "label",
@@ -173,7 +173,7 @@ class TodayCard extends Card {
                                                     title: $l10n("OK"),
                                                     handler: () => {
                                                         let file = sender.object(indexPath).label.text
-                                                        $file.delete(this.path_today + file)
+                                                        $file.delete(this.todayPath + file)
                                                         sender.delete(indexPath)
                                                     }
                                                 },
@@ -186,9 +186,9 @@ class TodayCard extends Card {
                                     title: $l10n("APPLY"),
                                     color: $color("orange"),
                                     handler: (sender, indexPath) => {
-                                        let script = this.path_today + sender.object(indexPath).label.text.trim()
+                                        let script = this.todayPath + sender.object(indexPath).label.text.trim()
                                         this.kernel.setting.set("today.script", script)
-                                        $("selected_script").text = script_name()
+                                        $("selected-script").text = scriptName()
                                     }
                                 }
                             ]
@@ -196,11 +196,11 @@ class TodayCard extends Card {
                         events: {
                             didSelect: (sender, indexPath, data) => {
                                 this.editor(data.label.text,
-                                    $file.read(this.path_today + data.label.text).string,
+                                    $file.read(this.todayPath + data.label.text).string,
                                     () => {
                                         setTimeout(() => {
                                             // 更新列表
-                                            $("list_script").data = template_script()
+                                            $("list-script").data = scriptTemplate()
                                         }, 500)
                                     }
                                 )
@@ -209,7 +209,7 @@ class TodayCard extends Card {
                         layout: $layout.fillSafeArea
                     }], $l10n("TOOLKIT"), [
                         // 新脚本
-                        this.factory.nav_button("script_new", "plus", (start, done) => {
+                        this.factory.navButton("script-new", "plus", (start, done) => {
                             $ui.menu({
                                 items: [$l10n("NEW_FILE"), $l10n("URL")],
                                 handler: (title, idx) => {
@@ -222,7 +222,7 @@ class TodayCard extends Card {
                                                 this.editor(text, "", () => {
                                                     setTimeout(() => {
                                                         // 更新列表
-                                                        $("list_script").data = template_script()
+                                                        $("list-script").data = scriptTemplate()
                                                     }, 500)
                                                 })
                                             }
@@ -237,7 +237,7 @@ class TodayCard extends Card {
                                                     url: text,
                                                     handler: response => {
                                                         let name = text.slice(text.lastIndexOf("/") + 1)
-                                                        this.save_script(name, response.data + "")
+                                                        this.saveScript(name, response.data + "")
                                                         // 保存信息到数据库
                                                         // 换更新脚本思路
                                                         /* this.kernel.storage.save({
@@ -246,7 +246,7 @@ class TodayCard extends Card {
                                                             script: response.data + "",
                                                             date: new Date().getTime()
                                                         }) */
-                                                        $("list_script").data = template_script()
+                                                        $("list-script").data = scriptTemplate()
                                                         done()
                                                     }
                                                 })
@@ -257,7 +257,7 @@ class TodayCard extends Card {
                             })
                         }),
                         // 备份脚本
-                        this.factory.nav_button("script_backup", "cloud", (start, done) => {
+                        this.factory.navButton("script-backup", "cloud", (start, done) => {
                             $ui.menu({
                                 items: [$l10n("BACKUP_ICLOUD"), $l10n("REVERT_FROM_ICLOUD")],
                                 handler: (title, idx) => {
@@ -269,21 +269,21 @@ class TodayCard extends Card {
                                             $file.mkdir(dst)
                                         }
                                         $file.copy({
-                                            src: this.path_today,
+                                            src: this.todayPath,
                                             dst: dst
                                         })
                                         done()
                                     } else if (idx === 1) { // 恢复
                                         start()
                                         // 恢复文件
-                                        if (!$file.exists(this.path_today)) {
-                                            $file.mkdir(this.path_today)
+                                        if (!$file.exists(this.todayPath)) {
+                                            $file.mkdir(this.todayPath)
                                         }
                                         $file.copy({
                                             src: this.iCloud + "Today",
-                                            dst: this.path_today
+                                            dst: this.todayPath
                                         })
-                                        $("list_script").data = template_script()
+                                        $("list-script").data = scriptTemplate()
                                         done()
                                     }
                                 }

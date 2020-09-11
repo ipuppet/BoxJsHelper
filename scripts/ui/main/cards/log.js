@@ -11,33 +11,33 @@ class LogCard extends Card {
             title: { text: $l10n("LOG") },
             extra: {
                 type: "switch",
-                props: { on: this.kernel.setting.get("server.log_request") },
+                props: { on: this.kernel.setting.get("server.logRequest") },
                 events: {
                     changed: sender => {
                         if (sender.on) {
-                            this.kernel.setting.set("server.log_request", true)
+                            this.kernel.setting.set("server.logRequest", true)
                         } else {
-                            this.kernel.setting.set("server.log_request", false)
+                            this.kernel.setting.set("server.logRequest", false)
                         }
                     }
                 }
             },
             events: {
                 tapped: () => {
-                    let path_log = this.kernel.server.logger.path
-                    const template_log_list = path => {
+                    let logPath = this.kernel.server.logger.path
+                    const logListTemplate = path => {
                         let files = $file.list(path)
-                        let template_data = []
+                        let dataTemplate = []
                         for (let file of files) {
-                            template_data.push({ label: { text: file } })
+                            dataTemplate.push({ label: { text: file } })
                         }
-                        return template_data
+                        return dataTemplate
                     }
                     this.factory.push([{
                         type: "list",
                         props: {
-                            data: template_log_list(path_log),
-                            id: "list_log",
+                            data: logListTemplate(logPath),
+                            id: "list-log",
                             header: {
                                 type: "view",
                                 props: { height: 70 },
@@ -76,7 +76,7 @@ class LogCard extends Card {
                                     color: $color("red"),
                                     handler: (sender, indexPath) => {
                                         let file = sender.object(indexPath).label.text
-                                        $file.delete(path_log + file)
+                                        $file.delete(logPath + file)
                                         sender.delete(indexPath)
                                     }
                                 }
@@ -89,7 +89,7 @@ class LogCard extends Card {
                                     props: {
                                         editable: false,
                                         textColor: $color("primaryText", "secondaryText"),
-                                        text: $file.read(path_log + data.label.text).string
+                                        text: $file.read(logPath + data.label.text).string
                                     },
                                     layout: $layout.fillSafeArea
                                 }], $l10n("LOG"))
@@ -99,7 +99,7 @@ class LogCard extends Card {
                     }], $l10n("TOOLKIT"), [{
                         type: "button",
                         props: {
-                            tintColor: this.factory.text_color,
+                            tintColor: this.factory.textColor,
                             symbol: "trash",
                             bgcolor: $color("clear")
                         },
@@ -112,9 +112,9 @@ class LogCard extends Card {
                                         {
                                             title: $l10n("OK"),
                                             handler: () => {
-                                                $file.delete(path_log)
-                                                $file.mkdir(path_log)
-                                                $("list_log").data = template_log_list(path_log)
+                                                $file.delete(logPath)
+                                                $file.mkdir(logPath)
+                                                $("list-log").data = logListTemplate(logPath)
                                             }
                                         },
                                         { title: $l10n("CANCEL") }
