@@ -646,20 +646,36 @@ class BaseUISetting {
                                 $(header.info.id).font = $font("bold", size)
                             }
                             // 顶部信息栏
-                            if (sender.contentOffset.y >= 25) {
+                            if (sender.contentOffset.y >= 5) {
                                 $ui.animate({
                                     duration: 0.2,
                                     animation: () => {
                                         $(header.info.id + "-header").alpha = 1
-                                        $(header.info.id).alpha = 0
                                     }
                                 })
-                            } else if (sender.contentOffset.y < 25) {
+                                if (sender.contentOffset.y > 40) {
+                                    $ui.animate({
+                                        duration: 0.2,
+                                        animation: () => {
+                                            $(header.info.id + "-header-title").alpha = 1
+                                            $(header.info.id).alpha = 0
+                                        }
+                                    })
+                                } else {
+                                    $ui.animate({
+                                        duration: 0.2,
+                                        animation: () => {
+                                            $(header.info.id + "-header-title").alpha = 0
+                                            $(header.info.id).alpha = 1
+                                        }
+                                    })
+                                }
+                            } else if (sender.contentOffset.y < 5) {
                                 $ui.animate({
                                     duration: 0.2,
                                     animation: () => {
                                         $(header.info.id + "-header").alpha = 0
-                                        $(header.info.id).alpha = 1
+
                                     }
                                 })
                             }
@@ -668,7 +684,7 @@ class BaseUISetting {
                     layout: $layout.fill
                 }]
             },
-            {
+            {// 顶部bar，用于显示 设置 字样
                 type: "view",
                 props: {
                     id: header.info.id + "-header",
@@ -709,6 +725,8 @@ class BaseUISetting {
                         views: [{
                             type: "label",
                             props: {
+                                id: header.info.id + "-header-title",
+                                alpha: 0,
                                 text: header.info.title,
                                 font: $font("bold", 17),
                                 align: $align.center,

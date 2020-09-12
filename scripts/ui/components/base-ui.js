@@ -5,6 +5,35 @@ class BaseUI {
         // all
         this.blurStyle = $blurStyle.thinMaterial
         this.textColor = $color("primaryText", "secondaryText")
+        // menu layout
+        this.menuLayout = {
+            menuItem: (make, view) => {
+                make.size.equalTo(50)
+                let length = this.menus.length
+                let spacing = (this.getMenuWidth() - length * 50) / (length + 1)
+                if (view.prev) {
+                    make.left.equalTo(view.prev.right).offset(spacing)
+                } else {
+                    make.left.inset(spacing)
+                }
+            },
+            menuBar: (make, view) => {
+                make.top.equalTo(view.super.safeAreaBottom).offset(-50)
+                make.centerX.equalTo(view.super)
+                make.width.equalTo(this.getMenuWidth())
+                let isLargeScreen = this.isLargeScreen()
+                if (isLargeScreen) {
+                    make.bottom.equalTo(-20)
+                    if (!$device.isIphoneX) {
+                        make.top.equalTo(view.super.safeAreaBottom).offset(-70)
+                    }
+                } else {
+                    make.bottom.equalTo(0)
+                }
+                $("menu").cornerRadius = isLargeScreen ? 10 : 0
+                if ($("menu-canvas")) $("menu-canvas").hidden = isLargeScreen
+            }
+        }
         // 首页加载页面
         this.prepare()
     }
@@ -15,6 +44,14 @@ class BaseUI {
 
     setViews(views) {
         this.views = views
+    }
+
+    getMenuWidth() {
+        return this.isLargeScreen() ? 500 : $device.info.screen.width
+    }
+
+    isLargeScreen() {
+        return $device.info.screen.width > 500
     }
 
     /**
@@ -90,7 +127,7 @@ class BaseUI {
                             type: "view",
                             views: views,
                             layout: (make, view) => {
-                                make.top.equalTo(view.prev).offset(30)
+                                make.top.equalTo(view.prev).offset(40)
                                 make.width.equalTo(view.super)
                                 make.bottom.equalTo(view.super.safeAreaBottom)
                             }
@@ -231,7 +268,7 @@ class BaseUI {
                     line: 1
                 },
                 layout: (make, view) => {
-                    make.left.inset(20)
+                    make.left.equalTo(view.super.safeArea).offset(20)
                     make.top.equalTo(view.super.safeAreaTop).offset(50)
                 }
             }]
@@ -239,9 +276,9 @@ class BaseUI {
     }
 
     /**
-     * 菜单内容转换成模板（通常在点击后触发）
+     * 菜单视图
      */
-    menuTemplate() {
+    menuItemTemplate() {
         let views = []
         for (let i = 0; i < this.menus.length; i++) {
             if (typeof this.menus[i].icon !== "object") {
@@ -308,17 +345,7 @@ class BaseUI {
                         }
                     }
                 ],
-                layout: (make, view) => {
-                    make.size.equalTo(50)
-                    let width = $device.info.screen.width
-                    let length = this.menus.length
-                    let spacing = (width - length * 50) / (length + 1)
-                    if (view.prev) {
-                        make.left.equalTo(view.prev.right).offset(spacing)
-                    } else {
-                        make.left.inset(spacing)
-                    }
-                },
+                layout: this.menuLayout.menuItem,
                 events: {
                     tapped: sender => {
                         if (this.selectedPage === sender.info.index) return
@@ -351,36 +378,11 @@ class BaseUI {
     }
 
     /**
-     * 菜单
-     */
-    menu() {
-        return {
-            type: "view",
-            props: {
-                id: "menu",
-                bgcolor: $color("clear")
-
-            },
-            views: this.menuTemplate(),
-            layout: (make, view) => {
-                make.top.inset(0)
-                if ($device.info.screen.width > 500) {
-                    make.width.equalTo(500)
-                } else {
-                    make.left.right.inset(0)
-                }
-                make.centerX.equalTo(view.super)
-                make.height.equalTo(50)
-            }
-        }
-    }
-
-    /**
      * 创建一个页面
      * @param {*} views 页面内容
      * @param {*} index 页面索引，需要和菜单对应
      */
-    creator(views, index) {
+    creator(views, index, isHorizontalSafeArea = true) {
         return {
             type: "view",
             props: {
@@ -389,12 +391,20 @@ class BaseUI {
                 clipsToBounds: true
             },
             layout: (make, view) => {
-                make.size.equalTo(view.super)
+                make.top.bottom.equalTo(view.super)
+                if (isHorizontalSafeArea) {
+                    make.left.right.equalTo(view.super.safeArea)
+                } else {
+                    make.left.right.equalTo(view.super)
+                }
             },
             views: views
         }
     }
 
+    /**
+     * 加载动画
+     */
     prepare() {
         $ui.render({
             props: {
@@ -443,22 +453,21 @@ class BaseUI {
                     views: this.views
                 },
                 {
-                    type: "view",
-                    layout: (make, view) => {
-                        make.top.equalTo(view.super.safeAreaBottom).offset(-50)
-                        make.bottom.left.right.inset(0)
+                    type: "blur",
+                    props: {
+                        id: "menu",
+                        style: this.blurStyle,
+                        cornerRadius: this.isLargeScreen() ? 10 : 0
                     },
-                    views: [
-                        {
-                            type: "blur",
-                            props: { style: this.blurStyle },
-                            layout: $layout.fill
-                        },
-                        this.menu()
-                    ]
+                    layout: this.menuLayout.menuBar,
+                    views: this.menuItemTemplate()
                 },
-                {
+                {// 菜单栏上方灰色横线
                     type: "canvas",
+                    props: {
+                        id: "menu-canvas",
+                        hidden: this.isLargeScreen()
+                    },
                     layout: (make, view) => {
                         make.top.equalTo(view.prev.top)
                         make.height.equalTo(1 / $device.info.screen.scale)
@@ -476,7 +485,24 @@ class BaseUI {
                         }
                     }
                 }
-            ]
+            ],
+            events: {
+                layoutSubviews: () => {
+                    if (!this.orientation) {
+                        this.orientation = $device.info.screen.orientation
+                        return
+                    }
+                    if (this.orientation !== $device.info.screen.orientation) {
+                        this.orientation = $device.info.screen.orientation
+                        // 更新菜单元素的布局
+                        for (let i = 0; i < this.menus.length; i++) {
+                            $(`menu-item-${i}`).updateLayout(this.menuLayout.menuItem)
+                        }
+                        // 更新菜单栏
+                        $("menu").updateLayout(this.menuLayout.menuBar)
+                    }
+                }
+            }
         })
     }
 }
