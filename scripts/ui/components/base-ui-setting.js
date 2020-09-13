@@ -624,123 +624,133 @@ class BaseUISetting {
         return [
             {
                 type: "view",
-                layout: $layout.fill,
-                views: [{
-                    type: "list",
-                    props: {
-                        style: 2,
-                        separatorInset: $insets(0, 50, 0, 10),
-                        rowHeight: 50,
-                        indicatorInsets: $insets(55, 0, 50, 0),
-                        header: header,
-                        footer: footer,
-                        data: data
-                    },
-                    events: Object.assign({
-                        didScroll: sender => {
-                            // 下拉放大字体
-                            if (sender.contentOffset.y <= this.topOffset) {
-                                let size = 35 - sender.contentOffset.y * 0.04
-                                if (size > this.titleSizeMax)
-                                    size = this.titleSizeMax
-                                $(header.info.id).font = $font("bold", size)
-                            }
-                            // 顶部信息栏
-                            if (sender.contentOffset.y >= 5) {
-                                $ui.animate({
-                                    duration: 0.2,
-                                    animation: () => {
-                                        $(header.info.id + "-header").alpha = 1
-                                    }
-                                })
-                                if (sender.contentOffset.y > 40) {
-                                    $ui.animate({
-                                        duration: 0.2,
-                                        animation: () => {
-                                            $(header.info.id + "-header-title").alpha = 1
-                                            $(header.info.id).alpha = 0
-                                        }
-                                    })
-                                } else {
-                                    $ui.animate({
-                                        duration: 0.2,
-                                        animation: () => {
-                                            $(header.info.id + "-header-title").alpha = 0
-                                            $(header.info.id).alpha = 1
-                                        }
-                                    })
-                                }
-                            } else if (sender.contentOffset.y < 5) {
-                                $ui.animate({
-                                    duration: 0.2,
-                                    animation: () => {
-                                        $(header.info.id + "-header").alpha = 0
-
-                                    }
-                                })
-                            }
-                        }
-                    }, events),
-                    layout: $layout.fill
-                }]
-            },
-            {// 顶部bar，用于显示 设置 字样
-                type: "view",
-                props: {
-                    id: header.info.id + "-header",
-                    alpha: 0
-                },
-                layout: (make, view) => {
-                    make.left.top.right.inset(0)
-                    make.bottom.equalTo(view.super.safeAreaTop).offset(45)
-                },
+                props: { bgcolor: $color("insetGroupedBackground") },
                 views: [
                     {
-                        type: "blur",
-                        props: { style: this.factory.blurStyle },
-                        layout: $layout.fill
-                    },
-                    {
-                        type: "canvas",
-                        layout: (make, view) => {
-                            make.top.equalTo(view.prev.bottom)
-                            make.height.equalTo(1 / $device.info.screen.scale)
-                            make.left.right.inset(0)
-                        },
-                        events: {
-                            draw: (view, ctx) => {
-                                let width = view.frame.width
-                                let scale = $device.info.screen.scale
-                                ctx.strokeColor = $color("gray")
-                                ctx.setLineWidth(1 / scale)
-                                ctx.moveToPoint(0, 0)
-                                ctx.addLineToPoint(width, 0)
-                                ctx.strokePath()
-                            }
-                        }
-                    },
-                    {
                         type: "view",
-                        layout: $layout.fill,
+                        layout: (make, view) => {
+                            make.top.left.right.equalTo(view.super.safeArea)
+                            make.bottom.inset(0)
+                        },
                         views: [{
-                            type: "label",
+                            type: "list",
                             props: {
-                                id: header.info.id + "-header-title",
-                                alpha: 0,
-                                text: header.info.title,
-                                font: $font("bold", 17),
-                                align: $align.center,
-                                bgcolor: $color("clear"),
-                                textColor: this.textColor
+                                style: 2,
+                                separatorInset: $insets(0, 50, 0, 10),
+                                rowHeight: 50,
+                                indicatorInsets: $insets(55, 0, 50, 0),
+                                header: header,
+                                footer: footer,
+                                data: data
                             },
-                            layout: (make, view) => {
-                                make.left.right.inset(0)
-                                make.top.equalTo(view.super.safeAreaTop)
-                                make.bottom.equalTo(view.super)
-                            }
+                            events: Object.assign({
+                                didScroll: sender => {
+                                    // 下拉放大字体
+                                    if (sender.contentOffset.y <= this.topOffset) {
+                                        let size = 35 - sender.contentOffset.y * 0.04
+                                        if (size > this.titleSizeMax)
+                                            size = this.titleSizeMax
+                                        $(header.info.id).font = $font("bold", size)
+                                    }
+                                    // 顶部信息栏
+                                    if (sender.contentOffset.y >= 5) {
+                                        $ui.animate({
+                                            duration: 0.2,
+                                            animation: () => {
+                                                $(header.info.id + "-header").alpha = 1
+                                            }
+                                        })
+                                        if (sender.contentOffset.y > 40) {
+                                            $ui.animate({
+                                                duration: 0.2,
+                                                animation: () => {
+                                                    $(header.info.id + "-header-title").alpha = 1
+                                                    $(header.info.id).alpha = 0
+                                                }
+                                            })
+                                        } else {
+                                            $ui.animate({
+                                                duration: 0.2,
+                                                animation: () => {
+                                                    $(header.info.id + "-header-title").alpha = 0
+                                                    $(header.info.id).alpha = 1
+                                                }
+                                            })
+                                        }
+                                    } else if (sender.contentOffset.y < 5) {
+                                        $ui.animate({
+                                            duration: 0.2,
+                                            animation: () => {
+                                                $(header.info.id + "-header").alpha = 0
+
+                                            }
+                                        })
+                                    }
+                                }
+                            }, events),
+                            layout: $layout.fill
                         }]
+                    },
+                    {// 顶部bar，用于显示 设置 字样
+                        type: "view",
+                        props: {
+                            id: header.info.id + "-header",
+                            alpha: 0
+                        },
+                        layout: (make, view) => {
+                            make.left.top.right.inset(0)
+                            make.bottom.equalTo(view.super.safeAreaTop).offset(45)
+                        },
+                        views: [
+                            {
+                                type: "blur",
+                                props: { style: this.factory.blurStyle },
+                                layout: $layout.fill
+                            },
+                            {
+                                type: "canvas",
+                                layout: (make, view) => {
+                                    make.top.equalTo(view.prev.bottom)
+                                    make.height.equalTo(1 / $device.info.screen.scale)
+                                    make.left.right.inset(0)
+                                },
+                                events: {
+                                    draw: (view, ctx) => {
+                                        let width = view.frame.width
+                                        let scale = $device.info.screen.scale
+                                        ctx.strokeColor = $color("gray")
+                                        ctx.setLineWidth(1 / scale)
+                                        ctx.moveToPoint(0, 0)
+                                        ctx.addLineToPoint(width, 0)
+                                        ctx.strokePath()
+                                    }
+                                }
+                            },
+                            {
+                                type: "view",
+                                layout: $layout.fill,
+                                views: [{
+                                    type: "label",
+                                    props: {
+                                        id: header.info.id + "-header-title",
+                                        alpha: 0,
+                                        text: header.info.title,
+                                        font: $font("bold", 17),
+                                        align: $align.center,
+                                        bgcolor: $color("clear"),
+                                        textColor: this.textColor
+                                    },
+                                    layout: (make, view) => {
+                                        make.left.right.inset(0)
+                                        make.top.equalTo(view.super.safeAreaTop)
+                                        make.bottom.equalTo(view.super)
+                                    }
+                                }]
+                            }
+                        ]
                     }
-                ]
+                ],
+                layout: $layout.fill
             }
         ]
     }
