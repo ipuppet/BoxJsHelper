@@ -1,17 +1,16 @@
 class Matrix {
     constructor() {
-        this.isFirst = true
         this.indexFlag = 1
         this.height = 90
         this.spacing = 15
         this.columns = 2
+        this.id = "Matrix"
+        this.contentViewId = this.id + "Content"
     }
 
     getWidth() {
-        if (undefined === this.width) {
-            this.width = $device.info.screen.width / this.columns
-            this.width = this.width - this.spacing * (this.columns + 1) / this.columns
-        }
+        this.width = $device.info.screen.width / this.columns
+        this.width = this.width - this.spacing * (this.columns + 1) / this.columns
         return this.width
     }
 
@@ -23,44 +22,73 @@ class Matrix {
                 cornerRadius: 10
             },
             layout: (make, view) => {
+                make.width.equalTo(view.super.width)
+                    .multipliedBy(1 / this.columns)
+                    .offset(-this.spacing - this.spacing / this.columns)
+                make.height.equalTo(this.height)
+                // 边距控制
                 if (this.indexFlag === 1) {
                     make.left.inset(this.spacing)
-                    if (this.isFirst) {
-                        make.top.inset(this.spacing)
-                        this.isFirst = false
+                    if (!view.prev) {
+                        make.top.equalTo(view.super).offset(this.spacing)
                     } else {
                         make.top.equalTo(view.prev).offset(this.height + this.spacing)
                     }
                 } else {
-                    make.left.equalTo(view.prev).offset(this.getWidth() + this.spacing)
+                    make.left.equalTo(view.prev.right).offset(this.spacing)
                     make.top.equalTo(view.prev)
                 }
-                if (this.indexFlag === this.columns) this.indexFlag = 1
-                else this.indexFlag++
-                make.size.equalTo($size(this.getWidth(), this.height))
+                this.indexFlag === this.columns ? this.indexFlag = 1 : this.indexFlag++
             },
             views: views,
             events: events
         }
     }
 
-    scrollTemplate(data, bottomOffset = 0) {
+    scrollTemplate(data, bottomOffset = this.spacing) {
         // 计算尺寸
         let line = Math.ceil(data.length / this.columns)
         let height = line * (this.height + this.spacing) + bottomOffset
         return {
             type: "scroll",
             props: {
+                id: this.id,
                 bgcolor: $color("insetGroupedBackground"),
                 scrollEnabled: true,
                 indicatorInsets: $insets(this.spacing, 0, 50, 0),
                 contentSize: $size(0, height)
             },
-            views: data,
             layout: (make, view) => {
-                make.left.right.inset(0)
+                make.left.right.equalTo(view.super.safeArea)
                 make.bottom.inset(0)
-                make.top.equalTo(view.prev).offset(50)
+                view.prev ? make.top.equalTo(view.prev).offset(50) : make.top.inset(0)
+            },
+            events: {
+                layoutSubviews: () => {
+                    const addView = () => {
+                        // 重置变量
+                        this.indexFlag = 1
+                        // 插入视图
+                        if ($(this.contentViewId)) $(this.contentViewId).remove()
+                        $(this.id).add({
+                            type: "view",
+                            props: { id: this.contentViewId },
+                            views: data,
+                            layout: (make, view) => {
+                                make.size.equalTo(view.super)
+                            }
+                        })
+                    }
+                    if (!this.orientation) {
+                        this.orientation = $device.info.screen.orientation
+                        addView()
+                        return
+                    }
+                    if (this.orientation !== $device.info.screen.orientation) {
+                        this.orientation = $device.info.screen.orientation
+                        addView()
+                    }
+                }
             }
         }
     }
