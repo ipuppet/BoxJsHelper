@@ -2,6 +2,8 @@
 
 > BoxJs 助手
 
+[通过Erots安装](https://liuguogy.github.io/JSBox-addins/?q=show&objectId=5f38086c3f19480006698974)
+
 若您不知道如何配置BoxJs，可以参考以下方法：
 
 在`配置-脚本-订阅脚本`中添加以下订阅即可
@@ -9,10 +11,6 @@
 <https://raw.githubusercontent.com/ipuppet/Loon/master/BoxJs.conf>
 
 注：本人只有Loon，所以仅限Loon用户
-
-设置页面参考 Aligege [影视大全](https://liuguogy.github.io/JSBox-addins/?q=show&objectId=5ec5f46dc1c17600084c5f23)
-
-[通过Erots安装](https://liuguogy.github.io/JSBox-addins/?q=show&objectId=5f38086c3f19480006698974)
 
 # 服务器
 
@@ -52,6 +50,9 @@
     `10010.js`: 这个也算是一个demo了，自动获取BoxJs的数据，什么也不用填，左划点应用，在Today里加上一个JSBox的小组件，点选择脚本，选本应用即可。（需要BoxJs内有`chavy_signheader_10010`）
 
 # 设置
+
+
+设置页面参考 Aligege [影视大全](https://liuguogy.github.io/JSBox-addins/?q=show&objectId=5ec5f46dc1c17600084c5f23)
 
 ## 一般
 
