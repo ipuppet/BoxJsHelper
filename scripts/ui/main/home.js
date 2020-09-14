@@ -40,8 +40,7 @@ class HomeUI {
                     opaque: false
                 },
                 layout: (make, view) => {
-                    make.top.equalTo(view.super.safeAreaTop)
-                    make.width.equalTo(view.super)
+                    make.width.top.equalTo(view.super)
                     make.bottom.equalTo(view.super.safeAreaBottom).offset(-50)
                 }
             }
