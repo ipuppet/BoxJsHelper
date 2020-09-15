@@ -24,6 +24,7 @@ class Matrix {
             layout: (make, view) => {
                 make.width.equalTo(view.super.width)
                     .multipliedBy(1 / this.columns)
+                    // this.spacing / this.columns 是应为最后一个块右侧边距为0，需要所有块均摊最后一个块右侧边距
                     .offset(-this.spacing - this.spacing / this.columns)
                 make.height.equalTo(this.height)
                 // 边距控制
