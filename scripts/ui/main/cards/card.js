@@ -1,7 +1,6 @@
 class Card {
-    constructor(kernel, factory) {
+    constructor(kernel) {
         this.kernel = kernel
-        this.factory = factory
         this.iCloud = this.kernel.iCloudPath("/BoxJsHepler")
     }
 }

@@ -1,4 +1,3 @@
-const Matrix = require("/scripts/ui/components/matrix")
 // 引入卡片
 const RefreshCard = require("./cards/refresh")
 const RemoteAccessCard = require("./cards/remote-access")
@@ -7,9 +6,9 @@ const BackupCard = require("./cards/backup")
 const TodayCard = require("./cards/today")
 
 class ToolkitUI {
-    constructor(kernel, factory) {
+    constructor(kernel) {
         this.kernel = kernel
-        this.factory = factory
+        const Matrix = this.kernel.registerPlugin("matrix")
         this.matrix = new Matrix()
         this.matrix.columns = 2
         this.matrix.height = 90
@@ -18,11 +17,11 @@ class ToolkitUI {
 
     loadCards() {
         this.cards = [
-            new RefreshCard(this.kernel, this.factory).card(),
-            new RemoteAccessCard(this.kernel, this.factory).card(),
-            new LogCard(this.kernel, this.factory).card(),
-            new BackupCard(this.kernel, this.factory).card(),
-            new TodayCard(this.kernel, this.factory).card()
+            new RefreshCard(this.kernel).card(),
+            new RemoteAccessCard(this.kernel).card(),
+            new LogCard(this.kernel).card(),
+            new BackupCard(this.kernel).card(),
+            new TodayCard(this.kernel).card()
         ]
     }
 
@@ -35,7 +34,7 @@ class ToolkitUI {
             {
                 type: "image",
                 props: Object.assign({
-                    tintColor: this.factory.textColor
+                    tintColor: this.kernel.UIKit.textColor
                 }, data.icon),
                 layout: make => {
                     make.top.left.inset(10)

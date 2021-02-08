@@ -1,40 +1,37 @@
-const BaseUI = require("/scripts/ui/components/base-ui")
+const BaseView = require("../../../EasyJsBox/src/Foundation/view")
 
-class Factory extends BaseUI {
+class Factory extends BaseView {
     constructor(kernel) {
         super(kernel)
-        this.selectedPage = this.kernel.setting.get("general.firstScreen") // 当前显示的页面
+        // 设置初始页面
+        this.kernel.page.controller.setSelectedPage(this.kernel.setting.get("general.firstScreen"))
     }
 
     home() {
         const HomeUI = require("./home")
         let interfaceUi = new HomeUI(this.kernel, this)
-        return this.creator(interfaceUi.getViews(), 0)
+        return this.kernel.page.view.creator(interfaceUi.getViews(), 0)
     }
 
     server() {
         const ToolkitUI = require("./toolkit")
-        let interfaceUi = new ToolkitUI(this.kernel, this)
-        return this.creator(interfaceUi.getViews(), 1)
+        let interfaceUi = new ToolkitUI(this.kernel)
+        return this.kernel.page.view.creator(interfaceUi.getViews(), 1)
     }
 
     setting() {
-        const SettingUI = require("./setting")
-        let interfaceUi = new SettingUI(this.kernel, this)
-        return this.creator(interfaceUi.getViews(), 2, false)
+        return this.kernel.page.view.creator(this.kernel.setting.getView(), 2, false)
     }
 
     /**
      * 渲染页面
      */
-    async render() {
-        // 视图
-        this.setViews([
+    render() {
+        this.kernel.render([
             this.home(),
             this.server(),
             this.setting()
-        ])
-        this.setMenus([
+        ], [
             {
                 icon: ["cube", "cube.fill"],
                 title: $l10n("BOXJS")
@@ -47,8 +44,7 @@ class Factory extends BaseUI {
                 icon: "gear",
                 title: $l10n("SETTING")
             }
-        ])
-        super.render()
+        ])()
     }
 }
 

@@ -1,10 +1,6 @@
 const Card = require("./card")
 
 class RefreshCard extends Card {
-    constructor(kernel, factory) {
-        super(kernel, factory)
-    }
-
     card() {
         return {
             icon: { symbol: "arrow.clockwise" },

@@ -10,7 +10,7 @@
                 "title": "TIPS",
                 "type": "script",
                 "key": "tipsDomain",
-                "value": "this.tipsDomain()"
+                "value": "this.controller.tipsDomain"
             },
             {
                 "icon": [
@@ -112,7 +112,7 @@
                 "title": "README",
                 "type": "script",
                 "key": "about.readme",
-                "value": "this.readme()"
+                "value": "this.controller.readme"
             }
         ]
     }

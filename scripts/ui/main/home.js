@@ -1,7 +1,6 @@
 class HomeUI {
-    constructor(kernel, factory) {
+    constructor(kernel) {
         this.kernel = kernel
-        this.factory = factory
         // 开启服务器并记录访问url
         this.kernel.server.startServer()
     }

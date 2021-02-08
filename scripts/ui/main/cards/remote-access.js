@@ -1,10 +1,6 @@
 const Card = require("./card")
 
 class RemoteAccessCard extends Card {
-    constructor(kernel, factory) {
-        super(kernel, factory)
-    }
-
     card() {
         return {
             icon: { symbol: "paperplane" },
