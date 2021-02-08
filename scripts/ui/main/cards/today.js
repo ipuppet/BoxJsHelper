@@ -10,9 +10,12 @@ class TodayCard extends Card {
         this.kernel.UIKit.push({
             view: [
                 {
-                    type: "text",
+                    type: "code",
                     props: {
                         id: "editor",
+                        language: "javascript",
+                        lineNumbers: true,
+                        theme: "idea",
                         info: name,
                         textColor: $color("primaryText", "secondaryText"),
                         text: content
