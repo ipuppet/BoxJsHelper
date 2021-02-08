@@ -2,10 +2,10 @@
     "info": {
         "name": "BoxJsHelper",
         "url": "https://github.com/ipuppet/BoxJsHelper",
-        "version": "1.0.19",
+        "version": "1.1.0",
         "author": "ipuppet",
         "website": "https://blog.ipuppet.cn",
-        "types": 15
+        "module": false
     },
     "settings": {
         "theme": "auto",

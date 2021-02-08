@@ -200,7 +200,7 @@ class BackupCard extends Card {
                         title: $l10n("TOOLKIT"),
                         navButtons: [
                             // 备份
-                            this.kernel.UIKit.navButton("boxdata-backup", "arrow.up.doc", (start, done) => {
+                            this.kernel.UIKit.navButton("boxdata-backup", "icloud.and.arrow.up", (start, done) => {
                                 $ui.alert({
                                     title: $l10n("BACKUP"),
                                     message: $l10n("BACKUP_NOW"),
@@ -258,7 +258,7 @@ class BackupCard extends Card {
                                 })
                             }),
                             // 恢复
-                            this.kernel.UIKit.navButton("boxdata-revert", "arrow.clockwise", (start, done) => {
+                            this.kernel.UIKit.navButton("boxdata-revert", "icloud.and.arrow.down", (start, done) => {
                                 $ui.alert({
                                     title: $l10n("REVERT_FROM_ICLOUD"),
                                     actions: [
