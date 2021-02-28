@@ -200,7 +200,7 @@ class BackupCard extends Card {
                         title: $l10n("TOOLKIT"),
                         navButtons: [
                             // 备份
-                            this.kernel.UIKit.navButton("boxdata-backup", "icloud.and.arrow.up", (start, done) => {
+                            this.kernel.UIKit.navButton("boxdata-backup", "icloud.and.arrow.up", animate => {
                                 $ui.alert({
                                     title: $l10n("BACKUP"),
                                     message: $l10n("BACKUP_NOW"),
@@ -208,7 +208,7 @@ class BackupCard extends Card {
                                         {
                                             title: $l10n("OK"),
                                             handler: () => {
-                                                start()
+                                                animate.start()
                                                 this.boxdata(boxjs => {
                                                     $http.post({
                                                         url: `${this.kernel.server.serverURL}/api/saveGlobalBak`,
@@ -228,7 +228,7 @@ class BackupCard extends Card {
                                                         },
                                                         handler: response => {
                                                             if (null !== response.error) {
-                                                                done(false, $l10n("ERROE_BACKUP"))
+                                                                animate.done(false, $l10n("ERROE_BACKUP"))
                                                                 return
                                                             }
                                                             if (!$file.exists(this.iCloud)) {
@@ -239,14 +239,14 @@ class BackupCard extends Card {
                                                                 path: `${this.iCloud}globalbaks.json`
                                                             })
                                                             if (!statusICloud) {
-                                                                done(false, $l10n("ERROE_BACKUP"))
+                                                                animate.done(false, $l10n("ERROE_BACKUP"))
                                                                 return
                                                             }
                                                             // 操作成功，更新列表
                                                             this.backupListTemplate(list => {
                                                                 $("list-backup").data = list
                                                                 // 动作结束
-                                                                done()
+                                                                animate.done()
                                                             })
                                                         }
                                                     })
@@ -258,14 +258,14 @@ class BackupCard extends Card {
                                 })
                             }),
                             // 恢复
-                            this.kernel.UIKit.navButton("boxdata-revert", "icloud.and.arrow.down", (start, done) => {
+                            this.kernel.UIKit.navButton("boxdata-revert", "icloud.and.arrow.down", animate => {
                                 $ui.alert({
                                     title: $l10n("REVERT_FROM_ICLOUD"),
                                     actions: [
                                         {
                                             title: $l10n("OK"),
                                             handler: () => {
-                                                start()
+                                                animate.start()
                                                 // 从iCloud恢复
                                                 let globalbaks = $file.read(`${this.iCloud}globalbaks.json`)
                                                 globalbaks = JSON.parse(globalbaks.string).globalbaks
@@ -286,7 +286,7 @@ class BackupCard extends Card {
                                                                     if (index > globalbaks.length)
                                                                         this.backupListTemplate(list => {
                                                                             $("list-backup").data = list
-                                                                            done()
+                                                                            animate.done()
                                                                         })
                                                                     else
                                                                         update(globalbaks[index - 1], index)

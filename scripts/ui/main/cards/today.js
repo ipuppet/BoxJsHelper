@@ -201,7 +201,7 @@ class TodayCard extends Card {
                         title: $l10n("TOOLKIT"),
                         navButtons: [
                             // 新脚本
-                            this.kernel.UIKit.navButton("script-new", "plus", (start, done) => {
+                            this.kernel.UIKit.navButton("script-new", "plus", animate => {
                                 $ui.menu({
                                     items: [$l10n("NEW_FILE"), $l10n("URL")],
                                     handler: (title, idx) => {
@@ -224,7 +224,7 @@ class TodayCard extends Card {
                                                 type: $kbType.url,
                                                 placeholder: $l10n("URL"),
                                                 handler: text => {
-                                                    start()
+                                                    animate.start()
                                                     $http.get({
                                                         url: text,
                                                         handler: response => {
@@ -239,7 +239,7 @@ class TodayCard extends Card {
                                                                 date: new Date().getTime()
                                                             }) */
                                                             $("list-script").data = scriptTemplate()
-                                                            done()
+                                                            animate.done()
                                                         }
                                                     })
                                                 }
@@ -249,12 +249,12 @@ class TodayCard extends Card {
                                 })
                             }),
                             // 备份脚本
-                            this.kernel.UIKit.navButton("script-backup", "cloud", (start, done) => {
+                            this.kernel.UIKit.navButton("script-backup", "cloud", animate => {
                                 $ui.menu({
                                     items: [$l10n("BACKUP_ICLOUD"), $l10n("REVERT_FROM_ICLOUD")],
                                     handler: (title, idx) => {
                                         if (idx === 0) { // 备份
-                                            start()
+                                            animate.start()
                                             // 备份文件
                                             let dst = this.iCloud + "Today"
                                             if (!$file.exists(dst)) {
@@ -264,9 +264,9 @@ class TodayCard extends Card {
                                                 src: this.todayPath,
                                                 dst: dst
                                             })
-                                            done()
+                                            animate.done()
                                         } else if (idx === 1) { // 恢复
-                                            start()
+                                            animate.start()
                                             // 恢复文件
                                             if (!$file.exists(this.todayPath)) {
                                                 $file.mkdir(this.todayPath)
@@ -276,7 +276,7 @@ class TodayCard extends Card {
                                                 dst: this.todayPath
                                             })
                                             $("list-script").data = scriptTemplate()
-                                            done()
+                                            animate.done()
                                         }
                                     }
                                 })

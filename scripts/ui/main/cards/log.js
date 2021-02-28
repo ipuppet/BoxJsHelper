@@ -99,8 +99,8 @@ class LogCard extends Card {
                         }],
                         title: $l10n("TOOLKIT"),
                         navButtons: [
-                            this.kernel.UIKit.navButton("log.clear", "trash", (start, done, cancel) => {
-                                start()
+                            this.kernel.UIKit.navButton("log.clear", "trash", animate => {
+                                animate.start()
                                 $ui.alert({
                                     title: $l10n("ALERT_INFO"),
                                     message: $l10n("CLEAR_LOG_MSG"),
@@ -111,12 +111,12 @@ class LogCard extends Card {
                                                 $file.delete(logPath)
                                                 $file.mkdir(logPath)
                                                 $("list-log").data = logListTemplate(logPath)
-                                                done()
+                                                animate.done()
                                             }
                                         },
                                         {
                                             title: $l10n("CANCEL"),
-                                            handler: () => { cancel() }
+                                            handler: () => { animate.cancel() }
                                         }
                                     ]
                                 })
