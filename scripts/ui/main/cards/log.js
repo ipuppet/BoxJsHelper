@@ -30,7 +30,7 @@ class LogCard extends Card {
                         return dataTemplate
                     }
                     this.kernel.UIKit.push({
-                        view: [{
+                        views: [{
                             type: "list",
                             props: {
                                 data: logListTemplate(logPath),
@@ -82,7 +82,7 @@ class LogCard extends Card {
                             events: {
                                 didSelect: (sender, indexPath, data) => {
                                     this.kernel.UIKit.push({
-                                        view: [{
+                                        views: [{
                                             type: "text",
                                             props: {
                                                 editable: false,

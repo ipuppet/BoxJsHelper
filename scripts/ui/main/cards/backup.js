@@ -41,7 +41,7 @@ class BackupCard extends Card {
                         return
                     }
                     this.kernel.UIKit.push({
-                        view: [{
+                        views: [{
                             type: "list",
                             props: {
                                 rowHeight: 60,

@@ -40,20 +40,17 @@ class AppKernel extends Kernel {
      */
     initSettingMethods() {
         this.setting.readme = animate => {
-            animate.touchHighlightStart()
+            animate.touchHighlight()
             const content = $file.read("/README.md").string
-            this.UIKit.push({
-                view: [{
+            this.UIKit.pushPageSheet({
+                views: [{
                     type: "markdown",
                     props: { content: content },
                     layout: (make, view) => {
                         make.size.equalTo(view.super)
                     }
                 }],
-                title: $l10n("README"),
-                disappeared: () => {
-                    animate.touchHighlightEnd()
-                }
+                title: $l10n("README")
             })
         }
 

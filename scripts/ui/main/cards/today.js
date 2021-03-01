@@ -8,7 +8,7 @@ class TodayCard extends Card {
 
     editor(name, content, callback) {
         this.kernel.UIKit.push({
-            view: [
+            views: [
                 {
                     type: "code",
                     props: {
@@ -89,7 +89,7 @@ class TodayCard extends Card {
                         return dataTemplate
                     }
                     this.kernel.UIKit.push({
-                        view: [{
+                        views: [{
                             type: "list",
                             props: {
                                 id: "list-script",
