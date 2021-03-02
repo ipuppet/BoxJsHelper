@@ -15,10 +15,19 @@ class TodayCard extends Card {
                         id: "editor",
                         language: "javascript",
                         lineNumbers: true,
-                        theme: "idea",
+                        theme: $device.isDarkMode ? "atom-one-dark" : "atom-one-light",
                         info: name,
-                        textColor: $color("primaryText", "secondaryText"),
                         text: content
+                    },
+                    events: {
+                        themeChanged: (sender, isDarkMode) => {
+                            console.log(isDarkMode)
+                            if (isDarkMode) {
+                                sender.theme = "atom-one-dark"
+                            } else {
+                                sender.theme = "atom-one-light"
+                            }
+                        }
                     },
                     layout: (make, view) => {
                         make.left.right.bottom.equalTo(view.super.safeArea)
