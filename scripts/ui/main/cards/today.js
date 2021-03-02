@@ -21,12 +21,8 @@ class TodayCard extends Card {
                     },
                     events: {
                         themeChanged: (sender, isDarkMode) => {
-                            console.log(isDarkMode)
-                            if (isDarkMode) {
-                                sender.theme = "atom-one-dark"
-                            } else {
-                                sender.theme = "atom-one-light"
-                            }
+                            // 无法动态更改主题
+                            sender.theme = isDarkMode ? "atom-one-dark" : "atom-one-light"
                         }
                     },
                     layout: (make, view) => {
