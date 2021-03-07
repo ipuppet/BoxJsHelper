@@ -89,7 +89,10 @@
                 "title": "Github",
                 "type": "info",
                 "key": "about.github",
-                "value": "https://github.com/ipuppet/BoxJsHelper"
+                "value": [
+                    "ipuppet/BoxJsHelper",
+                    "https://github.com/ipuppet/BoxJsHelper"
+                ]
             },
             {
                 "icon": [
@@ -101,7 +104,7 @@
                 "key": "about.author",
                 "value": [
                     "ipuppet",
-                    "https://blog.ipuppet.cn"
+                    "https://blog.ipuppet.top"
                 ]
             },
             {
