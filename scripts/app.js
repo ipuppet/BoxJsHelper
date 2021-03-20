@@ -77,8 +77,8 @@ class AppKernel extends Kernel {
 
 module.exports = {
     run: () => {
-        const Factory = require("./ui/main/factory")
         const kernel = new AppKernel()
+        const Factory = require("./ui/main/factory")
         new Factory(kernel).render()
     }
 }
