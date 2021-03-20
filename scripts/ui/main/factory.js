@@ -1,8 +1,6 @@
-const BaseView = require("../../../EasyJsBox/src/Foundation/view")
-
-class Factory extends BaseView {
+class Factory {
     constructor(kernel) {
-        super(kernel)
+        this.kernel = kernel
         // 设置初始页面
         this.kernel.page.controller.setSelectedPage(this.kernel.setting.get("general.firstScreen"))
     }

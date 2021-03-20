@@ -1,4 +1,4 @@
-const { Kernel, VERSION } = require("../EasyJsBox/src/kernel")
+const { Kernel } = require("../EasyJsBox/src/kernel")
 const Server = require("./server")
 
 class AppKernel extends Kernel {
