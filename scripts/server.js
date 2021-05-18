@@ -60,7 +60,6 @@ class Server {
     async response(request) {
         let response = {}
         let content = {}
-        $console.info(request.method)
         if (request.method === "POST") {
             let body = {}
             try {
