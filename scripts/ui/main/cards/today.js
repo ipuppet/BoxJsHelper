@@ -3,7 +3,7 @@ const Card = require("./card")
 class TodayCard extends Card {
     constructor(kernel) {
         super(kernel)
-        this.todayPath = "/storage/today/"
+        this.todayPath = "/assets/today/"
     }
 
     editor(name, content, callback) {
@@ -235,14 +235,6 @@ class TodayCard extends Card {
                                                         handler: response => {
                                                             let name = text.slice(text.lastIndexOf("/") + 1)
                                                             this.saveScript(name, response.data + "")
-                                                            // 保存信息到数据库
-                                                            // 换更新脚本思路
-                                                            /* this.kernel.storage.save({
-                                                                name: name,
-                                                                url: text,
-                                                                script: response.data + "",
-                                                                date: new Date().getTime()
-                                                            }) */
                                                             $("list-script").data = scriptTemplate()
                                                             animate.done()
                                                         }
