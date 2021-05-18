@@ -263,35 +263,37 @@ class BackupCard extends Card {
                                             handler: () => {
                                                 animate.start()
                                                 // 从iCloud恢复
-                                                let globalbaks = $file.read(`${this.iCloud}globalbaks.json`)
-                                                globalbaks = JSON.parse(globalbaks.string).globalbaks
-                                                // 递归调用，用于解决网络请求同步执行问题，若用async、await会破坏整个框架
-                                                const update = (data, index = 0) => {
-                                                    // 先删除，防止重复
-                                                    $http.post({
-                                                        url: `${this.kernel.server.serverURL}/api/delGlobalBak`,
-                                                        body: { id: data.id },
-                                                        handler: () => {
-                                                            // 添加新的备份到BoxJs
-                                                            $http.post({
-                                                                url: `${this.kernel.server.serverURL}/api/impGlobalBak`,
-                                                                body: data,
-                                                                handler: () => {
-                                                                    index++
-                                                                    // 控制行为
-                                                                    if (index > globalbaks.length)
-                                                                        this.backupListTemplate(list => {
-                                                                            $("list-backup").data = list
-                                                                            animate.done()
-                                                                        })
-                                                                    else
-                                                                        update(globalbaks[index - 1], index)
-                                                                }
-                                                            })
-                                                        }
-                                                    })
-                                                }
-                                                update(globalbaks[0])
+                                                setTimeout(async () => {
+                                                    let globalbaks = await $file.download(`${this.iCloud}globalbaks.json`)
+                                                    globalbaks = JSON.parse(globalbaks.string).globalbaks
+                                                    // 递归调用，用于解决网络请求同步执行问题，若用async、await会破坏整个框架
+                                                    const update = (data, index = 0) => {
+                                                        // 先删除，防止重复
+                                                        $http.post({
+                                                            url: `${this.kernel.server.serverURL}/api/delGlobalBak`,
+                                                            body: { id: data.id },
+                                                            handler: () => {
+                                                                // 添加新的备份到BoxJs
+                                                                $http.post({
+                                                                    url: `${this.kernel.server.serverURL}/api/impGlobalBak`,
+                                                                    body: data,
+                                                                    handler: () => {
+                                                                        index++
+                                                                        // 控制行为
+                                                                        if (index > globalbaks.length)
+                                                                            this.backupListTemplate(list => {
+                                                                                $("list-backup").data = list
+                                                                                animate.done()
+                                                                            })
+                                                                        else
+                                                                            update(globalbaks[index - 1], index)
+                                                                    }
+                                                                })
+                                                            }
+                                                        })
+                                                    }
+                                                    update(globalbaks[0])
+                                                })
                                             }
                                         },
                                         { title: $l10n("CANCEL") }
