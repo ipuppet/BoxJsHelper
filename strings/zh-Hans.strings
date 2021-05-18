@@ -49,7 +49,7 @@
 "SETTING" = "设置";
 "GENERAL" = "一般";
 "TIPS" = "小贴士";
-"REFRESH_CONFIRM" = "刷新前确认";
+"DOUBLE_TAPPED_REFRESH" = "双击刷新";
 "FIRST_SCREEN" = "首屏显示";
 "ADVANCED" = "高级";
 "DOMAIN" = "访问入口";

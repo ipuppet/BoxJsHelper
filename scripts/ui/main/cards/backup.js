@@ -1,4 +1,4 @@
-const Card = require("./card")
+const Card = require("../card")
 
 class BackupCard extends Card {
     boxdata(callback) {
@@ -36,10 +36,6 @@ class BackupCard extends Card {
             title: { text: $l10n("BACKUP") },
             events: {
                 tapped: () => {
-                    if (this.kernel.setting.get("advanced.domain") !== 1) {
-                        $ui.toast($l10n("TF_ONLY"))
-                        return
-                    }
                     this.kernel.UIKit.push({
                         views: [{
                             type: "list",

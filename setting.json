@@ -17,9 +17,9 @@
                     "arrow.clockwise",
                     "#1ABC9C"
                 ],
-                "title": "REFRESH_CONFIRM",
+                "title": "DOUBLE_TAPPED_REFRESH",
                 "type": "switch",
-                "key": "general.refreshConfirm",
+                "key": "general.doubleTappedRefresh",
                 "value": true
             },
             {

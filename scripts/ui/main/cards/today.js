@@ -1,4 +1,4 @@
-const Card = require("./card")
+const Card = require("../card")
 
 class TodayCard extends Card {
     constructor(kernel) {

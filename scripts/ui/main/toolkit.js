@@ -1,10 +1,3 @@
-// 引入卡片
-const RefreshCard = require("./cards/refresh")
-const RemoteAccessCard = require("./cards/remote-access")
-const LogCard = require("./cards/log")
-const BackupCard = require("./cards/backup")
-const TodayCard = require("./cards/today")
-
 class ToolkitUI {
     constructor(kernel) {
         this.kernel = kernel
@@ -13,16 +6,15 @@ class ToolkitUI {
         this.matrix.columns = 2
         this.matrix.height = 90
         this.matrix.spacing = 15
+        this.cards = []
     }
 
     loadCards() {
-        this.cards = [
-            new RefreshCard(this.kernel).card(),
-            new RemoteAccessCard(this.kernel).card(),
-            new LogCard(this.kernel).card(),
-            new BackupCard(this.kernel).card(),
-            new TodayCard(this.kernel).card()
-        ]
+        const cards = $file.list("/scripts/ui/main/cards")
+        cards.forEach(card => {
+            const Card = require(`./cards/${card}`)
+            this.cards.push(new Card(this.kernel).card())
+        })
     }
 
     /**

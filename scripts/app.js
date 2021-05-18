@@ -59,6 +59,7 @@ class AppKernel extends Kernel {
 点击 "功能->远程访问" 即可查看远程访问地址。
 首屏显示将确定软件在打开时显示哪个页面。
 更换入口的话，重启应用后才会生效哦~
+开启双击刷新的话，双击底部BoxJs按钮即可刷新~ (重启生效)
 可在底部README中查看更多信息。`
             animate.touchHighlightStart()
             $ui.alert({

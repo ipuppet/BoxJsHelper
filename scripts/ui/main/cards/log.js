@@ -1,4 +1,4 @@
-const Card = require("./card")
+const Card = require("../card")
 
 class LogCard extends Card {
     card() {

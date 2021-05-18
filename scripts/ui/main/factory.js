@@ -30,10 +30,12 @@ class Factory {
             this.server(),
             this.setting()
         ], [
-            {
+            Object.assign({
                 icon: ["cube", "cube.fill"],
                 title: $l10n("BOXJS")
-            },
+            }, this.kernel.setting.get("general.doubleTappedRefresh") ? {
+                doubleTapped: () => require("/scripts/ui/main/home").refresh()
+            } : {}),
             {
                 icon: ["square.grid.2x2", "square.grid.2x2.fill"],
                 title: $l10n("TOOLKIT")

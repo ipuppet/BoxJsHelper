@@ -1,4 +1,4 @@
-const Card = require("./card")
+const Card = require("../card")
 
 class RemoteAccessCard extends Card {
     card() {

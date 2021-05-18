@@ -5,28 +5,9 @@ class HomeUI {
         this.kernel.server.startServer()
     }
 
-    static refresh(refreshConfirm) {
-        const refreshAction = () => {
-            $("web-boxjs").reload()
-            $ui.toast($l10n("REFRESH_SUCCESS"))
-        }
-        if (refreshConfirm) {
-            $ui.alert({
-                title: $l10n("ALERT_INFO"),
-                message: `${$l10n("REFRESH")} ${$l10n("BOXJS")}?`,
-                actions: [
-                    {
-                        title: $l10n("OK"),
-                        handler: () => {
-                            refreshAction()
-                        }
-                    },
-                    { title: $l10n("CANCEL") }
-                ]
-            })
-        } else {
-            refreshAction()
-        }
+    static refresh() {
+        $("web-boxjs").reload()
+        $ui.toast($l10n("REFRESH_SUCCESS"))
     }
 
     getViews() {
