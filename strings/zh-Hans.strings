@@ -52,7 +52,7 @@
 "REFRESH_CONFIRM" = "刷新前确认";
 "FIRST_SCREEN" = "首屏显示";
 "ADVANCED" = "高级";
-"DOMAIN" = "入口选择";
+"DOMAIN" = "访问入口";
 "PORT" = "端口";
 
 "ABOUT" = "关于";
