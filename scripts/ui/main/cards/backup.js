@@ -288,8 +288,9 @@ class BackupCard extends Card {
                                                     const files = $file.list(`${this.iCloud}/backup`)
                                                     let index = 0
                                                     const length = files.length
-                                                    files.forEach(id => {
-                                                        const data = JSON.parse($file.read(`${this.iCloud}/backup/${id}`)?.string ?? "{}")
+                                                    files.forEach(async id => {
+                                                        const fileContent = await $file.download(`${this.iCloud}/backup/${id}`)
+                                                        const data = JSON.parse(fileContent?.string ?? "{}")
                                                         // 先删除，防止重复
                                                         $http.post({
                                                             url: `${this.kernel.server.serverURL}/api/delGlobalBak`,
