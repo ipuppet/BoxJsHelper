@@ -46,13 +46,9 @@
                     "#FF9900"
                 ],
                 "title": "DOMAIN",
-                "type": "tab",
+                "type": "input",
                 "key": "advanced.domain",
-                "items": [
-                    ".com",
-                    ".net"
-                ],
-                "value": 0
+                "value": "boxjs.net"
             },
             {
                 "icon": [

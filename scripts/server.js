@@ -8,10 +8,7 @@ class Server {
             port = this.setting.get("advanced.serverPort")
         }
         this.port = port
-        this.domain = "boxjs.com"
-        // 目前只有这两个域名
-        if (this.setting.get("advanced.domain"))
-            this.domain = "boxjs.net"
+        this.domain = this.setting.get("advanced.domain") ?? "boxjs.net"
         this.handler = {}
         this.server = $server.new()
     }

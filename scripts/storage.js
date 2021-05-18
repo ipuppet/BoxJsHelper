@@ -1,7 +1,7 @@
 class Storage {
     constructor(setting) {
         this.setting = setting
-        this.localDb = "/assets/BoxJsHelper.db"
+        this.localDb = "/storage/BoxJsHelper.db"
         this.iCloudPath = "drive://BoxJsHelper/"
         this.iCloudDb = this.iCloudPath + "BoxJsHelper.db"
         this.iCloudAutoDb = this.iCloudPath + "auto.db"

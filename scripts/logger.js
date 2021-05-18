@@ -5,7 +5,7 @@ class Logger {
         if (undefined === $cache.get(this.name)) {
             $cache.set(this.name, new Date().getTime())
         }
-        this.path = `/assets/log/${this.name}/`
+        this.path = `/storage/log/${this.name}/`
         if (!$file.exists(this.path)) {
             $file.mkdir(this.path)
         }

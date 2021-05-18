@@ -3,7 +3,7 @@ const Card = require("./card")
 class TodayCard extends Card {
     constructor(kernel) {
         super(kernel)
-        this.todayPath = "/assets/today/"
+        this.todayPath = "/storage/today/"
     }
 
     editor(name, content, callback) {
