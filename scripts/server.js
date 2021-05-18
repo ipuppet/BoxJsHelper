@@ -9,6 +9,7 @@ class Server {
         }
         this.port = port
         this.domain = this.setting.get("advanced.domain") ?? "boxjs.net"
+        this.timeout = 3
         this.handler = {}
         this.server = $server.new()
     }
@@ -57,21 +58,36 @@ class Server {
     }
 
     async response(request) {
-        let response
-        let content
+        let response = {}
+        let content = {}
+        $console.info(request.method)
         if (request.method === "POST") {
+            let body = {}
+            try {
+                body = JSON.parse(request.data.string)
+            } catch (error) { }
             content = await $http.post({
+                timeout: this.timeout,
                 url: `http://${this.domain}${request.path}`,
-                body: JSON.parse(request.data.string)
+                body: body
             })
             if (content.data === "") {
                 content.data = {}
             }
-        } else {
-            content = await $http.get(`http://${this.domain}${request.path}`)
+        } else if (request.method === "GET") {
+            content = await $http.get({
+                timeout: this.timeout,
+                url: `http://${this.domain}${request.path}`
+            })
+        } else if (request.method === "OPTIONS") {
+            content = await $http.request({
+                method: "OPTIONS",
+                timeout: this.timeout,
+                url: `http://${this.domain}${request.path}`
+            })
         }
         // 检查结构
-        if (content.data !== null && typeof content.data === "object")
+        if (content.data && typeof content.data === "object")
             response = { json: content.data }
         else
             response = { html: content.data + "" }
