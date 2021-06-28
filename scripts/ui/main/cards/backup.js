@@ -37,31 +37,13 @@ class BackupCard extends Card {
             events: {
                 tapped: () => {
                     this.kernel.UIKit.push({
+                        title: $l10n("BACKUP"),
                         views: [{
                             type: "list",
                             props: {
                                 rowHeight: 60,
                                 data: [],
                                 id: "list-backup",
-                                header: {
-                                    type: "view",
-                                    props: { height: 70 },
-                                    views: [
-                                        {
-                                            type: "label",
-                                            props: {
-                                                text: $l10n("BACKUP"),
-                                                textColor: $color("primaryText", "secondaryText"),
-                                                align: $align.left,
-                                                font: $font(34),
-                                                line: 1
-                                            },
-                                            layout: make => {
-                                                make.left.top.inset(10)
-                                            }
-                                        }
-                                    ]
-                                },
                                 template: {
                                     views: [
                                         {
@@ -185,13 +167,16 @@ class BackupCard extends Card {
                                 ready: sender => {
                                     // 加载数据
                                     this.backupListTemplate(list => {
-                                        sender.data = list
+                                        if(list.length>0){
+                                            sender.data = list
+                                        }else{
+                                            $ui.info($l10n("EMPTY_LIST"))
+                                        }
                                     })
                                 }
                             },
                             layout: $layout.fillSafeArea
                         }],
-                        title: $l10n("TOOLKIT"),
                         navButtons: [
                             // 备份
                             this.kernel.UIKit.navButton("boxdata-backup", "icloud.and.arrow.up", animate => {

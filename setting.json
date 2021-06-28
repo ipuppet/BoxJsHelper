@@ -11,29 +11,6 @@
                 "type": "script",
                 "key": "tipsDomain",
                 "value": "this.controller.tipsDomain"
-            },
-            {
-                "icon": [
-                    "arrow.clockwise",
-                    "#1ABC9C"
-                ],
-                "title": "DOUBLE_TAPPED_REFRESH",
-                "type": "switch",
-                "key": "general.doubleTappedRefresh",
-                "value": true
-            },
-            {
-                "icon": [
-                    "tv.fill"
-                ],
-                "title": "FIRST_SCREEN",
-                "type": "tab",
-                "key": "general.firstScreen",
-                "items": [
-                    "BOXJS",
-                    "TOOLKIT"
-                ],
-                "value": 0
             }
         ]
     },

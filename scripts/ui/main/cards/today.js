@@ -19,19 +19,13 @@ class TodayCard extends Card {
                         info: name,
                         text: content
                     },
-                    events: {
-                        themeChanged: (sender, isDarkMode) => {
-                            // 无法动态更改主题
-                            sender.theme = isDarkMode ? "atom-one-dark" : "atom-one-light"
-                        }
-                    },
                     layout: (make, view) => {
                         make.left.right.bottom.equalTo(view.super.safeArea)
                         make.top.equalTo(view.super)
                     }
                 }
             ],
-            title: $l10n("TODAY"),
+            title: $l10n("EDIT"),
             navButtons: [
                 {
                     type: "button",
@@ -93,54 +87,13 @@ class TodayCard extends Card {
                         }
                         return dataTemplate
                     }
+                    const data = scriptTemplate()
                     this.kernel.UIKit.push({
-                        views: [{
+                        views: [data.length === 0 ? this.emptyList : {
                             type: "list",
                             props: {
                                 id: "list-script",
-                                header: {
-                                    type: "view",
-                                    props: { height: 90 },
-                                    views: [
-                                        {
-                                            type: "label",
-                                            props: {
-                                                text: $l10n("TODAY"),
-                                                textColor: $color("primaryText", "secondaryText"),
-                                                align: $align.left,
-                                                font: $font(34),
-                                                line: 1
-                                            },
-                                            layout: make => {
-                                                make.left.top.inset(10)
-                                            }
-                                        },
-                                        {
-                                            type: "label",
-                                            props: {
-                                                align: $align.left,
-                                                text: $l10n("SELECTED_SCRIPT") + ": "
-                                            },
-                                            layout: (make, view) => {
-                                                make.top.equalTo(view.prev.bottom).offset(12)
-                                                make.left.inset(10)
-                                            }
-                                        },
-                                        {
-                                            type: "label",
-                                            props: {
-                                                id: "selected-script",
-                                                align: $align.right,
-                                                text: scriptName()
-                                            },
-                                            layout: (make, view) => {
-                                                make.top.equalTo(view.prev)
-                                                make.right.inset(10)
-                                            }
-                                        }
-                                    ]
-                                },
-                                data: scriptTemplate(),
+                                data: data,
                                 template: [
                                     {
                                         type: "label",
@@ -203,7 +156,7 @@ class TodayCard extends Card {
                             },
                             layout: $layout.fillSafeArea
                         }],
-                        title: $l10n("TOOLKIT"),
+                        title: $l10n("TODAY"),
                         navButtons: [
                             // 新脚本
                             this.kernel.UIKit.navButton("script-new", "plus", animate => {

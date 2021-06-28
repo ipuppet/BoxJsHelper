@@ -4,6 +4,26 @@ const Server = require("./server")
 class AppKernel extends Kernel {
     constructor() {
         super()
+        this.UIKit.disableLargeTitle()
+        this.UIKit.setNavButtons([
+            this.UIKit.navButton("setting", "arrow.clockwise", () => {
+                require("/scripts/ui/main/home").refresh()
+            }),
+            this.UIKit.navButton("toolkit", "square.grid.2x2", () => {
+                const ToolkitUI = require("./ui/main/toolkit")
+                const interfaceUi = new ToolkitUI(this)
+                this.UIKit.push({
+                    title: $l10n("TOOLKIT"),
+                    views: interfaceUi.getView(),
+                    navButtons: [this.UIKit.navButton("setting", "gear", () => {
+                        this.UIKit.push({
+                            title: $l10n("SETTING"),
+                            views: this.setting.getView()
+                        })
+                    })]
+                })
+            })
+        ])
         // 注册组件
         this.settingComponent = this.registerComponent("Setting")
         this.setting = this.settingComponent.controller
@@ -79,7 +99,11 @@ class AppKernel extends Kernel {
 module.exports = {
     run: () => {
         const kernel = new AppKernel()
+        const HomeUI = require("./ui/main/home")
+        const interfaceUi = new HomeUI(kernel)
+        kernel.UIRender(interfaceUi.getView())
+        /* const kernel = new AppKernel()
         const Factory = require("./ui/main/factory")
-        new Factory(kernel).render()
+        new Factory(kernel).render() */
     }
 }

@@ -29,31 +29,13 @@ class LogCard extends Card {
                         }
                         return dataTemplate
                     }
+                    const data = logListTemplate(logPath)
                     this.kernel.UIKit.push({
-                        views: [{
+                        views: [data.length === 0 ? this.emptyList : {
                             type: "list",
                             props: {
-                                data: logListTemplate(logPath),
+                                data: data,
                                 id: "list-log",
-                                header: {
-                                    type: "view",
-                                    props: { height: 70 },
-                                    views: [
-                                        {
-                                            type: "label",
-                                            props: {
-                                                text: $l10n("LOG"),
-                                                textColor: $color("primaryText", "secondaryText"),
-                                                align: $align.left,
-                                                font: $font(34),
-                                                line: 1
-                                            },
-                                            layout: make => {
-                                                make.left.top.inset(10)
-                                            }
-                                        }
-                                    ]
-                                },
                                 template: [
                                     {
                                         type: "label",
@@ -97,7 +79,7 @@ class LogCard extends Card {
                             },
                             layout: $layout.fillSafeArea
                         }],
-                        title: $l10n("TOOLKIT"),
+                        title: $l10n("LOG"),
                         navButtons: [
                             this.kernel.UIKit.navButton("log.clear", "trash", animate => {
                                 animate.start()

@@ -68,28 +68,9 @@ class ToolkitUI {
         return data
     }
 
-    getViews() {
+    getView() {
         this.loadCards()
-        return [
-            {
-                type: "label",
-                props: {
-                    text: $l10n("TOOLKIT"),
-                    align: $align.left,
-                    font: $font("bold", 34),
-                    textColor: $color("primaryText", "secondaryText"),
-                    line: 1
-                },
-                layout: (make, view) => {
-                    make.left.inset(20)
-                    make.width.equalTo(120)
-                    make.height.equalTo(40)
-                    make.top.equalTo(view.super.safeAreaTop).offset(50)
-                }
-            },
-            // 第二个参数是为了防止被下面菜单挡住最后一行的内容
-            this.matrix.scrollTemplate(this.cardTemplate(), 50 + this.matrix.spacing)
-        ]
+        return [this.matrix.scrollTemplate(this.cardTemplate())]
     }
 }
 

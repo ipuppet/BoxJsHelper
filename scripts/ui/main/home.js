@@ -10,7 +10,7 @@ class HomeUI {
         $ui.toast($l10n("REFRESH_SUCCESS"))
     }
 
-    getViews() {
+    getView() {
         return [
             {
                 type: "web",
@@ -19,10 +19,7 @@ class HomeUI {
                     url: this.kernel.server.serverURL,
                     opaque: false
                 },
-                layout: (make, view) => {
-                    make.width.top.equalTo(view.super)
-                    make.bottom.equalTo(view.super.safeAreaBottom).offset(-50)
-                }
+                layout: $layout.fill
             }
         ]
     }
