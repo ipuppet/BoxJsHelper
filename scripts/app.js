@@ -27,9 +27,8 @@ class AppKernel extends Kernel {
         // 注册组件
         this.settingComponent = this.registerComponent("Setting")
         this.setting = this.settingComponent.controller
+        this.setting.setChildPage(true)
         this.initSettingMethods()
-        this.page = this.registerComponent("Page")
-        this.menu = this.registerComponent("Menu")
         this.server = new Server(this.setting)
     }
 
