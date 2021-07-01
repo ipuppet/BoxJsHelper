@@ -72,26 +72,6 @@ class AppKernel extends Kernel {
                 title: $l10n("README")
             })
         }
-
-        this.setting.tipsDomain = animate => {
-            const message = `
-点击 "功能->远程访问" 即可查看远程访问地址。
-首屏显示将确定软件在打开时显示哪个页面。
-更换入口的话，重启应用后才会生效哦~
-开启双击刷新的话，双击底部BoxJs按钮即可刷新~ (重启生效)
-可在底部README中查看更多信息。`
-            animate.touchHighlightStart()
-            $ui.alert({
-                title: $l10n("TIPS"),
-                actions: [
-                    {
-                        title: $l10n("OK"),
-                        handler: () => animate.touchHighlightEnd()
-                    }
-                ],
-                message: message
-            })
-        }
     }
 }
 
@@ -101,8 +81,5 @@ module.exports = {
         const HomeUI = require("./ui/main/home")
         const interfaceUi = new HomeUI(kernel)
         kernel.UIRender(interfaceUi.getView())
-        /* const kernel = new AppKernel()
-        const Factory = require("./ui/main/factory")
-        new Factory(kernel).render() */
     }
 }

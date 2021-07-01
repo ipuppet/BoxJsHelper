@@ -1,20 +1,5 @@
 [
     {
-        "title": "GENERAL",
-        "items": [
-            {
-                "icon": [
-                    "tag.fill",
-                    "#9B59B6"
-                ],
-                "title": "TIPS",
-                "type": "script",
-                "key": "tipsDomain",
-                "value": "this.controller.tipsDomain"
-            }
-        ]
-    },
-    {
         "title": "ADVANCED",
         "items": [
             {
