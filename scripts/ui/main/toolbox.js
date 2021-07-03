@@ -1,4 +1,4 @@
-class ToolkitUI {
+class ToolboxUI {
     constructor(kernel) {
         this.kernel = kernel
         const Matrix = this.kernel.registerPlugin("matrix")
@@ -74,4 +74,4 @@ class ToolkitUI {
     }
 }
 
-module.exports = ToolkitUI
+module.exports = ToolboxUI

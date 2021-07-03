@@ -16,9 +16,8 @@ class BackupCard extends Card {
 
     backupListTemplate(callback) {
         this.boxdata(boxdata => {
-            let globalbaks = boxdata.globalbaks
-            let list = []
-            for (let item of globalbaks) {
+            const list = []
+            for (let item of boxdata.globalbaks) {
                 list.push({
                     id: { info: item.id },
                     name: { text: item.name },
@@ -101,11 +100,12 @@ class BackupCard extends Card {
                                 },
                                 actions: [
                                     {
-                                        title: $l10n("DELETE"),
+                                        title: $l10n("DELETE") + " ", // 加空格防止被检测为默认的删除行为
                                         color: $color("red"),
                                         handler: (sender, indexPath) => {
-                                            let id = sender.object(indexPath).id.info
-                                            let name = sender.object(indexPath).name.text
+                                            console.log(sender.object(indexPath))
+                                            const id = sender.object(indexPath).id.info
+                                            const name = sender.object(indexPath).name.text
                                             $ui.alert({
                                                 title: $l10n("ALERT_INFO"),
                                                 message: `${$l10n("DELETE")} ${name} ?`,
@@ -138,8 +138,8 @@ class BackupCard extends Card {
                             },
                             events: {
                                 didSelect: (sender, indexPath) => {
-                                    let id = sender.object(indexPath).id.info
-                                    let name = sender.object(indexPath).name.text
+                                    const id = sender.object(indexPath).id.info
+                                    const name = sender.object(indexPath).name.text
                                     $ui.alert({
                                         title: $l10n("ALERT_INFO"),
                                         message: `${$l10n("RECOVER_BACKUP")} ${name} ?`,
@@ -152,10 +152,10 @@ class BackupCard extends Card {
                                                         body: { id: id },
                                                         handler: (response) => {
                                                             if (null !== response.error) {
-                                                                $ui.toast($l10n("ERROR"))
+                                                                $ui.error($l10n("ERROR"))
                                                                 return false
                                                             }
-                                                            $ui.toast($l10n("SUCCESS_RECOVER"))
+                                                            $ui.success($l10n("SUCCESS_RECOVER"))
                                                         }
                                                     })
                                                 }
@@ -167,10 +167,10 @@ class BackupCard extends Card {
                                 ready: sender => {
                                     // 加载数据
                                     this.backupListTemplate(list => {
-                                        if(list.length>0){
+                                        if (list.length > 0) {
                                             sender.data = list
-                                        }else{
-                                            $ui.info($l10n("EMPTY_LIST"))
+                                        } else {
+                                            $ui.toast($l10n("EMPTY_LIST"))
                                         }
                                     })
                                 }

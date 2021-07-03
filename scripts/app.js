@@ -9,11 +9,11 @@ class AppKernel extends Kernel {
             this.UIKit.navButton("setting", "arrow.clockwise", () => {
                 require("/scripts/ui/main/home").refresh()
             }),
-            this.UIKit.navButton("toolkit", "square.grid.2x2", () => {
-                const ToolkitUI = require("./ui/main/toolkit")
-                const interfaceUi = new ToolkitUI(this)
+            this.UIKit.navButton("toolbox", "square.grid.2x2", () => {
+                const ToolboxUI = require("./ui/main/toolbox")
+                const interfaceUi = new ToolboxUI(this)
                 this.UIKit.push({
-                    title: $l10n("TOOLKIT"),
+                    title: $l10n("TOOLBOX"),
                     views: interfaceUi.getView(),
                     navButtons: [this.UIKit.navButton("setting", "gear", () => {
                         this.UIKit.push({

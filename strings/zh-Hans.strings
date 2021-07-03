@@ -1,5 +1,4 @@
 "ALERT_INFO" = "提示";
-"TF_ONLY" = "仅TF版BoxJs可用，若已是TF版，可在设置中将入口切换到'.net'";
 "SUCCESS" = "成功";
 "ERROR" = "发生错误";
 "INVALID_VALUE" = "该值无效";
@@ -11,12 +10,12 @@
 "EMPTY_LIST" = "列表为空";
 
 "GET_BOXJS_DATA_ERROR" = "从BoxJs获取数据失败";
-"NO_TODAY_CACHE" = "获取数据失败，请打开工具箱中的Today卡片，点击刷新按钮。";
+"NO_TODAY_CACHE" = "获取数据失败，请打开工具箱中的Today卡片，点击刷新按钮";
 "NO_SCRIPT" = "未选择脚本或脚本被删除，请在工具箱中选择脚本";
 
 "BOXJS" = "BoxJs";
 
-"TOOLKIT" = "工具箱";
+"TOOLBOX" = "工具箱";
 "REFRESH" = "刷新";
 "REFRESH_SUCCESS" = "刷新成功";
 "REMOTE_ACCESS" = "远程访问";
@@ -47,15 +46,6 @@
 "APPLY" = "应用";
 "SUCCESS_SAVE" = "保存成功";
 
-"SETTING" = "设置";
-"GENERAL" = "一般";
-"TIPS" = "小贴士";
-"DOUBLE_TAPPED_REFRESH" = "双击刷新";
-"FIRST_SCREEN" = "首屏显示";
 "ADVANCED" = "高级";
 "DOMAIN" = "访问入口";
 "PORT" = "端口";
-
-"ABOUT" = "关于";
-"VERSION" = "Version";
-"AUTHOR" = "作者";
