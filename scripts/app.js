@@ -59,7 +59,7 @@ module.exports = {
         const kernel = new AppKernel()
         // 设置样式
         kernel.UIKit.disableLargeTitle()
-        this.setting.setChildPage(true)
+        kernel.setting.setChildPage(true)
         // 设置 navButtons
         kernel.UIKit.setNavButtons([
             kernel.UIKit.navButton("setting", "arrow.clockwise", () => {
