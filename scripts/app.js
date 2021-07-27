@@ -7,7 +7,6 @@ class AppKernel extends Kernel {
         // 注册组件
         this.settingComponent = this.registerComponent("Setting")
         this.setting = this.settingComponent.controller
-        this.setting.setChildPage(true)
         this.initSettingMethods()
         this.server = new Server(this.setting)
     }
@@ -58,7 +57,10 @@ class AppKernel extends Kernel {
 module.exports = {
     run: () => {
         const kernel = new AppKernel()
+        // 设置样式
         kernel.UIKit.disableLargeTitle()
+        this.setting.setChildPage(true)
+        // 设置 navButtons
         kernel.UIKit.setNavButtons([
             kernel.UIKit.navButton("setting", "arrow.clockwise", () => {
                 require("/scripts/ui/main/home").refresh()
