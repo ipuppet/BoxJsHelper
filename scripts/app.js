@@ -4,26 +4,6 @@ const Server = require("./server")
 class AppKernel extends Kernel {
     constructor() {
         super()
-        this.UIKit.disableLargeTitle()
-        this.UIKit.setNavButtons([
-            this.UIKit.navButton("setting", "arrow.clockwise", () => {
-                require("/scripts/ui/main/home").refresh()
-            }),
-            this.UIKit.navButton("toolbox", "square.grid.2x2", () => {
-                const ToolboxUI = require("./ui/main/toolbox")
-                const interfaceUi = new ToolboxUI(this)
-                this.UIKit.push({
-                    title: $l10n("TOOLBOX"),
-                    views: interfaceUi.getView(),
-                    navButtons: [this.UIKit.navButton("setting", "gear", () => {
-                        this.UIKit.push({
-                            title: $l10n("SETTING"),
-                            views: this.setting.getView()
-                        })
-                    })]
-                })
-            })
-        ])
         // 注册组件
         this.settingComponent = this.registerComponent("Setting")
         this.setting = this.settingComponent.controller
@@ -78,6 +58,26 @@ class AppKernel extends Kernel {
 module.exports = {
     run: () => {
         const kernel = new AppKernel()
+        kernel.UIKit.disableLargeTitle()
+        kernel.UIKit.setNavButtons([
+            kernel.UIKit.navButton("setting", "arrow.clockwise", () => {
+                require("/scripts/ui/main/home").refresh()
+            }),
+            kernel.UIKit.navButton("toolbox", "square.grid.2x2", () => {
+                const ToolboxUI = require("./ui/main/toolbox")
+                const interfaceUi = new ToolboxUI(kernel)
+                kernel.UIKit.push({
+                    title: $l10n("TOOLBOX"),
+                    views: interfaceUi.getView(),
+                    navButtons: [kernel.UIKit.navButton("setting", "gear", () => {
+                        kernel.UIKit.push({
+                            title: $l10n("SETTING"),
+                            views: kernel.setting.getView()
+                        })
+                    })]
+                })
+            })
+        ])
         const HomeUI = require("./ui/main/home")
         const interfaceUi = new HomeUI(kernel)
         kernel.UIRender(interfaceUi.getView())
