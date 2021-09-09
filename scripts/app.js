@@ -62,23 +62,32 @@ module.exports = {
         kernel.setting.setChildPage(true)
         // 设置 navButtons
         kernel.UIKit.setNavButtons([
-            kernel.UIKit.navButton("setting", "arrow.clockwise", () => {
-                require("/scripts/ui/main/home").refresh()
-            }),
-            kernel.UIKit.navButton("toolbox", "square.grid.2x2", () => {
-                const ToolboxUI = require("./ui/main/toolbox")
-                const interfaceUi = new ToolboxUI(kernel)
-                kernel.UIKit.push({
-                    title: $l10n("TOOLBOX"),
-                    views: interfaceUi.getView(),
-                    navButtons: [kernel.UIKit.navButton("setting", "gear", () => {
-                        kernel.UIKit.push({
-                            title: $l10n("SETTING"),
-                            views: kernel.setting.getView()
-                        })
-                    })]
-                })
-            })
+            {
+                symbol: "arrow.clockwise",
+                handler: () => {
+                    require("/scripts/ui/main/home").refresh()
+                }
+            },
+            {
+                symbol: "square.grid.2x2",
+                handler: () => {
+                    const ToolboxUI = require("./ui/main/toolbox")
+                    const interfaceUi = new ToolboxUI(kernel)
+                    kernel.UIKit.push({
+                        title: $l10n("TOOLBOX"),
+                        views: interfaceUi.getView(),
+                        navButtons: [{
+                            symbol: "gear",
+                            handler: () => {
+                                kernel.UIKit.push({
+                                    title: $l10n("SETTING"),
+                                    views: kernel.setting.getView()
+                                })
+                            }
+                        }]
+                    })
+                }
+            }
         ])
         const HomeUI = require("./ui/main/home")
         const interfaceUi = new HomeUI(kernel)

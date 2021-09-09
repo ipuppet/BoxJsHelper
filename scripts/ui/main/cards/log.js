@@ -81,28 +81,26 @@ class LogCard extends Card {
                         }],
                         title: $l10n("LOG"),
                         navButtons: [
-                            this.kernel.UIKit.navButton("log.clear", "trash", animate => {
-                                animate.start()
-                                $ui.alert({
-                                    title: $l10n("ALERT_INFO"),
-                                    message: $l10n("CLEAR_LOG_MSG"),
-                                    actions: [
-                                        {
-                                            title: $l10n("OK"),
-                                            handler: () => {
-                                                $file.delete(logPath)
-                                                $file.mkdir(logPath)
-                                                $("list-log").data = logListTemplate(logPath)
-                                                animate.done()
-                                            }
-                                        },
-                                        {
-                                            title: $l10n("CANCEL"),
-                                            handler: () => { animate.cancel() }
-                                        }
-                                    ]
-                                })
-                            })
+                            {
+                                symbol: "trash",
+                                handler: () => {
+                                    $ui.alert({
+                                        title: $l10n("ALERT_INFO"),
+                                        message: $l10n("CLEAR_LOG_MSG"),
+                                        actions: [
+                                            {
+                                                title: $l10n("OK"),
+                                                handler: () => {
+                                                    $file.delete(logPath)
+                                                    $file.mkdir(logPath)
+                                                    $("list-log").data = logListTemplate(logPath)
+                                                }
+                                            },
+                                            { title: $l10n("CANCEL") }
+                                        ]
+                                    })
+                                }
+                            }
                         ]
                     })
                 }

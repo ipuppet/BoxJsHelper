@@ -159,78 +159,78 @@ class TodayCard extends Card {
                         title: $l10n("TODAY"),
                         navButtons: [
                             // 新脚本
-                            this.kernel.UIKit.navButton("script-new", "plus", animate => {
-                                $ui.menu({
-                                    items: [$l10n("NEW_FILE"), $l10n("URL")],
-                                    handler: (title, idx) => {
-                                        if (idx === 0) {
-                                            $input.text({
-                                                type: $kbType.default,
-                                                text: "MyScript",
-                                                placeholder: $l10n("FILE_NAME"),
-                                                handler: text => {
-                                                    this.editor(text, "", () => {
-                                                        setTimeout(() => {
-                                                            // 更新列表
-                                                            $("list-script").data = scriptTemplate()
-                                                        }, 500)
-                                                    })
-                                                }
-                                            })
-                                        } else if (idx === 1) {
-                                            $input.text({
-                                                type: $kbType.url,
-                                                placeholder: $l10n("URL"),
-                                                handler: text => {
-                                                    animate.start()
-                                                    $http.get({
-                                                        url: text,
-                                                        handler: response => {
-                                                            let name = text.slice(text.lastIndexOf("/") + 1)
-                                                            this.saveScript(name, response.data + "")
-                                                            $("list-script").data = scriptTemplate()
-                                                            animate.done()
-                                                        }
-                                                    })
-                                                }
-                                            })
+                            {
+                                symbol: "plus",
+                                handler: () => {
+                                    $ui.menu({
+                                        items: [$l10n("NEW_FILE"), $l10n("URL")],
+                                        handler: (title, idx) => {
+                                            if (idx === 0) {
+                                                $input.text({
+                                                    type: $kbType.default,
+                                                    text: "MyScript",
+                                                    placeholder: $l10n("FILE_NAME"),
+                                                    handler: text => {
+                                                        this.editor(text, "", () => {
+                                                            setTimeout(() => {
+                                                                // 更新列表
+                                                                $("list-script").data = scriptTemplate()
+                                                            }, 500)
+                                                        })
+                                                    }
+                                                })
+                                            } else if (idx === 1) {
+                                                $input.text({
+                                                    type: $kbType.url,
+                                                    placeholder: $l10n("URL"),
+                                                    handler: text => {
+                                                        $http.get({
+                                                            url: text,
+                                                            handler: response => {
+                                                                let name = text.slice(text.lastIndexOf("/") + 1)
+                                                                this.saveScript(name, response.data + "")
+                                                                $("list-script").data = scriptTemplate()
+                                                            }
+                                                        })
+                                                    }
+                                                })
+                                            }
                                         }
-                                    }
-                                })
-                            }),
+                                    })
+                                }
+                            },
                             // 备份脚本
-                            this.kernel.UIKit.navButton("script-backup", "cloud", animate => {
-                                $ui.menu({
-                                    items: [$l10n("BACKUP_ICLOUD"), $l10n("REVERT_FROM_ICLOUD")],
-                                    handler: (title, idx) => {
-                                        if (idx === 0) { // 备份
-                                            animate.start()
-                                            // 备份文件
-                                            let dst = this.iCloud + "Today"
-                                            if (!$file.exists(dst)) {
-                                                $file.mkdir(dst)
+                            {
+                                symbol: "cloud",
+                                handler: () => {
+                                    $ui.menu({
+                                        items: [$l10n("BACKUP_ICLOUD"), $l10n("REVERT_FROM_ICLOUD")],
+                                        handler: (title, idx) => {
+                                            if (idx === 0) { // 备份
+                                                // 备份文件
+                                                let dst = this.iCloud + "Today"
+                                                if (!$file.exists(dst)) {
+                                                    $file.mkdir(dst)
+                                                }
+                                                $file.copy({
+                                                    src: this.todayPath,
+                                                    dst: dst
+                                                })
+                                            } else if (idx === 1) { // 恢复
+                                                // 恢复文件
+                                                if (!$file.exists(this.todayPath)) {
+                                                    $file.mkdir(this.todayPath)
+                                                }
+                                                $file.copy({
+                                                    src: this.iCloud + "Today",
+                                                    dst: this.todayPath
+                                                })
+                                                $("list-script").data = scriptTemplate()
                                             }
-                                            $file.copy({
-                                                src: this.todayPath,
-                                                dst: dst
-                                            })
-                                            animate.done()
-                                        } else if (idx === 1) { // 恢复
-                                            animate.start()
-                                            // 恢复文件
-                                            if (!$file.exists(this.todayPath)) {
-                                                $file.mkdir(this.todayPath)
-                                            }
-                                            $file.copy({
-                                                src: this.iCloud + "Today",
-                                                dst: this.todayPath
-                                            })
-                                            $("list-script").data = scriptTemplate()
-                                            animate.done()
                                         }
-                                    }
-                                })
-                            })
+                                    })
+                                }
+                            }
                         ]
                     })
                 }

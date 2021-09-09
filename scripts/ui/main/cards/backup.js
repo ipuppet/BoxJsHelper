@@ -179,134 +179,136 @@ class BackupCard extends Card {
                         }],
                         navButtons: [
                             // 备份
-                            this.kernel.UIKit.navButton("boxdata-backup", "icloud.and.arrow.up", animate => {
-                                $ui.alert({
-                                    title: $l10n("BACKUP"),
-                                    message: $l10n("BACKUP_NOW"),
-                                    actions: [
-                                        {
-                                            title: $l10n("OK"),
-                                            handler: () => {
-                                                animate.start()
-                                                const handler = data => {
-                                                    $file.delete(`${this.iCloud}/backup`)
-                                                    $file.mkdir(`${this.iCloud}/backup`)
-                                                    let status = 0
-                                                    const length = data.globalbaks.length
-                                                    data.globalbaks.forEach(back => {
-                                                        $http.get({
-                                                            url: `${this.kernel.server.serverURL}/query/baks/${back.id}`,
-                                                            handler: response => {
-                                                                const statusICloud = $file.write({
-                                                                    data: $data({
-                                                                        string: JSON.stringify({
-                                                                            info: back,
-                                                                            data: response.data
+                            {
+                                symbol: "icloud.and.arrow.up",
+                                handler: () => {
+                                    $ui.alert({
+                                        title: $l10n("BACKUP"),
+                                        message: $l10n("BACKUP_NOW"),
+                                        actions: [
+                                            {
+                                                title: $l10n("OK"),
+                                                handler: () => {
+                                                    const handler = data => {
+                                                        $file.delete(`${this.iCloud}/backup`)
+                                                        $file.mkdir(`${this.iCloud}/backup`)
+                                                        let status = 0
+                                                        const length = data.globalbaks.length
+                                                        data.globalbaks.forEach(back => {
+                                                            $http.get({
+                                                                url: `${this.kernel.server.serverURL}/query/baks/${back.id}`,
+                                                                handler: response => {
+                                                                    const statusICloud = $file.write({
+                                                                        data: $data({
+                                                                            string: JSON.stringify({
+                                                                                info: back,
+                                                                                data: response.data
+                                                                            })
+                                                                        }),
+                                                                        path: `${this.iCloud}/backup/${back.id}`
+                                                                    })
+                                                                    if (!statusICloud) {
+                                                                        $ui.toast($l10n("ERROE_BACKUP"))
+                                                                    }
+                                                                    // 操作成功
+                                                                    status++
+                                                                    // 动作结束
+                                                                    if (status === length) {
+                                                                        this.backupListTemplate(list => {
+                                                                            $("list-backup").data = list
                                                                         })
-                                                                    }),
-                                                                    path: `${this.iCloud}/backup/${back.id}`
-                                                                })
-                                                                if (!statusICloud) {
-                                                                    animate.done(false, $l10n("ERROE_BACKUP"))
+                                                                    }
                                                                 }
-                                                                // 操作成功
-                                                                status++
-                                                                // 动作结束
-                                                                if (status === length) {
-                                                                    this.backupListTemplate(list => {
-                                                                        $("list-backup").data = list
-                                                                        animate.done()
+                                                            })
+                                                        })
+                                                    }
+                                                    this.boxdata(boxjs => {
+                                                        if ($("list-backup").data.length === 0) {
+                                                            $http.post({
+                                                                url: `${this.kernel.server.serverURL}/api/saveGlobalBak`,
+                                                                body: {
+                                                                    id: this.kernel.uuid(),
+                                                                    createTime: new Date().toISOString(),
+                                                                    name: `BoxJsHelper-${boxjs.globalbaks.length + 1}`,
+                                                                    tags: [
+                                                                        "BoxJsHelper",
+                                                                        boxjs.syscfgs.env,
+                                                                        boxjs.syscfgs.version,
+                                                                        boxjs.syscfgs.versionType
+                                                                    ],
+                                                                    version: boxjs.syscfgs.version,
+                                                                    versionType: boxjs.syscfgs.versionType,
+                                                                    env: boxjs.syscfgs.env
+                                                                },
+                                                                handler: response => {
+                                                                    if (null !== response.error) {
+                                                                        $ui.toast($l10n("ERROE_BACKUP"))
+                                                                        return
+                                                                    }
+                                                                    handler(response.data)
+                                                                }
+                                                            })
+                                                        } else {
+                                                            handler(boxjs)
+                                                        }
+                                                    })
+                                                }
+                                            },
+                                            { title: $l10n("CANCEL") }
+                                        ]
+                                    })
+                                }
+                            },
+                            // 恢复
+                            {
+                                symbol: "icloud.and.arrow.down",
+                                handler: () => {
+                                    $ui.alert({
+                                        title: $l10n("REVERT_FROM_ICLOUD"),
+                                        actions: [
+                                            {
+                                                title: $l10n("OK"),
+                                                handler: () => {
+                                                    // 从iCloud恢复
+                                                    setTimeout(async () => {
+                                                        await $file.download(`${this.iCloud}/backup`)
+                                                        const files = $file.list(`${this.iCloud}/backup`)
+                                                        let index = 0
+                                                        const length = files.length
+                                                        files.forEach(async id => {
+                                                            const fileContent = await $file.download(`${this.iCloud}/backup/${id}`)
+                                                            const data = JSON.parse(fileContent?.string ?? "{}")
+                                                            // 先删除，防止重复
+                                                            $http.post({
+                                                                url: `${this.kernel.server.serverURL}/api/delGlobalBak`,
+                                                                body: { id: id },
+                                                                handler: () => {
+                                                                    // 添加新的备份到BoxJs
+                                                                    $http.post({
+                                                                        url: `${this.kernel.server.serverURL}/api/impGlobalBak`,
+                                                                        body: Object.assign({
+                                                                            bak: data.data
+                                                                        }, data.info),
+                                                                        handler: () => {
+                                                                            index++
+                                                                            // 控制行为
+                                                                            if (index === length)
+                                                                                this.backupListTemplate(list => {
+                                                                                    $("list-backup").data = list
+                                                                                })
+                                                                        }
                                                                     })
                                                                 }
-                                                            }
+                                                            })
                                                         })
                                                     })
                                                 }
-                                                this.boxdata(boxjs => {
-                                                    if ($("list-backup").data.length === 0) {
-                                                        $http.post({
-                                                            url: `${this.kernel.server.serverURL}/api/saveGlobalBak`,
-                                                            body: {
-                                                                id: this.kernel.uuid(),
-                                                                createTime: new Date().toISOString(),
-                                                                name: `BoxJsHelper-${boxjs.globalbaks.length + 1}`,
-                                                                tags: [
-                                                                    "BoxJsHelper",
-                                                                    boxjs.syscfgs.env,
-                                                                    boxjs.syscfgs.version,
-                                                                    boxjs.syscfgs.versionType
-                                                                ],
-                                                                version: boxjs.syscfgs.version,
-                                                                versionType: boxjs.syscfgs.versionType,
-                                                                env: boxjs.syscfgs.env
-                                                            },
-                                                            handler: response => {
-                                                                if (null !== response.error) {
-                                                                    animate.done(false, $l10n("ERROE_BACKUP"))
-                                                                    return
-                                                                }
-                                                                handler(response.data)
-                                                            }
-                                                        })
-                                                    } else {
-                                                        handler(boxjs)
-                                                    }
-                                                })
-                                            }
-                                        },
-                                        { title: $l10n("CANCEL") }
-                                    ]
-                                })
-                            }),
-                            // 恢复
-                            this.kernel.UIKit.navButton("boxdata-revert", "icloud.and.arrow.down", animate => {
-                                $ui.alert({
-                                    title: $l10n("REVERT_FROM_ICLOUD"),
-                                    actions: [
-                                        {
-                                            title: $l10n("OK"),
-                                            handler: () => {
-                                                animate.start()
-                                                // 从iCloud恢复
-                                                setTimeout(async () => {
-                                                    await $file.download(`${this.iCloud}/backup`)
-                                                    const files = $file.list(`${this.iCloud}/backup`)
-                                                    let index = 0
-                                                    const length = files.length
-                                                    files.forEach(async id => {
-                                                        const fileContent = await $file.download(`${this.iCloud}/backup/${id}`)
-                                                        const data = JSON.parse(fileContent?.string ?? "{}")
-                                                        // 先删除，防止重复
-                                                        $http.post({
-                                                            url: `${this.kernel.server.serverURL}/api/delGlobalBak`,
-                                                            body: { id: id },
-                                                            handler: () => {
-                                                                // 添加新的备份到BoxJs
-                                                                $http.post({
-                                                                    url: `${this.kernel.server.serverURL}/api/impGlobalBak`,
-                                                                    body: Object.assign({
-                                                                        bak: data.data
-                                                                    }, data.info),
-                                                                    handler: () => {
-                                                                        index++
-                                                                        // 控制行为
-                                                                        if (index === length)
-                                                                            this.backupListTemplate(list => {
-                                                                                $("list-backup").data = list
-                                                                                animate.done()
-                                                                            })
-                                                                    }
-                                                                })
-                                                            }
-                                                        })
-                                                    })
-                                                })
-                                            }
-                                        },
-                                        { title: $l10n("CANCEL") }
-                                    ]
-                                })
-                            })
+                                            },
+                                            { title: $l10n("CANCEL") }
+                                        ]
+                                    })
+                                }
+                            }
                         ]
                     })
                 }
