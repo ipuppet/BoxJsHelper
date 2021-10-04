@@ -3,7 +3,7 @@ const Card = require("../card")
 class LogCard extends Card {
     card() {
         return {
-            icon: { symbol: "doc.text" },
+            icon: { symbol: "doc.circle" },
             title: { text: $l10n("LOG") },
             extra: {
                 type: "switch",

@@ -3,7 +3,7 @@ const Card = require("../card")
 class RemoteAccessCard extends Card {
     card() {
         return {
-            icon: { symbol: "paperplane" },
+            icon: { symbol: "paperplane.circle" },
             title: { text: $l10n("REMOTE_ACCESS") },
             extra: {
                 type: "switch",

@@ -30,7 +30,7 @@ class ToolboxUI {
                 }, data.icon),
                 layout: make => {
                     make.top.left.inset(10)
-                    make.size.equalTo(30)
+                    make.size.equalTo(35)
                 }
             },
             {

@@ -31,7 +31,7 @@ class BackupCard extends Card {
 
     card() {
         return {
-            icon: { symbol: "cloud" },
+            icon: { symbol: "icloud.circle" },
             title: { text: $l10n("BACKUP") },
             events: {
                 tapped: () => {

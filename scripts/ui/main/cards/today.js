@@ -70,7 +70,7 @@ class TodayCard extends Card {
 
     card() {
         return {
-            icon: { symbol: "calendar" },
+            icon: { symbol: "calendar.circle" },
             title: { text: $l10n("TODAY") },
             events: {
                 tapped: () => {
