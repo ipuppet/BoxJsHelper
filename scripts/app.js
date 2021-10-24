@@ -58,8 +58,7 @@ module.exports = {
     run: () => {
         const kernel = new AppKernel()
         // 设置样式
-        kernel.UIKit.disableLargeTitle()
-        kernel.setting.setChildPage(true)
+        kernel.UIKit.useJsboxNav()
         // 设置 navButtons
         kernel.UIKit.setNavButtons([
             {
