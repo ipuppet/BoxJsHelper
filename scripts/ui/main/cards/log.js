@@ -1,3 +1,4 @@
+const { UIKit } = require("../../../easy-jsbox")
 const Card = require("../card")
 
 class LogCard extends Card {
@@ -30,7 +31,7 @@ class LogCard extends Card {
                         return dataTemplate
                     }
                     const data = logListTemplate(logPath)
-                    this.kernel.UIKit.push({
+                    UIKit.push({
                         views: [data.length === 0 ? this.emptyList : {
                             type: "list",
                             props: {
@@ -63,7 +64,7 @@ class LogCard extends Card {
                             },
                             events: {
                                 didSelect: (sender, indexPath, data) => {
-                                    this.kernel.UIKit.push({
+                                    UIKit.push({
                                         views: [{
                                             type: "text",
                                             props: {

@@ -1,7 +1,9 @@
+const { UIKit } = require("../../easy-jsbox")
+const { Matrix } = require("./matrix")
+
 class ToolboxUI {
     constructor(kernel) {
         this.kernel = kernel
-        const Matrix = this.kernel.registerPlugin("matrix")
         this.matrix = new Matrix()
         this.matrix.columns = 2
         this.matrix.height = 90
@@ -10,7 +12,7 @@ class ToolboxUI {
     }
 
     loadCards() {
-        const cards = $file.list("/scripts/ui/main/cards")
+        const cards = $file.list("scripts/ui/main/cards")
         cards.forEach(card => {
             const Card = require(`./cards/${card}`)
             this.cards.push(new Card(this.kernel).card())
@@ -26,7 +28,7 @@ class ToolboxUI {
             {
                 type: "image",
                 props: Object.assign({
-                    tintColor: this.kernel.UIKit.textColor
+                    tintColor: UIKit.textColor
                 }, data.icon),
                 layout: make => {
                     make.top.left.inset(10)
@@ -70,7 +72,7 @@ class ToolboxUI {
 
     getView() {
         this.loadCards()
-        return [this.matrix.scrollTemplate(this.cardTemplate())]
+        return this.matrix.scrollTemplate(this.cardTemplate())
     }
 }
 

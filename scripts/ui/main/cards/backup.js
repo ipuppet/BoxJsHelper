@@ -1,3 +1,4 @@
+const { UIKit } = require("../../../easy-jsbox")
 const Card = require("../card")
 
 class BackupCard extends Card {
@@ -35,7 +36,7 @@ class BackupCard extends Card {
             title: { text: $l10n("BACKUP") },
             events: {
                 tapped: () => {
-                    this.kernel.UIKit.push({
+                    UIKit.push({
                         title: $l10n("BACKUP"),
                         views: [{
                             type: "list",

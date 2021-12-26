@@ -73,7 +73,7 @@
                 "title": "README",
                 "type": "script",
                 "key": "about.readme",
-                "value": "this.controller.readme"
+                "value": "this.method.readme"
             }
         ]
     }

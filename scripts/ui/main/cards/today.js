@@ -1,3 +1,4 @@
+const { UIKit } = require("../../../easy-jsbox")
 const Card = require("../card")
 
 class TodayCard extends Card {
@@ -7,7 +8,7 @@ class TodayCard extends Card {
     }
 
     editor(name, content, callback) {
-        this.kernel.UIKit.push({
+        UIKit.push({
             views: [
                 {
                     type: "code",
@@ -31,7 +32,7 @@ class TodayCard extends Card {
                     type: "button",
                     props: {
                         symbol: "checkmark",
-                        tintColor: this.kernel.UIKit.textColor,
+                        tintColor: UIKit.textColor,
                         bgcolor: $color("clear")
                     },
                     layout: (make, view) => {
@@ -88,7 +89,7 @@ class TodayCard extends Card {
                         return dataTemplate
                     }
                     const data = scriptTemplate()
-                    this.kernel.UIKit.push({
+                    UIKit.push({
                         views: [data.length === 0 ? this.emptyList : {
                             type: "list",
                             props: {

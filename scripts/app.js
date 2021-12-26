@@ -1,27 +1,18 @@
-const { Kernel } = require("../EasyJsBox/src/kernel")
+const {
+    UIKit,
+    Kernel,
+    Setting
+} = require("./easy-jsbox")
 const Server = require("./server")
 
 class AppKernel extends Kernel {
     constructor() {
         super()
         // 注册组件
-        this.settingComponent = this.registerComponent("Setting")
-        this.setting = this.settingComponent.controller
+        this.setting = new Setting()
+        this.setting.loadConfig()
         this.initSettingMethods()
         this.server = new Server(this.setting)
-    }
-
-    uuid() {
-        let s = []
-        const hexDigits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-        for (let i = 0; i < 36; i++) {
-            s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
-        }
-        s[14] = "4" // bits 12-15 of the time_hi_and_version field to 0010
-        s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
-        s[8] = s[13] = s[18] = s[23] = "-"
-
-        return s.join("")
     }
 
     iCloudPath(path) {
@@ -37,10 +28,10 @@ class AppKernel extends Kernel {
      * 注入设置中的脚本类型方法
      */
     initSettingMethods() {
-        this.setting.readme = animate => {
+        this.setting.method.readme = animate => {
             animate.touchHighlight()
-            const content = $file.read("/README.md").string
-            this.UIKit.pushPageSheet({
+            const content = $file.read("README.md").string
+            UIKit.push({
                 views: [{
                     type: "markdown",
                     props: { content: content },
@@ -58,13 +49,13 @@ module.exports = {
     run: () => {
         const kernel = new AppKernel()
         // 设置样式
-        kernel.UIKit.useJsboxNav()
+        kernel.useJsboxNav()
         // 设置 navButtons
-        kernel.UIKit.setNavButtons([
+        kernel.setNavButtons([
             {
                 symbol: "arrow.clockwise",
                 handler: () => {
-                    require("/scripts/ui/main/home").refresh()
+                    require("./ui/main/home").refresh()
                 }
             },
             {
@@ -72,15 +63,15 @@ module.exports = {
                 handler: () => {
                     const ToolboxUI = require("./ui/main/toolbox")
                     const interfaceUi = new ToolboxUI(kernel)
-                    kernel.UIKit.push({
+                    UIKit.push({
                         title: $l10n("TOOLBOX"),
-                        views: interfaceUi.getView(),
+                        views: [interfaceUi.getView()],
                         navButtons: [{
                             symbol: "gear",
                             handler: () => {
-                                kernel.UIKit.push({
+                                UIKit.push({
                                     title: $l10n("SETTING"),
-                                    views: kernel.setting.getView()
+                                    views: [kernel.setting.getListView()]
                                 })
                             }
                         }]
@@ -90,6 +81,8 @@ module.exports = {
         ])
         const HomeUI = require("./ui/main/home")
         const interfaceUi = new HomeUI(kernel)
-        kernel.UIRender(interfaceUi.getView())
+        kernel.UIRender({
+            views: [interfaceUi.getView()]
+        })
     }
 }

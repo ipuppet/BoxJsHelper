@@ -11,17 +11,15 @@ class HomeUI {
     }
 
     getView() {
-        return [
-            {
-                type: "web",
-                props: {
-                    id: "web-boxjs",
-                    url: this.kernel.server.serverURL,
-                    opaque: false
-                },
-                layout: $layout.fill
-            }
-        ]
+        return {
+            type: "web",
+            props: {
+                id: "web-boxjs",
+                url: this.kernel.server.serverURL,
+                opaque: false
+            },
+            layout: $layout.fill
+        }
     }
 }
 
