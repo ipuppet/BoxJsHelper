@@ -2,7 +2,7 @@
 "SUCCESS" = "Success";
 "ERROR" = "Error";
 "INVALID_VALUE" = "Invalid value";
-"OK" = "Ok";
+"OK" = "OK";
 "CANCEL" = "Cancel";
 "BACK" = "Back";
 "COPY" = "Copy";
