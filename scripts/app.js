@@ -28,6 +28,14 @@ class AppKernel extends Kernel {
      * 注入设置中的脚本类型方法
      */
     initSettingMethods() {
+        this.setting.method.tips = animate => {
+            animate.touchHighlight()
+            $ui.alert({
+                title: $l10n("TIPS"),
+                message: $l10n("DOMAIN") + "与浏览器访问地址一致"
+            })
+        }
+
         this.setting.method.readme = animate => {
             animate.touchHighlight()
             const content = $file.read("README.md").string

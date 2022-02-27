@@ -18,7 +18,7 @@
 "TOOLBOX" = "Toolbox";
 "REFRESH" = "Refresh";
 "REFRESH_SUCCESS" = "Refresh successfully";
-"REMOTE_ACCESS" = "Remote access";
+"REMOTE_ACCESS" = "Remote Access";
 "REMOTE_ACCESS_CLOSED" = "Remote access is off";
 "REMOTE_ACCESS_STARTED" = "Remote access is on";
 "LOG" = "Log";
@@ -34,7 +34,7 @@
 "RECOVER_BACKUP" = "Recover";
 "SUCCESS_RECOVER" = "Recover successfully";
 "DELETE" = "Delete";
-"TODAY" = "Today widget";
+"TODAY" = "Today Widget";
 "SELECTED_SCRIPT" = "Selected script";
 "NO_SCRIPT_FROM_URL" = "No script";
 "UPDATE_ALL_SCRIPT" = "Update all scripts?";
@@ -47,5 +47,5 @@
 "SUCCESS_SAVE" = "Saved";
 
 "ADVANCED" = "Advanced";
-"DOMAIN" = "Access domain";
+"DOMAIN" = "Access Domain";
 "PORT" = "Port";

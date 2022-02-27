@@ -1,7 +1,17 @@
 [
     {
-        "title": "ADVANCED",
+        "title": "BoxJs",
         "items": [
+            {
+                "icon": [
+                    "tag.fill",
+                    "#9B59B6"
+                ],
+                "title": "TIPS",
+                "type": "script",
+                "key": "boxjs.tips",
+                "value": "this.method.tips"
+            },
             {
                 "icon": [
                     "location.fill",
@@ -11,7 +21,12 @@
                 "type": "input",
                 "key": "advanced.domain",
                 "value": "boxjs.net"
-            },
+            }
+        ]
+    },
+    {
+        "title": "REMOTE_ACCESS",
+        "items": [
             {
                 "icon": [
                     "dot.radiowaves.right",
