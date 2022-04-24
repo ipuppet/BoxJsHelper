@@ -52,7 +52,7 @@ class LogCard extends Card {
                                 ],
                                 actions: [
                                     {
-                                        title: $l10n("DELETE"),
+                                        title: " " + $l10n("DELETE") + " ",
                                         color: $color("red"),
                                         handler: (sender, indexPath) => {
                                             let file = sender.object(indexPath).label.text
@@ -66,10 +66,10 @@ class LogCard extends Card {
                                 didSelect: (sender, indexPath, data) => {
                                     UIKit.push({
                                         views: [{
-                                            type: "text",
+                                            type: "code",
                                             props: {
                                                 editable: false,
-                                                textColor: $color("primaryText", "secondaryText"),
+                                                accessoryView: {},
                                                 text: $file.read(logPath + data.label.text).string
                                             },
                                             layout: $layout.fillSafeArea

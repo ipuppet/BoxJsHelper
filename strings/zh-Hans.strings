@@ -48,4 +48,5 @@
 
 "ADVANCED" = "高级";
 "DOMAIN" = "访问入口";
+"TIMEOUT" = "超时时间 (s)";
 "PORT" = "端口";

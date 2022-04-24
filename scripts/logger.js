@@ -1,17 +1,28 @@
 class Logger {
+    status = true
+
     constructor(name = "default") {
         this.name = name
         this.maxSize = 1024 * 1024 * 1024
         if (undefined === $cache.get(this.name)) {
             $cache.set(this.name, new Date().getTime())
         }
-        this.path = `/storage/log/${this.name}/`
-        if (!$file.exists(this.path)) {
-            $file.mkdir(this.path)
-        }
+        this.path = `storage/log/${this.name}/`
+    }
+
+    disable() {
+        this.status = false
+    }
+
+    enable() {
+        this.status = true
     }
 
     write(message, level) {
+        if (!this.status) {
+            return
+        }
+
         let path = `${this.path}${$cache.get(this.name)}.log`
         let file = $file.read(path)
         // 目前只能先读取文件后拼接字符串再写入

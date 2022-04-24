@@ -21,6 +21,15 @@
                 "type": "input",
                 "key": "advanced.domain",
                 "value": "boxjs.net"
+            },
+            {
+                "icon": [
+                    "wifi.slash"
+                ],
+                "title": "TIMEOUT",
+                "type": "number",
+                "key": "advanced.timeout",
+                "value": 3
             }
         ]
     },

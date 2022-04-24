@@ -48,4 +48,5 @@
 
 "ADVANCED" = "Advanced";
 "DOMAIN" = "Access Domain";
+"TIMEOUT" = "Timeout (s)";
 "PORT" = "Port";

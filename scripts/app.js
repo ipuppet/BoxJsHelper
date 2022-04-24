@@ -33,6 +33,7 @@ class AppKernel extends Kernel {
             $ui.alert({
                 title: $l10n("TIPS"),
                 message: $l10n("DOMAIN") + "与浏览器访问地址一致"
+                    + "\n QuantumultX 用户超时时间可以设置的久一点"
             })
         }
 

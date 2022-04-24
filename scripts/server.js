@@ -3,13 +3,21 @@ const Logger = require("./logger")
 class Server {
     constructor(setting, port = null) {
         this.setting = setting
+
         this.logger = new Logger("server-access")
+        if (!this.setting.get("server.logRequest")) {
+            this.logger.disable()
+        }
+
         if (port === null) {
             port = this.setting.get("advanced.serverPort")
         }
         this.port = port
-        this.domain = this.setting.get("advanced.domain") ?? "boxjs.net"
-        this.timeout = 3
+        this.domain = this.setting.get("advanced.domain", "boxjs.net")
+        if (this.domain.startsWith("http")) {
+            this.domain = this.domain.slice(this.domain.indexOf("//") + 2)
+        }
+        this.timeout = this.setting.get("advanced.timeout", 3)
         this.handler = {}
         this.server = $server.new()
     }
@@ -21,9 +29,7 @@ class Server {
             port: this.port
         }
         this.server.start(options)
-        if (this.setting.get("server.logRequest")) {
-            this.logger.info("Server Start.")
-        }
+        this.logger.info("Server Start.")
         // 访问地址
         this.serverURL = `http://localhost:${this.port}`
         if (this.server.serverURL) {
@@ -38,16 +44,11 @@ class Server {
 
     stopServer() {
         this.server.stop()
-        if (this.setting.get("server.logRequest"))
-            this.logger.info("Server Stop.")
+        this.logger.info("Server Stop.")
     }
 
-    async logRequest(request) {
-        // 判断是否记录日志
-        if (this.setting.get("server.logRequest")) {
-            let message = ` ${request.remoteAddress} "${request.method}" ${request.path}`
-            this.logger.info(message)
-        }
+    requestLogTemplate(request) {
+        return `"${request.remoteAddress}" "${request.method}" "${request.path}"`
     }
 
     isLocalhost(request) {
@@ -58,13 +59,13 @@ class Server {
     }
 
     async response(request) {
-        let response = {}
         let content = {}
+
         if (request.method === "POST") {
             let body = {}
             try {
                 body = JSON.parse(request.data.string)
-            } catch (error) { }
+            } catch { }
             content = await $http.post({
                 timeout: this.timeout,
                 url: `http://${this.domain}${request.path}`,
@@ -85,26 +86,33 @@ class Server {
                 url: `http://${this.domain}${request.path}`
             })
         }
+
+        if (content.error) {
+            throw content.error
+        }
+
         // 检查结构
-        if (content.data && typeof content.data === "object")
+        let response = {}
+        if (content.data && typeof content.data === "object") {
             response = { json: content.data }
-        else
+        } else {
             response = { html: content.data + "" }
+        }
         return response
     }
 
     async handle(request, completion) {
-        this.logRequest(request)
-        let response
-        if (this.isLocalhost(request)) {
-            response = await this.response(request)
-        } else {
-            if (this.setting.get("server.remoteAccess")) {
+        $delay(0, () => this.logger.info(this.requestLogTemplate(request)))
+
+        let response = { statusCode: 400, hasBody: false }
+        if (this.isLocalhost(request) || this.setting.get("server.remoteAccess")) {
+            try {
                 response = await this.response(request)
-            } else {
-                response = { statusCode: 400, hasBody: false }
+            } catch (error) {
+                this.logger.error(this.requestLogTemplate(request) + ` ${error.code}: ${error.localizedDescription}`)
             }
         }
+
         completion({
             type: "data",
             props: response
