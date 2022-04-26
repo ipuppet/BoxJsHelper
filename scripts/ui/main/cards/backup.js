@@ -101,7 +101,7 @@ class BackupCard extends Card {
                                 },
                                 actions: [
                                     {
-                                        title: $l10n("DELETE") + " ", // 加空格防止被检测为默认的删除行为
+                                        title: " " + $l10n("DELETE") + " ", // 加空格防止被检测为默认的删除行为
                                         color: $color("red"),
                                         handler: (sender, indexPath) => {
                                             console.log(sender.object(indexPath))
@@ -190,9 +190,10 @@ class BackupCard extends Card {
                                             {
                                                 title: $l10n("OK"),
                                                 handler: () => {
-                                                    const handler = data => {
-                                                        $file.delete(`${this.iCloud}/backup`)
+                                                    if (!$file.exists(`${this.iCloud}/backup`)) {
                                                         $file.mkdir(`${this.iCloud}/backup`)
+                                                    }
+                                                    const handler = data => {
                                                         let status = 0
                                                         const length = data.globalbaks.length
                                                         data.globalbaks.forEach(back => {
@@ -209,8 +210,10 @@ class BackupCard extends Card {
                                                                         path: `${this.iCloud}/backup/${back.id}`
                                                                     })
                                                                     if (!statusICloud) {
-                                                                        $ui.toast($l10n("ERROE_BACKUP"))
+                                                                        $ui.alert($l10n("ERROE_BACKUP"))
+                                                                        return
                                                                     }
+                                                                    $ui.success($l10n("SUCCESS"))
                                                                     // 操作成功
                                                                     status++
                                                                     // 动作结束
