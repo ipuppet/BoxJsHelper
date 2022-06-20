@@ -1,4 +1,4 @@
-const { UIKit } = require("../../../easy-jsbox")
+const { UIKit } = require("../../../libs/easy-jsbox")
 const Card = require("../card")
 
 class TodayCard extends Card {
@@ -29,27 +29,15 @@ class TodayCard extends Card {
             title: $l10n("EDIT"),
             navButtons: [
                 {
-                    type: "button",
-                    props: {
-                        symbol: "checkmark",
-                        tintColor: UIKit.textColor,
-                        bgcolor: $color("clear")
-                    },
-                    layout: (make, view) => {
-                        make.right.inset(20)
-                        make.size.equalTo(20)
-                        make.centerY.equalTo(view.super)
-                    },
-                    events: {
-                        tapped: () => {
-                            let editor = $("editor")
-                            this.saveScript(editor.info, editor.text)
-                            $ui.toast($l10n("SUCCESS_SAVE"))
-                            setTimeout(() => {
-                                $ui.pop()
-                                callback()
-                            }, 600)
-                        }
+                    symbol: "checkmark",
+                    handler: () => {
+                        let editor = $("editor")
+                        this.saveScript(editor.info, editor.text)
+                        $ui.toast($l10n("SUCCESS_SAVE"))
+                        setTimeout(() => {
+                            $ui.pop()
+                            callback()
+                        }, 600)
                     }
                 }
             ]

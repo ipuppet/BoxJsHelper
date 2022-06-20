@@ -1,4 +1,4 @@
-const { UIKit } = require("../../../easy-jsbox")
+const { UIKit } = require("../../../libs/easy-jsbox")
 const Card = require("../card")
 
 class LogCard extends Card {
@@ -21,9 +21,9 @@ class LogCard extends Card {
             },
             events: {
                 tapped: () => {
-                    let logPath = this.kernel.server.logger.path
+                    let logPath = this.kernel.server.logger?.path
                     const logListTemplate = path => {
-                        let files = $file.list(path)
+                        let files = $file.list(path) ?? []
                         let dataTemplate = []
                         for (let file of files) {
                             dataTemplate.push({ label: { text: file } })

@@ -1,4 +1,4 @@
-const { UIKit } = require("../../../easy-jsbox")
+const { UIKit } = require("../../../libs/easy-jsbox")
 const Card = require("../card")
 
 class BackupCard extends Card {

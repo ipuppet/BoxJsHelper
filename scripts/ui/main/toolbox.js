@@ -1,4 +1,4 @@
-const { UIKit } = require("../../easy-jsbox")
+const { UIKit } = require("../../libs/easy-jsbox")
 const { Matrix } = require("./matrix")
 
 class ToolboxUI {

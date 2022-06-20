@@ -2,7 +2,7 @@ const {
     UIKit,
     Kernel,
     Setting
-} = require("./easy-jsbox")
+} = require("./libs/easy-jsbox")
 const Server = require("./server")
 
 class AppKernel extends Kernel {
