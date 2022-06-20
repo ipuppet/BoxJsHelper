@@ -205,7 +205,7 @@ class TodayCard extends Card {
                                 symbol: "cloud",
                                 handler: () => {
                                     $ui.menu({
-                                        items: [$l10n("BACKUP_ICLOUD"), $l10n("REVERT_FROM_ICLOUD")],
+                                        items: [$l10n("UPLOAD_TO_ICLOUD"), $l10n("REVERT_FROM_ICLOUD")],
                                         handler: (title, idx) => {
                                             if (idx === 0) { // 备份
                                                 // 备份文件

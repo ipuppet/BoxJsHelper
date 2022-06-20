@@ -9,8 +9,8 @@
 "COPY_SUCCESS" = "复制成功";
 "EMPTY_LIST" = "列表为空";
 
-"GET_BOXJS_DATA_ERROR" = "从BoxJs获取数据失败";
-"NO_TODAY_CACHE" = "获取数据失败，请打开工具箱中的Today卡片，点击刷新按钮";
+"GET_BOXJS_DATA_ERROR" = "从 BoxJs 获取数据失败";
+"NO_TODAY_CACHE" = "获取数据失败，请打开工具箱中的 Today 卡片，点击刷新按钮";
 "NO_SCRIPT" = "未选择脚本或脚本被删除，请在工具箱中选择脚本";
 
 "BOXJS" = "BoxJs";
@@ -25,21 +25,23 @@
 "CLEAR_LOG" = "清理日志";
 "CLEAR_LOG_MSG" = "确认要清除所有日志吗？";
 "BACKUP" = "备份";
-"BACKUP_ICLOUD" = "备份到iCloud";
-"BACKUP_NOW" = "立即进行备份？\n(会覆盖iCloud内的文件)";
+"UPLOAD_TO_ICLOUD" = "上传至 iCloud";
+"NOTHING_HAPPENS" = "无事发生";
+"UPLOAD_TO_ICLOUD_ALERT" = "若列表为空则会自动创建一份备份\n会跳过 iCloud 内同名文件";
+"ALSO_DELETE_ICLOUD" = "该操作也会删除 iCloud 文件";
 "ERROR_GET_DATA" = "获取数据时出错";
 "ERROE_BACKUP" = "制作备份时出错";
 "SUCCESS_BACKUP" = "备份成功";
-"REVERT_FROM_ICLOUD" = "从iCloud恢复备份";
-"RECOVER_BACKUP" = "恢复备份";
+"REVERT_FROM_ICLOUD" = "从 iCloud 恢复备份";
+"RECOVER_TO_BOXJS" = "恢复至 BoxJs";
 "SUCCESS_RECOVER" = "恢复成功";
 "DELETE" = "删除";
-"TODAY" = "Today小组件";
+"TODAY" = "Today 小组件";
 "SELECTED_SCRIPT" = "选中的脚本";
-"NO_SCRIPT_FROM_URL" = "没有从URL获取的脚本";
+"NO_SCRIPT_FROM_URL" = "没有从 URL 获取的脚本";
 "UPDATE_ALL_SCRIPT" = "更新所有脚本？";
 "UPDATE" = "更新所有脚本？";
-"URL" = "从URL添加";
+"URL" = "从 URL 添加";
 "NEW_FILE" = "新建文件";
 "FILE_NAME" = "文件名称";
 "EDIT" = "编辑";
