@@ -1,8 +1,4 @@
-const {
-    UIKit,
-    Kernel,
-    Setting
-} = require("./libs/easy-jsbox")
+const { UIKit, Kernel, Setting } = require("./libs/easy-jsbox")
 const Server = require("./server")
 
 class AppKernel extends Kernel {
@@ -28,26 +24,25 @@ class AppKernel extends Kernel {
      * 注入设置中的脚本类型方法
      */
     initSettingMethods() {
-        this.setting.method.tips = animate => {
-            animate.touchHighlight()
+        this.setting.method.tips = () => {
             $ui.alert({
                 title: $l10n("TIPS"),
-                message: $l10n("DOMAIN") + "与浏览器访问地址一致"
-                    + "\n QuantumultX 用户超时时间可以设置的久一点"
+                message: $l10n("DOMAIN") + "与浏览器访问地址一致" + "\n QuantumultX 用户超时时间可以设置的久一点"
             })
         }
 
-        this.setting.method.readme = animate => {
-            animate.touchHighlight()
+        this.setting.method.readme = () => {
             const content = $file.read("README.md").string
             UIKit.push({
-                views: [{
-                    type: "markdown",
-                    props: { content: content },
-                    layout: (make, view) => {
-                        make.size.equalTo(view.super)
+                views: [
+                    {
+                        type: "markdown",
+                        props: { content: content },
+                        layout: (make, view) => {
+                            make.size.equalTo(view.super)
+                        }
                     }
-                }],
+                ],
                 title: $l10n("README")
             })
         }
@@ -75,15 +70,17 @@ module.exports = {
                     UIKit.push({
                         title: $l10n("TOOLBOX"),
                         views: [interfaceUi.getView()],
-                        navButtons: [{
-                            symbol: "gear",
-                            handler: () => {
-                                UIKit.push({
-                                    title: $l10n("SETTING"),
-                                    views: [kernel.setting.getListView()]
-                                })
+                        navButtons: [
+                            {
+                                symbol: "gear",
+                                handler: () => {
+                                    UIKit.push({
+                                        title: $l10n("SETTING"),
+                                        views: [kernel.setting.getListView()]
+                                    })
+                                }
                             }
-                        }]
+                        ]
                     })
                 }
             }
