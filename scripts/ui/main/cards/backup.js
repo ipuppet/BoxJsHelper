@@ -148,64 +148,58 @@ class BackupCard extends Card {
     }
 
     async uploadToiCloud() {
-        const handler = data => {
-            let uploaded = 0
-            let errorList = []
-            const length = data.globalbaks.length
-            data.globalbaks.forEach(backup => {
-                // 文件存在则跳过
-                if (this.hasiCloud(backup.id)) {
+        const data = await this.boxdata()
+        const length = data.globalbaks.length
+        if (length === 0) {
+            return
+        }
+        let uploaded = 0
+        let errorList = []
+        data.globalbaks.forEach(backup => {
+            // 文件存在则跳过
+            if (this.hasiCloud(backup.id)) {
+                uploaded++
+                return
+            }
+            // 显示加载动画
+            this.backupStatus[backup.id]?.loading(true)
+            $http.get({
+                url: `${this.kernel.server.serverURL}/query/baks/${backup.id}`,
+                handler: response => {
+                    // 增加计数器
                     uploaded++
-                    return
-                }
-                // 显示加载动画
-                this.backupStatus[backup.id]?.loading(true)
-                $http.get({
-                    url: `${this.kernel.server.serverURL}/query/baks/${backup.id}`,
-                    handler: response => {
-                        // 增加计数器
-                        uploaded++
-                        // 保存至 iCloud
-                        if (
-                            $file.write({
-                                data: $data({
-                                    string: JSON.stringify({
-                                        info: backup,
-                                        data: response.data
-                                    })
-                                }),
-                                path: this.iCloudPath(backup.id)
-                            })
-                        ) {
-                            $delay(0.3, () => {
-                                // 显示成功图标
-                                this.backupStatus[backup.id]?.ok()
-                            })
-                        } else {
-                            errorList.push(backup.name)
-                        }
-                        // 动作结束
-                        if (uploaded === length) {
-                            this.updateList()
-                            if (errorList.length > 0) {
-                                $ui.alert({
-                                    title: $l10n("ERROE_BACKUP"),
-                                    message: errorList.join("\n")
+                    // 保存至 iCloud
+                    if (
+                        $file.write({
+                            data: $data({
+                                string: JSON.stringify({
+                                    info: backup,
+                                    data: response.data
                                 })
-                            }
+                            }),
+                            path: this.iCloudPath(backup.id)
+                        })
+                    ) {
+                        $delay(0.3, () => {
+                            // 显示成功图标
+                            this.backupStatus[backup.id]?.ok()
+                        })
+                    } else {
+                        errorList.push(backup.name)
+                    }
+                    // 动作结束
+                    if (uploaded === length) {
+                        this.updateList()
+                        if (errorList.length > 0) {
+                            $ui.alert({
+                                title: $l10n("ERROE_BACKUP"),
+                                message: errorList.join("\n")
+                            })
                         }
                     }
-                })
+                }
             })
-        }
-
-        if ($(this.listId).data.length === 0) {
-            const response = await this.createBackup()
-            handler(response.data)
-        } else {
-            const boxdata = await this.boxdata()
-            handler(boxdata)
-        }
+        })
     }
 
     async recoverFromiCloud() {
