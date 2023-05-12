@@ -9,6 +9,7 @@ class CardBase {
                 make.top.inset(20)
             },
             props: {
+                id: "cardEmptyListTemplate",
                 text: $l10n("EMPTY_LIST"),
                 align: $align.center,
                 color: $color("darkGray")

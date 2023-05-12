@@ -14,6 +14,7 @@ class HomeUI {
         return {
             type: "web",
             props: {
+                allowsNavigation: true,
                 id: "web-boxjs",
                 url: this.kernel.server.serverURL,
                 opaque: false

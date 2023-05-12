@@ -10,7 +10,7 @@ class Matrix {
 
     getWidth() {
         this.width = $device.info.screen.width / this.columns
-        this.width = this.width - this.spacing * (this.columns + 1) / this.columns
+        this.width = this.width - (this.spacing * (this.columns + 1)) / this.columns
         return this.width
     }
 
@@ -22,7 +22,8 @@ class Matrix {
                 cornerRadius: 10
             },
             layout: (make, view) => {
-                make.width.equalTo(view.super.width)
+                make.width
+                    .equalTo(view.super.width)
                     .multipliedBy(1 / this.columns)
                     // this.spacing / this.columns 是应为最后一个块右侧边距为0，需要所有块均摊最后一个块右侧边距
                     .offset(-this.spacing - this.spacing / this.columns)
@@ -39,7 +40,7 @@ class Matrix {
                     make.left.equalTo(view.prev.right).offset(this.spacing)
                     make.top.equalTo(view.prev)
                 }
-                this.indexFlag === this.columns ? this.indexFlag = 1 : this.indexFlag++
+                this.indexFlag === this.columns ? (this.indexFlag = 1) : this.indexFlag++
             },
             views: views,
             events: events

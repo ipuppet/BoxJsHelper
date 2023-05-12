@@ -27,9 +27,12 @@ class ToolboxUI {
         let views = [
             {
                 type: "image",
-                props: Object.assign({
-                    tintColor: UIKit.textColor
-                }, data.icon),
+                props: Object.assign(
+                    {
+                        tintColor: UIKit.textColor
+                    },
+                    data.icon
+                ),
                 layout: make => {
                     make.top.left.inset(10)
                     make.size.equalTo(35)
@@ -37,10 +40,13 @@ class ToolboxUI {
             },
             {
                 type: "label",
-                props: Object.assign({
-                    font: $font(18),
-                    textColor: $color("primaryText", "secondaryText")
-                }, data.title),
+                props: Object.assign(
+                    {
+                        font: $font(18),
+                        textColor: $color("primaryText", "secondaryText")
+                    },
+                    data.title
+                ),
                 layout: make => {
                     make.bottom.left.inset(10)
                 }

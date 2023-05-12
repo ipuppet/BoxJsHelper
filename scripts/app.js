@@ -30,22 +30,6 @@ class AppKernel extends Kernel {
                 message: $l10n("DOMAIN") + "与浏览器访问地址一致" + "\n QuantumultX 用户超时时间可以设置的久一点"
             })
         }
-
-        this.setting.method.readme = () => {
-            const content = $file.read("README.md").string
-            UIKit.push({
-                views: [
-                    {
-                        type: "markdown",
-                        props: { content: content },
-                        layout: (make, view) => {
-                            make.size.equalTo(view.super)
-                        }
-                    }
-                ],
-                title: $l10n("README")
-            })
-        }
     }
 }
 
