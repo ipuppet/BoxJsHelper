@@ -11,10 +11,17 @@ class BackupCard extends Card {
         }
     }
 
+    getiCloudId(id = "") {
+        if (id.endsWith(".icloud")) {
+            id = id.substring(1, id.length - 7)
+        }
+        return id
+    }
+
     iCloudPath(id = "", cloud = false) {
         if (id.endsWith(".icloud")) {
             if (!cloud) {
-                id = id.substring(1, id.length - 7)
+                id = this.getiCloudId(id)
             }
         } else if (cloud) {
             return `${this.iCloud}/backup/.${id}.icloud`
@@ -25,6 +32,18 @@ class BackupCard extends Card {
 
     hasiCloud(id = "") {
         return $file.exists(this.iCloudPath(id)) || $file.exists(this.iCloudPath(id, true))
+    }
+
+    async hasBoxBackup(id = "") {
+        const response = await $http.get({
+            url: `${this.kernel.server.serverURL}/query/baks/${id}`
+        })
+        if (null !== response.error) {
+            $ui.toast($l10n("ERROR_GET_DATA"))
+            this.kernel.print(error)
+            throw response.error
+        }
+        return response.data !== ""
     }
 
     async boxdata() {
@@ -40,8 +59,10 @@ class BackupCard extends Card {
     }
 
     async updateList() {
-        const boxdata = await this.boxdata()
         const list = []
+        // boxdata
+        const boxdata = await this.boxdata()
+        const boxBackupMap = {}
         for (let item of boxdata.globalbaks) {
             list.push({
                 id: { info: item.id },
@@ -49,7 +70,24 @@ class BackupCard extends Card {
                 tags: { text: item.tags.join(" ") },
                 date: { text: new Date(item.createTime).toLocaleString() }
             })
+            boxBackupMap[item.id] = true
         }
+        // iCloud
+        const files = $file.list(this.iCloudPath())
+        files.forEach(fileName => {
+            const id = this.getiCloudId(fileName)
+            if (boxBackupMap[id]) {
+                // 跳过已存在备份
+                return
+            }
+            list.push({
+                id: { info: id },
+                name: { text: id },
+                tags: { text: "iCloud" },
+                date: { text: "" }
+            })
+        })
+
         $(this.listId).data = list
         $(this.emptyList.props.id).hidden = list.length > 0
     }
@@ -143,7 +181,7 @@ class BackupCard extends Card {
 
     async sync() {
         this.uploadToiCloud()
-        await this.recoverFromiCloud()
+        await this.recoverAllFromiCloud()
         this.updateList()
     }
 
@@ -202,8 +240,30 @@ class BackupCard extends Card {
         })
     }
 
-    async recoverFromiCloud() {
-        await $wait(0.2)
+    async recoverFromiCloud(id) {
+        this.backupStatus[id].loading()
+        await $wait(0.2) // 等待显示动画
+        await $file.download(this.iCloudPath(id, true))
+        const fileContent = $file.read(this.iCloudPath(id))
+        const data = JSON.parse(fileContent?.string ?? "{}")
+        // 添加新的备份到 BoxJs
+        const response = await $http.post({
+            url: `${this.kernel.server.serverURL}/api/impGlobalBak`,
+            body: Object.assign(
+                {
+                    bak: data.data
+                },
+                data.info
+            )
+        })
+        if (null === response.error) {
+            this.backupStatus[id].ok()
+        }
+        return response
+    }
+
+    async recoverAllFromiCloud() {
+        await $wait(0.2) // 等待显示动画
         // 从 iCloud 恢复
         const files = $file.list(this.iCloudPath())
         const length = files.length
@@ -214,7 +274,7 @@ class BackupCard extends Card {
         let errorList = []
         const backupMap = {}
         ;(await this.boxdata())?.globalbaks?.forEach(item => {
-            backupMap[item.id] = item.name
+            backupMap[item.id] = item.name + " " + new Date(item.createTime).toLocaleString()
         })
         files.forEach(async id => {
             if (backupMap[id]) {
@@ -222,36 +282,181 @@ class BackupCard extends Card {
                 recovered++
                 return
             }
-            await $file.download(this.iCloudPath(id, true))
-            const fileContent = $file.read(this.iCloudPath(id))
-            const data = JSON.parse(fileContent?.string ?? "{}")
-            // 添加新的备份到 BoxJs
-            $http.post({
-                url: `${this.kernel.server.serverURL}/api/impGlobalBak`,
-                body: Object.assign(
+            const response = await this.recoverFromiCloud(id)
+            if (null !== response.error) {
+                errorList.push(backupMap[id])
+            }
+            recovered++
+            // 控制行为
+            if (recovered === length) {
+                this.updateList()
+                if (errorList.length > 0) {
+                    $ui.alert({
+                        title: $l10n("ERROE_BACKUP"),
+                        message: errorList.join("\n")
+                    })
+                }
+            }
+        })
+    }
+
+    get listView() {
+        return {
+            type: "list",
+            props: {
+                rowHeight: 60,
+                data: [],
+                id: this.listId,
+                template: {
+                    views: [
+                        {
+                            type: "label",
+                            props: {
+                                id: "id",
+                                hidden: true
+                            }
+                        },
+                        {
+                            type: "spinner",
+                            props: { loading: true },
+                            layout: make => {
+                                make.top.inset(10)
+                                make.right.inset(10)
+                                make.width.equalTo(25)
+                            }
+                        },
+                        // 同步状态 icon
+                        {
+                            type: "image",
+                            props: { hidden: true },
+                            layout: (make, view) => {
+                                make.width.equalTo(view.prev)
+                                make.top.inset(10)
+                                make.right.inset(10)
+                            },
+                            events: {
+                                ready: async sender => {
+                                    const id = sender.super.get("id").info
+                                    const loading = (loading = true) => {
+                                        if (loading) {
+                                            sender.prev.hidden = false
+                                            sender.hidden = true
+                                        } else {
+                                            sender.prev.hidden = true
+                                            sender.hidden = false
+                                        }
+                                    }
+                                    this.backupStatus[id] = {
+                                        loading: loading,
+                                        ok: () => {
+                                            loading(false)
+                                            sender.symbol = "checkmark.icloud"
+                                        },
+                                        no: () => {
+                                            loading(false)
+                                            sender.symbol = "icloud.slash"
+                                        },
+                                        iCloud: () => {
+                                            loading(false)
+                                            sender.symbol = "icloud.and.arrow.down"
+                                        }
+                                    }
+                                    if (!(await this.hasBoxBackup(id))) {
+                                        this.backupStatus[id].iCloud()
+                                    } else if (this.hasiCloud(id)) {
+                                        this.backupStatus[id].ok()
+                                    } else {
+                                        this.backupStatus[id].no()
+                                    }
+                                    loading(false)
+                                }
+                            }
+                        },
+                        {
+                            type: "label",
+                            props: {
+                                id: "name",
+                                font: $font(18),
+                                align: $align.left
+                            },
+                            layout: (make, view) => {
+                                make.top.inset(10)
+                                make.left.inset(10)
+                                make.right.equalTo(view.prev.left)
+                            }
+                        },
+                        {
+                            type: "label",
+                            props: {
+                                id: "tags",
+                                font: $font(14),
+                                textColor: $color({
+                                    light: "#C0C0C0",
+                                    dark: "#545454"
+                                }),
+                                align: $align.left
+                            },
+                            layout: make => {
+                                make.bottom.inset(5)
+                                make.left.inset(10)
+                            }
+                        },
+                        {
+                            type: "label",
+                            props: {
+                                id: "date",
+                                font: $font(14),
+                                textColor: $color({
+                                    light: "#C0C0C0",
+                                    dark: "#545454"
+                                }),
+                                align: $align.right
+                            },
+                            layout: make => {
+                                make.bottom.inset(5)
+                                make.right.inset(10)
+                            }
+                        }
+                    ]
+                },
+                actions: [
                     {
-                        bak: data.data
-                    },
-                    data.info
-                ),
-                handler: response => {
-                    if (null !== response.error) {
-                        errorList.push(backupMap[id])
-                    }
-                    recovered++
-                    // 控制行为
-                    if (recovered === length) {
-                        this.updateList()
-                        if (errorList.length > 0) {
-                            $ui.alert({
-                                title: $l10n("ERROE_BACKUP"),
-                                message: errorList.join("\n")
+                        title: " " + $l10n("DELETE") + " ", // 加空格防止被检测为默认的删除行为
+                        color: $color("red"),
+                        handler: (sender, indexPath) => {
+                            const id = sender.object(indexPath).id.info
+                            const name = sender.object(indexPath).name.text
+                            this.delete(id, name, async () => {
+                                sender.delete(indexPath)
+                                await $wait(0.3)
+                                this.updateList()
                             })
                         }
                     }
+                ]
+            },
+            events: {
+                pulled: async sender => {
+                    await this.sync()
+                    sender.endRefreshing()
+                },
+                didSelect: async (sender, indexPath) => {
+                    const id = sender.object(indexPath).id.info
+                    if (!(await this.hasBoxBackup(id))) {
+                        await this.recoverFromiCloud(id)
+                        this.updateList()
+                        return
+                    }
+                    const name = sender.object(indexPath).name.text
+                    this.recoverToBoxJs(id, name)
+                },
+                ready: sender => {
+                    // 加载数据
+                    this.updateList()
                 }
-            })
-        })
+            },
+            layout: $layout.fillSafeArea
+        }
     }
 
     card() {
@@ -262,151 +467,7 @@ class BackupCard extends Card {
                 tapped: () => {
                     UIKit.push({
                         title: $l10n("BACKUP"),
-                        views: [
-                            {
-                                type: "list",
-                                props: {
-                                    rowHeight: 60,
-                                    data: [],
-                                    id: this.listId,
-                                    template: {
-                                        views: [
-                                            {
-                                                type: "label",
-                                                props: {
-                                                    id: "id",
-                                                    hidden: true
-                                                }
-                                            },
-                                            {
-                                                type: "label",
-                                                props: {
-                                                    id: "name",
-                                                    font: $font(18),
-                                                    align: $align.left
-                                                },
-                                                layout: make => {
-                                                    make.top.inset(10)
-                                                    make.left.inset(10)
-                                                }
-                                            },
-                                            {
-                                                type: "spinner",
-                                                props: { loading: true },
-                                                layout: make => {
-                                                    make.top.inset(10)
-                                                    make.right.inset(10)
-                                                }
-                                            },
-                                            {
-                                                type: "image",
-                                                props: { hidden: true },
-                                                layout: make => {
-                                                    make.top.inset(10)
-                                                    make.right.inset(10)
-                                                },
-                                                events: {
-                                                    ready: sender => {
-                                                        const id = sender.super.get("id").info
-                                                        this.backupStatus[id] = {
-                                                            loading: loading => {
-                                                                if (loading) {
-                                                                    sender.prev.hidden = false
-                                                                    sender.hidden = true
-                                                                } else {
-                                                                    sender.prev.hidden = true
-                                                                    sender.hidden = false
-                                                                }
-                                                            }
-                                                        }
-                                                        Object.assign(this.backupStatus[id], {
-                                                            ok: () => {
-                                                                this.backupStatus[id].loading(false)
-                                                                sender.symbol = "checkmark.icloud"
-                                                            },
-                                                            no: () => {
-                                                                this.backupStatus[id].loading(false)
-                                                                sender.symbol = "icloud.slash"
-                                                            }
-                                                        })
-                                                        if (this.hasiCloud(id)) {
-                                                            this.backupStatus[id].ok()
-                                                        } else {
-                                                            this.backupStatus[id].no()
-                                                        }
-                                                        this.backupStatus[id].loading(false)
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                type: "label",
-                                                props: {
-                                                    id: "tags",
-                                                    font: $font(14),
-                                                    textColor: $color({
-                                                        light: "#C0C0C0",
-                                                        dark: "#545454"
-                                                    }),
-                                                    align: $align.left
-                                                },
-                                                layout: make => {
-                                                    make.bottom.inset(5)
-                                                    make.left.inset(10)
-                                                }
-                                            },
-                                            {
-                                                type: "label",
-                                                props: {
-                                                    id: "date",
-                                                    font: $font(14),
-                                                    textColor: $color({
-                                                        light: "#C0C0C0",
-                                                        dark: "#545454"
-                                                    }),
-                                                    align: $align.right
-                                                },
-                                                layout: make => {
-                                                    make.bottom.inset(5)
-                                                    make.right.inset(10)
-                                                }
-                                            }
-                                        ]
-                                    },
-                                    actions: [
-                                        {
-                                            title: " " + $l10n("DELETE") + " ", // 加空格防止被检测为默认的删除行为
-                                            color: $color("red"),
-                                            handler: (sender, indexPath) => {
-                                                const id = sender.object(indexPath).id.info
-                                                const name = sender.object(indexPath).name.text
-                                                this.delete(id, name, async () => {
-                                                    sender.delete(indexPath)
-                                                    await $wait(0.3)
-                                                    this.updateList()
-                                                })
-                                            }
-                                        }
-                                    ]
-                                },
-                                events: {
-                                    pulled: async sender => {
-                                        await this.sync()
-                                        sender.endRefreshing()
-                                    },
-                                    didSelect: (sender, indexPath) => {
-                                        const id = sender.object(indexPath).id.info
-                                        const name = sender.object(indexPath).name.text
-                                        this.recoverToBoxJs(id, name)
-                                    },
-                                    ready: sender => {
-                                        // 加载数据
-                                        this.updateList()
-                                    }
-                                },
-                                layout: $layout.fillSafeArea
-                            },
-                            this.emptyList
-                        ],
+                        views: [this.listView, this.emptyList],
                         navButtons: [
                             {
                                 symbol: "plus",
