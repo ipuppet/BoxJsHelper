@@ -136,7 +136,7 @@ class BackupCard extends Card {
                                 }
                                 // 删除 iCloud 文件
                                 if (this.hasiCloud(id)) {
-                                    $file.delete(this.iCloudPath(id))
+                                    $file.delete(this.iCloudPath(id, false))
                                 }
                                 if (typeof callback === "function") {
                                     callback()
