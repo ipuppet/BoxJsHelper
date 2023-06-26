@@ -1,4 +1,11 @@
+/**
+ * @typedef {import("../../app").AppKernel} AppKernel
+ */
+
 class HomeUI {
+    /**
+     * @param {AppKernel} kernel 
+     */
     constructor(kernel) {
         this.kernel = kernel
         // 开启服务器并记录访问url

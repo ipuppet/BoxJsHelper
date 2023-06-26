@@ -1,35 +1,46 @@
 const Logger = require("./logger")
 
 class Server {
-    constructor(setting, port = null) {
+    constructor(setting) {
         this.setting = setting
 
         this.logger = new Logger("server-access")
-        if (!this.setting.get("server.logRequest")) {
-            this.logger.disable()
-        }
 
-        if (port === null) {
-            port = this.setting.get("advanced.serverPort")
-        }
-        this.port = port
-        this.domain = this.setting.get("advanced.domain", "boxjs.net")
         if (this.domain.startsWith("http")) {
             this.domain = this.domain.slice(this.domain.indexOf("//") + 2)
         }
-        this.timeout = this.setting.get("advanced.timeout", 3)
         this.handler = {}
         this.server = $server.new()
     }
 
+    get domain() {
+        return this.setting.get("advanced.domain", "boxjs.net")
+    }
+
+    get port() {
+        return this.setting.get("advanced.serverPort")
+    }
+
+    get timeout() {
+        return this.setting.get("advanced.timeout", 3)
+    }
+
+    get logRequest() {
+        return this.setting.get("server.logRequest")
+    }
+
     startServer() {
         if (this.server.running) return
+        if (!this.logRequest) {
+            this.logger.disable()
+        }
+
         this.server.addHandler(this.getHandler())
         let options = {
             port: this.port
         }
         this.server.start(options)
-        this.logger.info("Server Start.")
+        this.logger.info("Server started.")
         // 访问地址
         this.serverURL = `http://localhost:${this.port}`
         if (this.server.serverURL) {
@@ -44,7 +55,12 @@ class Server {
 
     stopServer() {
         this.server.stop()
-        this.logger.info("Server Stop.")
+        this.logger.info("Server stoped.")
+    }
+
+    reloadServer() {
+        this.stopServer()
+        this.startServer()
     }
 
     requestLogTemplate(request) {

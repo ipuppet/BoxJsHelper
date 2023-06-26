@@ -10,8 +10,9 @@ class AppKernel extends Kernel {
         // 注册组件
         this.setting = new Setting()
         this.setting.loadConfig()
-        this.initSettingMethods()
         this.server = new Server(this.setting)
+        this.initSettingMethods()
+        this.initSettingEvents()
     }
 
     iCloudPath(path) {
@@ -21,6 +22,15 @@ class AppKernel extends Kernel {
         let end = path.lastIndexOf("/") === path.length - 1 ? -1 : undefined
         path = path.slice(0, end)
         return `drive://${path}/`
+    }
+
+    initSettingEvents() {
+        this.setting.setEvent("onSet", (key, value) => {
+            const serverConfigKeys = ["advanced.timeout", "advanced.domain", "advanced.serverPort", "server.logRequest"]
+            if (serverConfigKeys.includes(key)) {
+                this.server.reloadServer()
+            }
+        })
     }
 
     /**
