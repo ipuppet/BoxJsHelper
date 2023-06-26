@@ -100,15 +100,19 @@ class BackupCard extends Card {
                 {
                     title: $l10n("OK"),
                     handler: () => {
+                        $ui.toast($l10n("LOADING"), 10000)
                         $http.post({
                             url: `${this.kernel.server.serverURL}/api/revertGlobalBak`,
                             body: { id },
                             handler: response => {
+                                let error
                                 if (null !== response.error) {
-                                    $ui.error(response.error.localizedDescription)
-                                    return false
+                                    error = response.error.localizedDescription
                                 } else if (response?.response?.statusCode >= 300) {
-                                    $ui.error(response.data)
+                                    error = response.data
+                                }
+                                if (error) {
+                                    $ui.error(error)
                                     return false
                                 }
                                 $ui.success($l10n("SUCCESS_RECOVER"))
