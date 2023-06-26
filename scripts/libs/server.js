@@ -65,7 +65,7 @@ class Server {
             let body = {}
             try {
                 body = JSON.parse(request.data.string)
-            } catch { }
+            } catch {}
             content = await $http.post({
                 timeout: this.timeout,
                 url: `http://${this.domain}${request.path}`,
@@ -87,36 +87,30 @@ class Server {
             })
         }
 
-        if (content.error) {
-            throw content.error
-        }
-
         // 检查结构
-        let response = {}
-        if (content.data && typeof content.data === "object") {
-            response = { json: content.data }
+        let response = {
+            statusCode: content?.response?.statusCode ?? 500
+        }
+        if (content.error) {
+            const error = content.error
+            response.text = error.localizedDescription
+            this.logger.error(this.requestLogTemplate(request) + ` ${error.code}: ${error.localizedDescription}`)
+        } else if (content.data && typeof content.data === "object") {
+            response.json = content.data
         } else {
-            response = { html: content.data + "" }
+            response.html = content.data + ""
         }
         return response
     }
 
-    async handle(request, completion) {
+    async handle(request) {
         $delay(0, () => this.logger.info(this.requestLogTemplate(request)))
 
-        let response = { statusCode: 400, hasBody: false }
+        let response = { statusCode: 401, hasBody: false }
         if (this.isLocalhost(request) || this.setting.get("server.remoteAccess")) {
-            try {
-                response = await this.response(request)
-            } catch (error) {
-                this.logger.error(this.requestLogTemplate(request) + ` ${error.code}: ${error.localizedDescription}`)
-            }
+            response = await this.response(request)
         }
-
-        completion({
-            type: "data",
-            props: response
-        })
+        return response
     }
 
     getHandler() {
@@ -124,8 +118,13 @@ class Server {
             // 全部使用data
             return "data"
         }
-        this.handler.asyncResponse = async (request, completion) => {
-            await this.handle(request, completion)
+        this.handler.asyncResponse = (request, completion) => {
+            this.handle(request).then(response => {
+                completion({
+                    type: "data",
+                    props: response
+                })
+            })
         }
         return this.handler
     }

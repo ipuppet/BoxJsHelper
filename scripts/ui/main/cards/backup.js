@@ -105,7 +105,10 @@ class BackupCard extends Card {
                             body: { id },
                             handler: response => {
                                 if (null !== response.error) {
-                                    $ui.error($l10n("ERROR"))
+                                    $ui.error(response.error.localizedDescription)
+                                    return false
+                                } else if (response?.response?.statusCode >= 300) {
+                                    $ui.error(response.data)
                                     return false
                                 }
                                 $ui.success($l10n("SUCCESS_RECOVER"))
@@ -249,12 +252,9 @@ class BackupCard extends Card {
         // 添加新的备份到 BoxJs
         const response = await $http.post({
             url: `${this.kernel.server.serverURL}/api/impGlobalBak`,
-            body: Object.assign(
-                {
-                    bak: data.data
-                },
-                data.info
-            )
+            body: Object.assign(data.info, {
+                bak: data.data
+            })
         })
         if (null === response.error) {
             this.backupStatus[id].ok()

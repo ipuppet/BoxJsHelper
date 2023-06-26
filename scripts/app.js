@@ -1,6 +1,9 @@
 const { UIKit, Kernel, Setting } = require("./libs/easy-jsbox")
-const Server = require("./server")
+const Server = require("./libs/server")
 
+/**
+ * @typedef {AppKernel} AppKernel
+ */
 class AppKernel extends Kernel {
     constructor() {
         super()

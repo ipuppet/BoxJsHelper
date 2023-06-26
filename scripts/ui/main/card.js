@@ -1,4 +1,11 @@
+/**
+ * @typedef {import("../../app").AppKernel} AppKernel
+ */
+
 class CardBase {
+    /**
+     * @param {AppKernel} kernel 
+     */
     constructor(kernel) {
         this.kernel = kernel
         this.iCloud = this.kernel.iCloudPath("/BoxJsHepler")
