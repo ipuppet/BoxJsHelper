@@ -1,10 +1,17 @@
 const Logger = require("./logger")
 
+/**
+ * @typedef {import("../app").AppKernel} AppKernel
+ */
 class Server {
-    constructor(setting) {
-        this.setting = setting
+    /**
+     * @param {AppKernel} kernel
+     */
+    constructor(kernel) {
+        this.kernel = kernel
+        this.setting = this.kernel.setting
 
-        this.logger = new Logger("server-access")
+        this.logger = new Logger(this.kernel.fileStorage.basePath)
 
         if (this.domain.startsWith("http")) {
             this.domain = this.domain.slice(this.domain.indexOf("//") + 2)

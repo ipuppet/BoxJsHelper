@@ -1,13 +1,16 @@
 class Logger {
     status = true
 
-    constructor(name = "default") {
-        this.name = name
+    constructor(basePath) {
+        this.name = "server-access"
         this.maxSize = 1024 * 1024 * 1024
         if (undefined === $cache.get(this.name)) {
             $cache.set(this.name, new Date().getTime())
         }
-        this.path = `storage/log/${this.name}/`
+        this.path = `${basePath}/logs/`
+        if (!$file.exists(this.path)) {
+            $file.mkdir(this.path)
+        }
     }
 
     disable() {

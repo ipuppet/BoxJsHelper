@@ -3,29 +3,21 @@
         "title": "BoxJs",
         "items": [
             {
-                "icon": [
-                    "tag.fill",
-                    "#9B59B6"
-                ],
+                "icon": ["tag.fill", "#9B59B6"],
                 "title": "TIPS",
                 "type": "script",
                 "key": "boxjs.tips",
                 "value": "this.method.tips"
             },
             {
-                "icon": [
-                    "location.fill",
-                    "#FF9900"
-                ],
+                "icon": ["location.fill", "#FF9900"],
                 "title": "DOMAIN",
                 "type": "input",
                 "key": "advanced.domain",
                 "value": "boxjs.net"
             },
             {
-                "icon": [
-                    "wifi.slash"
-                ],
+                "icon": ["wifi.slash"],
                 "title": "TIMEOUT",
                 "type": "number",
                 "key": "advanced.timeout",
@@ -37,10 +29,7 @@
         "title": "REMOTE_ACCESS",
         "items": [
             {
-                "icon": [
-                    "dot.radiowaves.right",
-                    "#3498DB"
-                ],
+                "icon": ["dot.radiowaves.right", "#3498DB"],
                 "title": "PORT",
                 "type": "number",
                 "key": "advanced.serverPort",
@@ -64,39 +53,27 @@
         "title": "ABOUT",
         "items": [
             {
-                "icon": [
-                    "/assets/icon/github.com.jpeg",
-                    "white"
-                ],
+                "icon": ["icon_177", "black"],
                 "title": "Github",
                 "type": "info",
-                "key": "about.github",
-                "value": [
-                    "ipuppet/BoxJsHelper",
-                    "https://github.com/ipuppet/BoxJsHelper"
-                ]
+                "value": ["ipuppet/BoxJsHelper", "https://github.com/ipuppet/BoxJsHelper"]
             },
             {
-                "icon": [
-                    "person.fill",
-                    "#FF9900"
-                ],
+                "icon": ["icon_172", "#1888bf"],
+                "title": "Telegram",
+                "type": "info",
+                "value": ["JSBoxTG", "https://t.me/JSBoxTG"]
+            },
+            {
+                "icon": ["person.fill", "#FF9900"],
                 "title": "AUTHOR",
                 "type": "info",
-                "key": "about.author",
-                "value": [
-                    "ipuppet",
-                    "https://blog.ultagic.com"
-                ]
+                "value": ["ipuppet", "https://blog.ultagic.com"]
             },
             {
-                "icon": [
-                    "book.fill",
-                    "#A569BD"
-                ],
+                "icon": ["book.fill", "#A569BD"],
                 "title": "README",
                 "type": "script",
-                "key": "about.readme",
                 "value": "this.method.readme"
             }
         ]

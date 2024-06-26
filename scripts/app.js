@@ -1,4 +1,4 @@
-const { UIKit, Kernel, Setting } = require("./libs/easy-jsbox")
+const { UIKit, Kernel, FileStorage, Logger, Setting } = require("./libs/easy-jsbox")
 const Server = require("./libs/server")
 
 /**
@@ -7,10 +7,14 @@ const Server = require("./libs/server")
 class AppKernel extends Kernel {
     constructor() {
         super()
-        // 注册组件
-        this.setting = new Setting()
-        this.setting.loadConfig()
-        this.server = new Server(this.setting)
+        this.fileStorage = new FileStorage({ basePath: "shared://BoxjsHelper" })
+
+        this.logger = new Logger()
+        this.logger.setWriter(this.fileStorage, "logs/boxjs-helper.log")
+
+        this.setting = new Setting({ logger: this.logger, fileStorage: this.fileStorage })
+
+        this.server = new Server(this)
         this.initSettingMethods()
         this.initSettingEvents()
     }
